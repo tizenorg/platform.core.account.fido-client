@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<node name="/org/tizen/fido">
+  <interface name="org.tizen.fido">
+    <method name="fido_uaf_init">
+      <arg type="i" name="tizen_error_code" direction="out" />
+    </method>
+    <method name="fido_uaf_deinit">
+      <arg type="i" name="tizen_error_code" direction="out" />
+    </method>
+    <method name="fido_uaf_discover">
+      <arg type="i" name="tizen_error_code" direction="out" />
+      <arg type="as" name="asm_response_list" direction="out" />
+      <arg type="i" name="data_len" direction="out" />
+    </method>
+    <method name="fido_uaf_check_policy">
+      <arg type="s" name="uaf_message_json" direction="in" />
+      <arg type="i" name="tizen_error_code" direction="out" />
+    </method>
+    <method name="fido_uaf_process_operation">
+      <arg type="s" name="uaf_request_json" direction="in" />
+      <arg type="s" name="channel_binding_json" direction="in" />
+      <arg type="i" name="tizen_error_code" direction="out" />
+      <arg type="s" name="uaf_response_json" direction="out" />
+    </method>
+    <method name="fido_uaf_notify_result">
+      <arg type="i" name="respose_code" direction="in" />
+      <arg type="s" name="uaf_response_json" direction="in" />
+      <arg type="i" name="tizen_error_code" direction="out" />
+    </method>
+    <method name="ui_response">
+      <arg type="i" name="error" direction="in" />
+      <arg type="s" name="ui_response_json" direction="in" />
+    </method>
+  </interface>
+</node>

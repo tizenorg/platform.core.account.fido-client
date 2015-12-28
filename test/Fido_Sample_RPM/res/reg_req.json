@@ -1,0 +1,33 @@
+[
+    {
+        "header": {
+            "upv": {
+                "major": 1,
+                "minor": 0
+            },
+"op":"Reg",
+"appID":"org.tizen.FidoSample",
+            "serverData": "nwV8EPqS5raZdAgH3GD9Z-ytCA9MkiiWaCsr1GHHNJ2yUh3HaV1HHxd4Z67FefJOD5sQYZvipfg5BavhdWPMecD2SH39aJixoXN9ZaNwRlcftJe9WbtPNDC9q5V9WX7Z5jCwkAwehcI"
+        },
+        "challenge": "9pIcUwwrY5eD9o3OwfhkeHLnoIl0vaeJUbxSHMe_XgE",
+"username":"ryan",
+        "policy": {
+            "accepted": [
+                [
+                    {
+                        "aaid": [
+			    "0000#C001"
+                        ]
+                    }
+                ],
+                [
+                    {
+                        "aaid": [
+			    "53EC#3101"
+                        ]
+                    }
+                ]
+            ]
+        }
+    }
+]

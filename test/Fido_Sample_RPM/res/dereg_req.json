@@ -1,0 +1,18 @@
+[
+    {
+        "header": {
+            "upv": {
+                "major": "1",
+                "minor": "0"
+            },
+            "op": "Dereg",
+            "appID": "org.tizen.FidoSample"
+        },
+        "authenticators": [
+            {
+		"aaid": "53EC#3101",
+                "keyID": "uWrbo_8JI1HmPESrNAStTVV8ZbBrzLsf_kZu1QKX2YY"
+            }
+        ]
+    }
+]

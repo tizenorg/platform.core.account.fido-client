@@ -1,0 +1,13 @@
+# Package Information for pkg-config
+
+prefix=@PREFIX@
+exec_prefix=@EXEC_PREFIX@
+libdir=@LIBDIR@
+includedir=@INCLUDEDIR@
+
+Name: fido-client
+Description: Tizen FIDO Client
+Version: @VERSION@
+#Requires: capi-base-common
+Libs: -L${libdir} -lfido-client
+Cflags: -I${includedir}

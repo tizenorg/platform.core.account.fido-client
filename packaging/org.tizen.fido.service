@@ -1,0 +1,8 @@
+[Unit]
+Description=FIDO Service D-Bus
+
+[D-BUS Service]
+Name=org.tizen.fido
+Exec=/usr/bin/fido-service
+User=system
+Group=system
