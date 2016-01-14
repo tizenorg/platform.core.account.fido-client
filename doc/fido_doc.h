@@ -26,10 +26,21 @@
  * @section   CAPI_FIDO_HEADER Required Header
  *  \#include <fido.h>
  *
- * @section CAPI_FIDO_MODULE_OVERVIEW Overview
+  * @section CAPI_FIDO_MODULE_OVERVIEW Overview
  * The FIDO Universal Authentication Framework (UAF) Client APIs provide APIs for application developers to utilize Device's available authenticators for online service integration.
  * The goal of this Universal Authentication Framework is to provide a unified and extensible authentication mechanism that supplants passwords while avoiding the shortcomings of current alternative authentication approaches.
  * More details about the FIDO specification can be found in https://fidoalliance.org/specifications/download/
+  * @section CAPI_FIDO_MODULE_FEATURE Related Features
+ * This API is related with the following feature:\n
+ * - http://tizen.org/feature/fido.uaf
+ *
+ * It is recommended to design feature related codes in your application for reliability.\n
+ *
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ *
+ * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
+ *
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  * @defgroup  CAPI_FIDO_UAF_MESSAGES_MODULE FIDO UAF MESSAGES
  * @ingroup   CAPI_FIDO_MODULE
