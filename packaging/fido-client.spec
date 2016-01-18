@@ -19,6 +19,7 @@ BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(capi-base-common)
 BuildRequires:	pkgconfig(glib-2.0) >= 2.26
 BuildRequires:  pkgconfig(gio-unix-2.0)
+BuildRequires:  pkgconfig(libtzplatform-config)
 BuildRequires:  pkgconfig(cynara-client)
 BuildRequires:  pkgconfig(cynara-session)
 BuildRequires:  pkgconfig(cynara-creds-gdbus)
@@ -52,16 +53,18 @@ Development files for %{name}
 %setup -q
 
 %build
-#export   CFLAGS+=" -Wextra -Wcast-align -Wcast-qual -Wshadow -Wwrite-strings -Wswitch-default"
-#export CXXFLAGS+=" -Wextra -Wcast-align -Wcast-qual -Wshadow -Wwrite-strings -Wswitch-default -Wnon-virtual-dtor -Wno-c++0x-compat"
-#export   CFLAGS+=" -Wno-unused-parameter -Wno-empty-body"
-#export CXXFLAGS+=" -Wno-unused-parameter -Wno-empty-body"
-
-#export   CFLAGS+=" -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-strict-aliasing -fno-unroll-loops -fsigned-char -fstrict-overflow -fno-common"
-#export CXXFLAGS+=" -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-strict-aliasing -fno-unroll-loops -fsigned-char -fstrict-overflow"
+%if 0%{?sec_build_binary_debug_enable}
+export CFLAGS="$CFLAGS -DTIZEN_DEBUG_ENABLE"
+export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE"
+export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
+%endif
 
 export CFLAGS="${CFLAGS} -fPIC -fvisibility=hidden"
-cmake . -DCMAKE_INSTALL_PREFIX=/usr
+
+cmake . \
+-DCMAKE_INSTALL_PREFIX=%{_prefix} \
+-DLIBDIR=%{_libdir} \
+-DINCLUDEDIR=%{_includedir}
 
 make %{?jobs:-j%jobs}
 
@@ -81,7 +84,6 @@ mkdir -p %{buildroot}%{_unitdir}/multi-user.target.wants
 install -m 644 %SOURCE3 %{buildroot}%{_unitdir}/org.tizen.fido.service
 %install_service multi-user.target.wants org.tizen.fido.service
 
-
 mkdir -p %{buildroot}/usr/share/dbus-1/system-services
 install -m 0644 %SOURCE4 %{buildroot}/usr/share/dbus-1/system-services/org.tizen.dummyasm.service
 
@@ -94,12 +96,12 @@ install -m 644 %SOURCE4 %{buildroot}%{_unitdir}/org.tizen.dummyasm.service
 
 install -m 0644  test/Dummy_ASM_DBUS/dummy_asm.json %{buildroot}%{_libdir}/fido/asm/dummy_asm.json
 
-##rm -rf %{buildroot}/usr/lib/fido
+%make_install
+mkdir -p %{buildroot}%{_libdir}
 
 %post
-mkdir -p /usr/lib/fido/asm/
-chsmack -a '_' /usr/lib/fido/
-chsmack -a '_' /usr/lib/fido/asm/
+chsmack -a '_' %{_libdir}/fido/
+chsmack -a '_' %{_libdir}/fido/asm/
 /sbin/ldconfig
 
 %postun
@@ -193,7 +195,7 @@ Summary:    Fido Sample App (Internal Dev)
 Group:      Account/Testing
 #Requires:   %{name} = %{version}-%{release}
 
-BuildRequires: cmake 
+BuildRequires: cmake
 BuildRequires: pkgconfig(capi-appfw-application)
 BuildRequires: pkgconfig(capi-system-system-settings)
 BuildRequires: pkgconfig(elementary)

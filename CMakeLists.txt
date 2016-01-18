@@ -3,7 +3,6 @@ PROJECT(fido-client C)
 
 SET(PREFIX ${CMAKE_INSTALL_PREFIX})
 SET(EXEC_PREFIX "\${prefix}")
-SET(LIBDIR "\${prefix}/lib")
 SET(INCLUDEDIR "\${prefix}/include ")
 SET(VERSION_MAJOR 0)
 SET(VERSION "${VERSION_MAJOR}.0.1")
