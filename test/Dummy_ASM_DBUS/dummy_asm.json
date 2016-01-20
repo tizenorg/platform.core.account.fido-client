@@ -1,8 +1,0 @@
-{
-        "vendor" : "Dummy Corp",
-        "bin_path" : "/usr/bin/dummyasm-service",
-        "dbus_info" : "org.tizen.dummyasm",
-        "dbus_obj_path" : "/org/tizen/dummyasm",
-        "dbus_interface_name" : "org.tizen.dummyasm",
-        "dbus_method_name" : "asm_request"
-}
