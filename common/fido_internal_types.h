@@ -167,9 +167,10 @@ typedef struct _message {
 void _free_message(_message_t *data);
 
 typedef struct _reg_request {
-    char *challenge;
-    char *user_name;
-    _policy_t *policy;
+	char *challenge;
+	char *user_name;
+	_policy_t *policy;
+	GList *png_list;/*ASM does not send it in reg resp, but client needs to send it back for reg resp*/
 } _reg_request_t;
 
 void _free_reg_request(_reg_request_t *data);
@@ -324,9 +325,9 @@ typedef struct _ui_auth_data {
 void _free_ui_auth_data(_ui_auth_data_t *data);
 
 typedef struct _auth_reg_assertion {
-    char *assertion_schm;
-    char *assertion;
-    //GList *tc_disp_char_list;
+	char *assertion_schm;
+	char *assertion;
+	GList *tc_disp_char_list;/*fido_display_png_characteristics_descriptor_s list*/
     //GList *ext_list;
 } _auth_reg_assertion_t;
 
@@ -369,6 +370,7 @@ typedef struct _matched_auth_data {
     int att_type;
     char *label;
     GList *key_ids;
+	GList *tc_display_png_characteristics;
 } _matched_auth_data_t;
 
 void _free_matched_auth_data(gpointer data);

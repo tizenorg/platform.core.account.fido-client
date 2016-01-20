@@ -1396,6 +1396,67 @@ _uaf_composer_compose_uaf_process_response_reg(_op_header_t *header, char *final
         json_builder_set_member_name(builder, _JSON_KEY_ASSERT_SCHEME);
         json_builder_add_string_value(builder, ass_data->assertion_schm);
 
+		/*tcDisplayPNGCharacteristics*/
+		if (ass_data->tc_disp_char_list != NULL) {
+			json_builder_set_member_name(builder, "tcDisplayPNGCharacteristics");
+			json_builder_begin_array(builder);
+
+			GList *iter = g_list_first(ass_data->tc_disp_char_list);
+			while (iter != NULL) {
+
+				fido_display_png_characteristics_descriptor_s *png_data =
+						(fido_display_png_characteristics_descriptor_s*) (iter->data);
+
+				if (png_data != NULL) {
+
+					json_builder_begin_object(builder);
+
+					__add_int_to_json_object(builder, _JSON_KEY_WIDTH, png_data->width);
+					__add_int_to_json_object(builder, _JSON_KEY_HEIGHT, png_data->height);
+					__add_int_to_json_object(builder, _JSON_KEY_BIT_DEPTH, png_data->bit_depth);
+					__add_int_to_json_object(builder, _JSON_KEY_COLOR_TYPE, png_data->color_type);
+					__add_int_to_json_object(builder, _JSON_KEY_COMPRESSION, png_data->compression);
+					__add_int_to_json_object(builder, _JSON_KEY_FILTER, png_data->filter);
+					__add_int_to_json_object(builder, _JSON_KEY_INTERLACE, png_data->interlace);
+
+
+					if (png_data->plte != NULL) {
+						/*plte array start*/
+
+						json_builder_set_member_name(builder, _JSON_KEY_PLTE);
+						json_builder_begin_array(builder);
+
+						GList *plte_iter = g_list_first(png_data->plte);
+						while (plte_iter != NULL) {
+
+							fido_rgb_pallette_entry_s *plte_data = (fido_rgb_pallette_entry_s*)(plte_iter->data);
+							if (plte_data != NULL) {
+								json_builder_begin_object(builder);
+
+								__add_int_to_json_object(builder, _JSON_KEY_R, plte_data->r);
+								__add_int_to_json_object(builder, _JSON_KEY_G, plte_data->g);
+								__add_int_to_json_object(builder, _JSON_KEY_B, plte_data->b);
+
+								json_builder_end_object(builder);
+							}
+
+							plte_iter = plte_iter->next;
+						}
+
+						json_builder_end_array(builder);
+
+						/*plte array end*/
+					}
+
+					json_builder_end_object(builder);
+				}
+
+				iter = iter->next;
+			}
+
+			json_builder_end_array(builder);
+		}
+
         json_builder_end_object(builder);
 
         assertions_iter = assertions_iter->next;

@@ -358,6 +358,65 @@ __copy_string_list(GList *src)
     return dest;
 }
 
+static GList*
+__copy_png_list(GList *src_list)
+{
+	RET_IF_FAIL(src_list != NULL, NULL);
+
+	GList *dest = NULL;
+
+	/*fido_display_png_characteristics_descriptor_s list*/
+	GList *iter = g_list_first(src_list);
+
+	while (iter != NULL) {
+		fido_display_png_characteristics_descriptor_s *src_data =
+				(fido_display_png_characteristics_descriptor_s *)(iter->data);
+
+		if (src_data != NULL) {
+			fido_display_png_characteristics_descriptor_s *dest_data =
+					calloc(1, sizeof(fido_display_png_characteristics_descriptor_s));
+
+			dest_data->bit_depth = src_data->bit_depth;
+			dest_data->color_type = src_data->color_type;
+			dest_data->compression = src_data->compression;
+			dest_data->filter = src_data->filter;
+			dest_data->height = src_data->height;
+			dest_data->interlace = src_data->interlace;
+			dest_data->width = src_data->width;
+			/*TODO: dest_data->plte clone*/
+			if (src_data->plte != NULL) {
+				GList *p_iter = g_list_first(src_data->plte);
+				while (p_iter != NULL) {
+
+					fido_rgb_pallette_entry_s *plte_src_data = (fido_rgb_pallette_entry_s*)(p_iter->data);
+					if (plte_src_data != NULL) {
+						fido_rgb_pallette_entry_s *plte_dest_data = calloc(1, sizeof(fido_rgb_pallette_entry_s));
+						plte_dest_data->r = plte_src_data->r;
+						plte_dest_data->g = plte_src_data->g;
+						plte_dest_data->b = plte_src_data->b;
+
+						dest_data->plte = g_list_append(dest_data->plte, plte_dest_data);
+					}
+					p_iter = p_iter->next;
+				}
+			}
+
+			if (dest_data->plte != NULL)
+				dest_data->plte = g_list_first(dest_data->plte);
+
+			dest_data->plte =
+			dest = g_list_append(dest, dest_data);
+		}
+
+		iter = iter->next;
+	}
+
+	if (dest != NULL)
+		dest = g_list_first(dest);
+
+	return dest;
+}
+
 /* Returns _matched_auth_data_t list*/
 GList *
 _policy_checker_get_matched_auth_list(_policy_t *policy, GList *auth_list)
@@ -435,6 +494,9 @@ _policy_checker_get_matched_auth_list(_policy_t *policy, GList *auth_list)
                                     _ERR("Authenticator does not have any ASM ID!!");
 
                                 matched_auth_data->key_ids = __copy_string_list(match_info->key_id_list);
+								/*fido_display_png_characteristics_descriptor_s list*/
+								matched_auth_data->tc_display_png_characteristics =
+										__copy_png_list(authenticator->tc_display_png_characteristics);
 
                                 allowed_list = g_list_append(allowed_list, matched_auth_data);
                             }

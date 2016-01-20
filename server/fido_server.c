@@ -378,6 +378,7 @@ _asm_response_reg_process(int error_code, const char *asm_response_json, void *u
 	_fido_asm_reg_in_t *asm_reg_in = (_fido_asm_reg_in_t *)(cb_data->asm_in);
 
 	_message_t *uaf_req = cb_data->uaf_req;
+	_reg_request_t *uaf_reg_req = (_reg_request_t*)(uaf_req->data);
 	_op_header_t *header = uaf_req->header;
 
 	char *uaf_response_json = NULL;
@@ -386,6 +387,7 @@ _asm_response_reg_process(int error_code, const char *asm_response_json, void *u
 	_auth_reg_assertion_t *ass_data = (_auth_reg_assertion_t*) calloc(1, sizeof(_auth_reg_assertion_t));
 	ass_data->assertion = __dup_string(asm_reg_out->assertion);
 	ass_data->assertion_schm = __dup_string(asm_reg_out->assertion_schm);
+	ass_data->tc_disp_char_list = uaf_reg_req->png_list;
 
 
 	_free_asm_out(asm_out);
@@ -416,6 +418,8 @@ __handle_reg(_process_cb_data_t *cb_data, _matched_auth_data_t *matched_auth)
 	_message_t *uaf_req = (_message_t *)(cb_data->uaf_req);
 
 	_reg_request_t *uaf_reg_req = (_reg_request_t *)(cb_data->uaf_req->data);
+
+	uaf_reg_req->png_list = matched_auth->tc_display_png_characteristics;
 
 	_fido_asm_reg_in_t *reg_in = (_fido_asm_reg_in_t*) calloc(1, sizeof(_fido_asm_reg_in_t));
 
