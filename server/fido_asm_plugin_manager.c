@@ -31,6 +31,7 @@
 #include "fido_asm_plugin_manager.h"
 
 #define _ASM_CONF_DIR_PATH "/usr/lib/fido/asm/"
+#define _ASM_CONF_DIR_PATH_64 "/usr/lib64/fido/asm/"
 
 typedef struct _asm_ipc_cb_data {
     _asm_ipc_response_cb cb;
@@ -107,10 +108,8 @@ __free_asm_proxy_data(gpointer data)
 }
 
 static int
-__load_plugins(const char *path)
+__load_plugins(char **plugin_path)
 {
-    RET_IF_FAIL(path != NULL, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR);
-
     if (asm_proxy_table != NULL) {
         g_hash_table_destroy(asm_proxy_table);
         asm_proxy_table = NULL;
@@ -120,17 +119,30 @@ __load_plugins(const char *path)
 
     DIR *dir;
     struct dirent *entry;
+    bool is_64 = true;
 
-    dir = opendir(path);
+    dir = opendir(_ASM_CONF_DIR_PATH_64);
     if (dir == NULL) {
 
-        _ERR("Could not open [%s] path = [%s]", path, strerror(errno));
-        return FIDO_ERROR_PERMISSION_DENIED;
+		dir = opendir(_ASM_CONF_DIR_PATH);
+		if (dir == NULL) {
+
+			_ERR("Could not open [%s] and [%s] path = [%s]", _ASM_CONF_DIR_PATH_64, 
+				_ASM_CONF_DIR_PATH, strerror(errno));
+			return FIDO_ERROR_PERMISSION_DENIED;
+		}
+		is_64 = false;
     }
+
+	*plugin_path = calloc(1, 128);
+	if (is_64 == true)
+		snprintf(*plugin_path, 127, _ASM_CONF_DIR_PATH_64);
+	else
+		snprintf(*plugin_path, 127, _ASM_CONF_DIR_PATH);	
 
     bool is_asm_found = false;
 
-    _INFO("Loading ASM conf files");
+    _INFO("Loading ASM conf files from [%s]", *plugin_path);
 
     while ((entry = readdir(dir)) != NULL) {
         if (entry->d_type == DT_REG) {
@@ -138,7 +150,7 @@ __load_plugins(const char *path)
             if (conf_file_name != NULL) {
                 char conf_file_name_full[128] = {0, };
                 /*TODO make safe size*/
-                snprintf(conf_file_name_full, 127, "%s%s", _ASM_CONF_DIR_PATH, conf_file_name);
+                snprintf(conf_file_name_full, 127, "%s%s", *plugin_path, conf_file_name);
                 _INFO("Processing [%s]", conf_file_name_full);
                 _fido_asm_proxy_t *asm_proxy = _parse_asm_conf_file(conf_file_name_full);
                 if (asm_proxy != NULL) {
@@ -172,8 +184,11 @@ static void
 __plugin_changed_cb(GFileMonitor *monitor, GFile *file, GFile *other_file, GFileMonitorEvent event_type,
                void* user_data)
 {
-    int ret = __load_plugins(_ASM_CONF_DIR_PATH);
+	char *plugin_path = NULL;
+    int ret = __load_plugins(&plugin_path);
     _INFO("__load_plugins=[%d]", ret);
+
+	SAFE_DELETE(plugin_path);
 }
 
 static void
@@ -203,10 +218,13 @@ _asm_plugin_mgr_init(void)
 
     _INFO("_asm_plugin_mgr_init start");
 
-    int ret = __load_plugins(_ASM_CONF_DIR_PATH);
+	char *plugin_path = NULL;
+    int ret = __load_plugins(&plugin_path);
     _INFO("__load_plugins=[%d]", ret);
 
-    __set_up_watcher(_ASM_CONF_DIR_PATH);
+    __set_up_watcher(plugin_path);
+
+	SAFE_DELETE(plugin_path);
 
     /*Ignored load_plugins error, since ASM might get installed later*/
     return FIDO_ERROR_NONE;
