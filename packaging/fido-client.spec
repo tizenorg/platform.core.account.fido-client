@@ -10,6 +10,9 @@ Source1:    org.tizen.fido.service
 Source2:    org.tizen.fido.conf
 Source3:    org.tizen.fido.service
 
+Source4:    org.tizen.dummyasm.service
+Source5:    org.tizen.dummyasm.conf
+
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(dlog)
@@ -81,6 +84,18 @@ mkdir -p %{buildroot}%{_unitdir}/multi-user.target.wants
 install -m 644 %SOURCE3 %{buildroot}%{_unitdir}/org.tizen.fido.service
 %install_service multi-user.target.wants org.tizen.fido.service
 
+mkdir -p %{buildroot}/usr/share/dbus-1/system-services
+install -m 0644 %SOURCE4 %{buildroot}/usr/share/dbus-1/system-services/org.tizen.dummyasm.service
+
+mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d
+install -m 0644 %{SOURCE5} %{buildroot}%{_sysconfdir}/dbus-1/system.d/
+
+mkdir -p %{buildroot}%{_unitdir}/multi-user.target.wants
+install -m 644 %SOURCE4 %{buildroot}%{_unitdir}/org.tizen.dummyasm.service
+%install_service multi-user.target.wants org.tizen.dummyasm.service
+
+install -m 0644  test/Dummy_ASM_DBUS/dummy_asm.json %{buildroot}%{_libdir}/fido/asm/dummy_asm.json
+
 %make_install
 mkdir -p %{buildroot}%{_libdir}
 
@@ -141,34 +156,33 @@ FIDO Service UI
 ##/usr/apps/org.tizen.fidosvcui/res/*
 /usr/share/packages/org.tizen.fidosvcui.xml
 /usr/share/icons/default/small/org.tizen.fidosvcui.png
+
 #################################################################################
-## Fido Sample App
-##
-##%package -n org.tizen.FidoSample
-##Summary:    Fido Sample App (Internal Dev)
-##Group:      Account/Testing
-#Requires:   %{name} = %{version}-%{release}
-##
-##BuildRequires: cmake
-##BuildRequires: pkgconfig(capi-appfw-application)
-##BuildRequires: pkgconfig(capi-system-system-settings)
-##BuildRequires: pkgconfig(elementary)
-##BuildRequires: pkgconfig(efl-extension)
-##BuildRequires: pkgconfig(dlog)
-##BuildRequires: pkgconfig(json-glib-1.0)
-##BuildRequires: pkgconfig(glib-2.0) >= 2.26
-##BuildRequires: pkgconfig(gio-unix-2.0)
-##Requires: fido-client
-##
-##%description -n org.tizen.FidoSample
-##This is a program to test the Fido service internally.
-##
-##%files -n org.tizen.FidoSample
-##%defattr(-,root,root,-)
-##/usr/share/license/%{name}
-##%manifest org.tizen.FidoSample.manifest
-##/opt/usr/apps/org.tizen.FidoSample/bin/*
-##/opt/usr/apps/org.tizen.FidoSample/res/*
-##/opt/usr/apps/org.tizen.FidoSample/shared/res/*
-##/opt/share/packages/org.tizen.FidoSample.xml
-##/opt/share/icons/default/small/org.tizen.FidoSample.png
+# FIDO Dummy ASM
+%package -n dummyasm
+Summary:    FIDO Dummy ASM (Internal Dev)
+Group:      Account/Testing
+
+BuildRequires: cmake
+BuildRequires: pkgconfig(capi-appfw-application)
+BuildRequires: pkgconfig(capi-system-system-settings)
+BuildRequires: pkgconfig(elementary)
+BuildRequires: pkgconfig(efl-extension)
+BuildRequires: pkgconfig(dlog)
+BuildRequires: pkgconfig(json-glib-1.0)
+BuildRequires: pkgconfig(glib-2.0) >= 2.26
+BuildRequires: pkgconfig(gio-unix-2.0)
+BuildRequires: pkgconfig(libtzplatform-config)
+Requires: fido-client
+
+%description -n dummyasm
+This is a dummy ASM.
+
+%files -n dummyasm
+%manifest dummyasm.manifest
+%config %{_sysconfdir}/dbus-1/system.d/org.tizen.dummyasm.conf
+%{_bindir}/dummyasm-service
+%attr(0644,root,root) %{_unitdir}/org.tizen.dummyasm.service
+%attr(0644,root,root) %{_unitdir}/multi-user.target.wants/org.tizen.dummyasm.service
+%attr(0644,root,root) /usr/share/dbus-1/system-services/org.tizen.dummyasm.service
+%{_libdir}/fido/asm/dummy_asm.json
