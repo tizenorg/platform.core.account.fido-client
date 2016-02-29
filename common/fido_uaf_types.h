@@ -37,7 +37,6 @@
  */
 typedef struct fido_authenticator_s* fido_authenticator_h;
 
-#define TIZEN_ERROR_FIDO        -0x01030000
 
 /**
  *  @brief    Enumerations of error codes for FIDO APIs.
