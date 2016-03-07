@@ -40,14 +40,22 @@ Requires(post): /usr/bin/sqlite3
 Requires(postun): /sbin/ldconfig
 
 %description
-Tizen FIDO Client
+Tizen FIDO Client provides FIDO UAF spec compliant APIs.
 
 %package devel
-Summary:    Development files for %{name}
+Summary:    Dev files for %{name}
 Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 %description devel
 Development files for %{name}
+
+%define _pkg_dir                %{TZ_SYS_RO_APP}/org.tizen.fidosvcui
+%define _bin_dir                %{_pkg_dir}/bin
+%define _lib_dir                %{_pkg_dir}/lib
+%define _res_dir                %{_pkg_dir}/res
+%define _locale_dir             %{_res_dir}/locale
+%define _manifest_dir           %{TZ_SYS_RO_PACKAGES}
+%define _icon_dir               %{TZ_SYS_RO_ICONS}/default/small
 
 %prep
 %setup -q
@@ -64,7 +72,12 @@ export CFLAGS="${CFLAGS} -fPIC -fvisibility=hidden"
 cmake . \
 -DCMAKE_INSTALL_PREFIX=%{_prefix} \
 -DLIBDIR=%{_libdir} \
--DINCLUDEDIR=%{_includedir}
+-DINCLUDEDIR=%{_includedir} \
+-DBIN_DIR=%{_bin_dir} \
+-DRES_DIR=%{_res_dir} \
+-DLOCALE_DIR=%{_locale_dir} \
+-DMANIFEST_DIR=%{_manifest_dir} \
+-DICON_DIR=%{_icon_dir}
 
 make %{?jobs:-j%jobs}
 
@@ -108,7 +121,7 @@ chsmack -a '_' %{_libdir}/fido/asm/
 /sbin/ldconfig
 
 %files
-/usr/share/license/%{name}
+%{TZ_SYS_SHARE}/license/%{name}
 %{_libdir}/*.so.*
 %manifest fido.manifest
 %config %{_sysconfdir}/dbus-1/system.d/org.tizen.fido.conf
@@ -130,8 +143,7 @@ chsmack -a '_' %{_libdir}/fido/asm/
 
 %package -n org.tizen.fidosvcui
 Summary:    FIDO Service UI
-Group:      Account
-#Requires:   %{name} = %{version}-%{release}
+Group:       Social & Content/API
 
 BuildRequires: cmake 
 BuildRequires: pkgconfig(capi-appfw-application)
@@ -143,25 +155,25 @@ BuildRequires:  pkgconfig(bundle)
 BuildRequires: pkgconfig(json-glib-1.0)
 BuildRequires:	pkgconfig(glib-2.0) >= 2.26
 BuildRequires:  pkgconfig(gio-unix-2.0)
+BuildRequires:  pkgconfig(libtzplatform-config)
 Requires: fido-client
 
 %description -n org.tizen.fidosvcui
-FIDO Service UI
+FIDO Service UI provides Authenticator selection UI.
 
 %files -n org.tizen.fidosvcui
 %defattr(-,root,root,-)
-/usr/share/license/%{name}
+%{TZ_SYS_SHARE}/license/%{name}
 %manifest org.tizen.fidosvcui.manifest
-/usr/apps/org.tizen.fidosvcui/bin/*
-##/usr/apps/org.tizen.fidosvcui/res/*
-/usr/share/packages/org.tizen.fidosvcui.xml
-/usr/share/icons/default/small/org.tizen.fidosvcui.png
+%{TZ_SYS_RO_APP}/org.tizen.fidosvcui/bin/*
+%{TZ_SYS_SHARE}/packages/org.tizen.fidosvcui.xml
+%{TZ_SYS_SHARE}/icons/default/small/org.tizen.fidosvcui.png
 
 #################################################################################
 # FIDO Dummy ASM
 %package -n dummyasm
 Summary:    FIDO Dummy ASM (Internal Dev)
-Group:      Account/Testing
+Group:      Social & Content/API
 
 BuildRequires: cmake
 BuildRequires: pkgconfig(capi-appfw-application)
@@ -176,7 +188,7 @@ BuildRequires: pkgconfig(libtzplatform-config)
 Requires: fido-client
 
 %description -n dummyasm
-This is a dummy ASM.
+This is a dummy ASM for testing FIDO client.
 
 %files -n dummyasm
 %manifest dummyasm.manifest
