@@ -8,7 +8,7 @@ License:    Apache-2.0
 Source0:    fido-client-%{version}.tar.gz
 Source1:    org.tizen.fido.service
 Source2:    org.tizen.fido.conf
-Source3:    org.tizen.fido.service
+Source3:    fido.service
 
 Source4:    org.tizen.dummyasm.service
 Source5:    org.tizen.dummyasm.conf
@@ -83,8 +83,7 @@ make %{?jobs:-j%jobs}
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/usr/share/license
-cp %{_builddir}/%{name}-%{version}/LICENSE.Apache-2.0  %{buildroot}/usr/share/license/%{name}
+
 %make_install
 
 mkdir -p %{buildroot}/usr/share/dbus-1/system-services
@@ -94,8 +93,8 @@ mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d
 install -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 
 mkdir -p %{buildroot}%{_unitdir}/multi-user.target.wants
-install -m 644 %SOURCE3 %{buildroot}%{_unitdir}/org.tizen.fido.service
-%install_service multi-user.target.wants org.tizen.fido.service
+install -m 644 %SOURCE3 %{buildroot}%{_unitdir}/fido.service
+%install_service multi-user.target.wants fido.service
 
 mkdir -p %{buildroot}/usr/share/dbus-1/system-services
 install -m 0644 %SOURCE4 %{buildroot}/usr/share/dbus-1/system-services/org.tizen.dummyasm.service
@@ -121,13 +120,12 @@ chsmack -a '_' %{_libdir}/fido/asm/
 /sbin/ldconfig
 
 %files
-%{TZ_SYS_SHARE}/license/%{name}
 %{_libdir}/*.so.*
 %manifest fido.manifest
 %config %{_sysconfdir}/dbus-1/system.d/org.tizen.fido.conf
 %{_bindir}/fido-service
-%attr(0644,root,root) %{_unitdir}/org.tizen.fido.service
-%attr(0644,root,root) %{_unitdir}/multi-user.target.wants/org.tizen.fido.service
+%attr(0644,root,root) %{_unitdir}/fido.service
+%attr(0644,root,root) %{_unitdir}/multi-user.target.wants/fido.service
 %attr(0644,root,root) /usr/share/dbus-1/system-services/org.tizen.fido.service
 
 %files devel
@@ -163,7 +161,6 @@ FIDO Service UI provides Authenticator selection UI.
 
 %files -n org.tizen.fidosvcui
 %defattr(-,root,root,-)
-%{TZ_SYS_SHARE}/license/%{name}
 %manifest org.tizen.fidosvcui.manifest
 %{TZ_SYS_RO_APP}/org.tizen.fidosvcui/bin/*
 %{TZ_SYS_SHARE}/packages/org.tizen.fidosvcui.xml
