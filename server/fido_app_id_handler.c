@@ -284,11 +284,19 @@ _verify_and_get_facet_id(const char *uaf_app_id, GDBusMethodInvocation *invocati
 
     soup_uri_free(parsed_uri);
 
+#ifdef WITH_JSON_HANDLER
     SoupSession *session = soup_session_new_with_options(
                 SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_PROXY_RESOLVER_DEFAULT,
                 SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
                 SOUP_SESSION_TIMEOUT, _MAX_NW_TIME_OUT,
                 NULL);
+#else
+    SoupSession *session = soup_session_async_new_with_options(
+                SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_PROXY_RESOLVER_DEFAULT,
+                SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
+                SOUP_SESSION_TIMEOUT, _MAX_NW_TIME_OUT,
+                NULL);
+#endif
 
     bool ssl_strict = FALSE;//changed to make sure https cert errors dont occur, only for testing
     g_object_set(session, "ssl-strict", ssl_strict, NULL);

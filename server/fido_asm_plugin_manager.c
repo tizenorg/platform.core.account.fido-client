@@ -14,6 +14,8 @@
  * limitations under the License.
  *
  */
+#include <sys/types.h>
+#include <dirent.h>
 
 #include <app.h>
 #include <stdio.h>
