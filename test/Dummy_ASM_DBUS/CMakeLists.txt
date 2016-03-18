@@ -21,12 +21,12 @@ ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/common/dummy-asm-stub.c ${CMAKE_S
 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/common/
 COMMAND gdbus-codegen --interface-prefix org.tizen. --generate-c-code dummy-asm-stub ${CMAKE_SOURCE_DIR}/common/dbus_interfaces/dummyasm.xml 
 COMMENT "Generating Dummy ASM GDBus stubs........................")
-	
+
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -Wall -Werror")
 SET(CMAKE_LDFLAGS "-Wl,-zdefs")
 
 SET(DUMMY_ASM_SRCS
-	dummy_asm_server.c
+        dummy_asm_server.c
 )
 
 ADD_EXECUTABLE(${ASM_DAEMON} ${DUMMY_ASM_SRCS} ${CMAKE_SOURCE_DIR}/common/dummy-asm-stub.c)
@@ -36,4 +36,10 @@ ADD_DEPENDENCIES(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/common/dummy-asm-stub.c)
 TARGET_LINK_LIBRARIES(${ASM_DAEMON} ${ASM_PKGS_LDFLAGS})
 
 INSTALL(TARGETS ${ASM_DAEMON} DESTINATION bin)
+
+if(USE_JSON_BUILDER)
+else()
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/packaging/org.tizen.dummyasm.service DESTINATION share/dbus-1/services)
+endif()
+
 INSTALL(FILES ${CMAKE_SOURCE_DIR}/test/Dummy_ASM_DBUS/dummy_asm.json DESTINATION ${LIBDIR}/fido/asm/)

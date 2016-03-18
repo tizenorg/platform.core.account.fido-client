@@ -39,6 +39,7 @@
 #include "fido_internal_types.h"
 
 #define _FIDO_SERVICE_UI_DBUS_PATH       "/org/tizen/fidosvcui"
+
 #define _FIDO_SERVICE_PATH "/usr/bin/fido-service"
 
 #define _FREEDESKTOP_SERVICE    "org.freedesktop.DBus"
@@ -88,6 +89,7 @@ __free_ui_data(ui_data_s *data)
     SAFE_DELETE(data);
 }
 
+#ifdef WITH_JSON_BUILDER
 static void
 __add_string_to_json_object(JsonBuilder *json_obj, const char *key, const char *val)
 {
@@ -107,6 +109,7 @@ __add_int_to_json_object(JsonBuilder *json_obj, const char *key, int val)
     json_builder_set_member_name(json_obj, key);
     json_builder_add_int_value(json_obj, val);
 }
+#endif
 
 static void
 __init_dbus(void)
@@ -181,62 +184,132 @@ __send_response_to_fido_svc(int error, const char *ui_resp)
 char*
 _create_json_response(ui_data_s *selected_auth)
 {
-	_INFO("_create_json_response");
+    _INFO("_create_json_response");
 
-	/*Builder start*/
-	JsonBuilder *builder = json_builder_new();
-	json_builder_begin_object(builder);
+#ifdef WITH_JSON_BUILDER
 
-	/*requestType*/
-	__add_string_to_json_object(builder, UI_DATA_ASM_ID, selected_auth->asm_id);
-	__add_string_to_json_object(builder, UI_DATA_AUTH_INDEX, selected_auth->auth_index);
-	__add_string_to_json_object(builder, UI_DATA_LABEL, selected_auth->label);
-	__add_int_to_json_object(builder, UI_DATA_ATT_TYPE, selected_auth->att_t);
+    /*Builder start*/
+    JsonBuilder *builder = json_builder_new();
+    json_builder_begin_object(builder);
 
-	json_builder_end_object(builder);
-	/*Builder end*/
+    /*requestType*/
+    __add_string_to_json_object(builder, UI_DATA_ASM_ID, selected_auth->asm_id);
+    __add_string_to_json_object(builder, UI_DATA_AUTH_INDEX, selected_auth->auth_index);
+    __add_string_to_json_object(builder, UI_DATA_LABEL, selected_auth->label);
+    __add_int_to_json_object(builder, UI_DATA_ATT_TYPE, selected_auth->att_t);
 
-	JsonGenerator *gen = json_generator_new();
-	JsonNode *root_builder = json_builder_get_root(builder);
-	json_generator_set_root(gen, root_builder);
+    json_builder_end_object(builder);
+    /*Builder end*/
 
-	json_node_free(root_builder);
-	g_object_unref(builder);
+    JsonGenerator *gen = json_generator_new();
+    JsonNode *root_builder = json_builder_get_root(builder);
+    json_generator_set_root(gen, root_builder);
 
-	gsize len = 0;
-	char *json = json_generator_to_data(gen, &len);
-	if (json != NULL) {
+    json_node_free(root_builder);
+    g_object_unref(builder);
 
-		if (gen != NULL)
-			g_object_unref(gen);
+    gsize len = 0;
+    char *json = json_generator_to_data(gen, &len);
+    if (json != NULL) {
 
-		_INFO("%s", json);
-		_INFO("_create_json_response end");
+        if (gen != NULL)
+            g_object_unref(gen);
 
-		return json;
-	}
+        _INFO("%s", json);
+        _INFO("_create_json_response end");
 
-	g_object_unref(gen);
+        return json;
+    }
 
-	_INFO("_create_json_response fail");
-	return NULL;
+    g_object_unref(gen);
+
+    _INFO("_create_json_response fail");
+    return NULL;
+
+#else
+
+    /*Builder start*/
+    JsonGenerator *generator = NULL;
+    JsonObject *root_obj = NULL;
+    JsonNode *root_node = NULL;
+
+    generator = json_generator_new();
+    if(generator == NULL) {
+        _INFO("json_generator_new is NULL");
+        goto CATCH;
+    }
+
+    root_obj = json_object_new();
+    if(root_obj == NULL) {
+        _INFO("json_object_new in NULL");
+        goto CATCH;
+    }
+
+    root_node = json_node_new(JSON_NODE_OBJECT);
+    if (root_node == NULL) {
+        _INFO("*json_node_new is NULL");
+        goto CATCH;
+    }
+
+    /*requestType*/
+    json_object_set_string_member(root_obj, UI_DATA_ASM_ID, selected_auth->asm_id);
+    json_object_set_string_member(root_obj, UI_DATA_AUTH_INDEX, selected_auth->auth_index);
+    json_object_set_string_member(root_obj, UI_DATA_LABEL, selected_auth->label);
+    json_object_set_int_member(root_obj, UI_DATA_ATT_TYPE, selected_auth->att_t);
+
+    json_node_take_object(root_node, root_obj);
+    json_generator_set_root(generator, root_node);
+    /*Builder end*/
+
+    char *json = json_generator_to_data(generator, NULL);
+
+    if (json != NULL) {
+
+        if (generator != NULL)
+            g_object_unref(generator);
+
+        _INFO("%s", json);
+        _INFO("_create_json_response end");
+
+        return json;
+    }
+
+CATCH:
+    if (generator != NULL) {
+        g_object_unref(generator);
+        generator = NULL;
+    }
+
+    if (root_node != NULL) {
+        json_node_free(root_node);
+        root_node = NULL;
+    }
+
+    if (root_obj != NULL) {
+        g_object_unref(root_obj);
+        root_obj = NULL;
+    }
+    return NULL;
+#endif
+
+    return NULL;
 }
 
 void
 _list_destroy(gpointer data)
 {
-	ui_data_s *list_data = (ui_data_s *) data;
-	SAFE_DELETE(list_data->auth_index);
-	SAFE_DELETE(list_data->label);
+    ui_data_s *list_data = (ui_data_s *) data;
+    SAFE_DELETE(list_data->auth_index);
+    SAFE_DELETE(list_data->label);
 }
 
 void
 _hide_ui(void)
 {
-	elm_genlist_clear(ad->genlist);
-	g_list_free_full(ad->ui_data_list, (GDestroyNotify) _list_destroy);
-	ad->ui_data_list = NULL;
-	evas_object_hide(ad->win);
+    elm_genlist_clear(ad->genlist);
+    g_list_free_full(ad->ui_data_list, (GDestroyNotify) _list_destroy);
+    ad->ui_data_list = NULL;
+    evas_object_hide(ad->win);
 }
 
 void genlist_select_cb(void *data, Evas_Object *obj, void *event_info)
