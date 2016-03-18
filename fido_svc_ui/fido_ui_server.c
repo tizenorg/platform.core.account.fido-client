@@ -182,7 +182,9 @@ char*
 _create_json_response(ui_data_s *selected_auth)
 {
 	_INFO("_create_json_response");
-
+	
+#ifdef USE_JSON_BUILDER
+	
 	/*Builder start*/
 	JsonBuilder *builder = json_builder_new();
 	json_builder_begin_object(builder);
@@ -219,6 +221,9 @@ _create_json_response(ui_data_s *selected_auth)
 	g_object_unref(gen);
 
 	_INFO("_create_json_response fail");
+	return NULL;
+#endif
+
 	return NULL;
 }
 
