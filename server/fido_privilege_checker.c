@@ -18,13 +18,16 @@
 #include "fido_privilege_checker.h"
 #include "fido_logs.h"
 
+#ifdef WITH_JSON_BUILDER
 #include <cynara-client.h>
 #include <cynara-session.h>
 #include <cynara-creds-gdbus.h>
+static cynara *__cynara = NULL;
+#endif
 
 #define _DISABLE_PRIV_CHECK
 
-static cynara *__cynara = NULL;
+#ifdef WITH_JSON_BUILDER
 
 static guint
 _get_client_pid(GDBusMethodInvocation* invoc)
@@ -70,6 +73,8 @@ _get_client_pid(GDBusMethodInvocation* invoc)
 static int
 __check_privilege_by_cynara(const char *client, const char *session, const char *user, const char *privilege)
 {
+	#ifdef WITH_JSON_BUILDER
+	
 	int ret;
 	char err_buf[128] = {0,};
 
@@ -88,11 +93,18 @@ __check_privilege_by_cynara(const char *client, const char *session, const char 
 			_ERR("cynara_check error : %s, privilege=%s, ret = %d", err_buf, privilege, ret);
 			return FIDO_ERROR_PERMISSION_DENIED;
 	}
+	
+	return FIDO_ERROR_NONE;
+	#endif
+	
+	return FIDO_ERROR_NONE;
 }
 
 static int
 __get_information_for_cynara_check(GDBusMethodInvocation *invocation, char **client, char **user, char **session)
 {
+	#ifdef WITH_JSON_BUILDER
+	
 	GDBusConnection *gdbus_conn = NULL;
 	char* sender = NULL;
 	int ret = -1;
@@ -130,11 +142,17 @@ __get_information_for_cynara_check(GDBusMethodInvocation *invocation, char **cli
 		return -1;
 	}
 	return FIDO_ERROR_NONE;
+	#endif
+	
+	return FIDO_ERROR_NONE;
 }
+#endif
 
 bool
 is_allowed_to_call(GDBusMethodInvocation *invocation, const char* privilege)
 {
+	#ifdef WITH_JSON_BUILDER
+	
 	int ret = -1;
 
 	if (__cynara == NULL) {
@@ -176,5 +194,8 @@ is_allowed_to_call(GDBusMethodInvocation *invocation, const char* privilege)
 	g_free(user);
 	SAFE_DELETE(session);
 
+	return true;
+	#endif
+	
 	return true;
 }
