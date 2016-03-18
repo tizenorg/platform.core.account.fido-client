@@ -14,3 +14,4 @@ ADD_DEPENDENCIES(fido-service fido-ui-service)
 #INSTALL(DIRECTORY lib/fido/asm/ DESTINATION lib/fido/asm/)
 ADD_SUBDIRECTORY(test/Dummy_ASM_DBUS)
 ADD_SUBDIRECTORY(test/shell_tc)
+

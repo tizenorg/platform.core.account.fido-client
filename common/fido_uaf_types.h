@@ -21,6 +21,10 @@
 #include <tizen.h>
 #include <stdint.h>
 
+#ifndef WITH_JSON_BUILDER
+#define TIZEN_ERROR_FIDO        -0x01030000
+#endif
+
 /**
  * @addtogroup CAPI_FIDO_MODULE
  * @{
