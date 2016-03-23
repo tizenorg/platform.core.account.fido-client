@@ -17,6 +17,7 @@ pkg_check_modules(SERVER_pkgs REQUIRED
 		cynara-session
 		cynara-creds-gdbus
 		libtzplatform-config
+		gobject-2.0
 )
 
 FOREACH(flag ${SERVER_pkgs_CFLAGS})

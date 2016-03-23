@@ -14,12 +14,15 @@ INCLUDE(FindPkgConfig)
 pkg_check_modules(UI_PKGS REQUIRED
 		elementary
 		efl-extension
+		capi-base-common
 		capi-appfw-application
 		capi-system-system-settings
 		dlog
 		json-glib-1.0
 		glib-2.0
-		gio-unix-2.0)
+		gio-unix-2.0
+		gobject-2.0
+)
 
 FOREACH(flag ${UI_PKGS_CFLAGS})
 	SET(EXTRA_CFLGAS "${EXTRA_CFLGAS} ${flag}")

@@ -19,6 +19,7 @@ pkg_check_modules(CLIENT_PKGS REQUIRED
 		capi-base-common
 		json-glib-1.0
 		openssl
+		gobject-2.0
 )
 
 FOREACH(flag ${CLIENT_PKGS_CFLAGS})

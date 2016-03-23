@@ -2,13 +2,14 @@ SET(ASM_DAEMON dummyasm-service)
 
 INCLUDE(FindPkgConfig)
 pkg_check_modules(ASM_PKGS REQUIRED
-                dlog
-                glib-2.0
-                gio-unix-2.0
-                capi-base-common
-                vconf
-                json-glib-1.0
-                capi-appfw-application
+		dlog
+		glib-2.0
+		gio-unix-2.0
+		capi-base-common
+		vconf
+		json-glib-1.0
+		capi-appfw-application
+		gobject-2.0
 )
 
 FOREACH(flag ${ASM_PKGS_CFLAGS})
