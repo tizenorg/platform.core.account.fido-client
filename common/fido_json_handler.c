@@ -1867,8 +1867,10 @@ _uaf_composer_compose_final_challenge(const char *app_id, const char *challenge,
     SAFE_DELETE(json_str);
     g_object_unref(generator);
 
-    if (r != 0)
-        return NULL;
+	if (r != 0) {
+		SAFE_DELETE(fc_enc);
+		return NULL;
+	}
 
     _INFO("_fido_b64url_encoded string=%s", fc_enc);
 

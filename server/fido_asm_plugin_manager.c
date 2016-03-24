@@ -120,7 +120,8 @@ __load_plugins(char **plugin_path)
     asm_proxy_table = g_hash_table_new_full(g_str_hash, g_str_equal, free, _free_fido_asm_proxy);
 
     DIR *dir;
-    struct dirent *entry;
+	struct dirent entry;
+	struct dirent *result;
     bool is_64 = true;
 
     dir = opendir(_ASM_CONF_DIR_PATH_64);
@@ -129,7 +130,7 @@ __load_plugins(char **plugin_path)
 		dir = opendir(_ASM_CONF_DIR_PATH);
 		if (dir == NULL) {
 
-			_ERR("Could not open [%s] and [%s] path = [%s]", _ASM_CONF_DIR_PATH_64, _ASM_CONF_DIR_PATH, strerror(errno));
+			_ERR("Could not open [%s] and [%s] path", _ASM_CONF_DIR_PATH_64, _ASM_CONF_DIR_PATH);
 			return FIDO_ERROR_PERMISSION_DENIED;
 		}
 		is_64 = false;
@@ -145,9 +146,10 @@ __load_plugins(char **plugin_path)
 
     _INFO("Loading ASM conf files from [%s]", *plugin_path);
 
-    while ((entry = readdir(dir)) != NULL) {
-        if (entry->d_type == DT_REG) {
-            char *conf_file_name = entry->d_name;
+	while ((readdir_r(dir, &entry, &result) == 0)
+		   && (result != NULL)) {
+		if (entry.d_type == DT_REG) {
+			char *conf_file_name = entry.d_name;
             if (conf_file_name != NULL) {
                 char conf_file_name_full[128] = {0, };
                 /*TODO make safe size*/

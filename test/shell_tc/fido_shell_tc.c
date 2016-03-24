@@ -75,54 +75,57 @@ __process_cb(fido_error_e tizen_error_code, const char *uaf_response, void *user
 	get_user_choice();
 }
 
+#define STRING_SIZE_1024 1024
+#define STRING_SIZE_5000 5000
+
 void fido_attestation_type_cb_list(fido_auth_attestation_type_e att_type, void *user_data)
 {
 	char *str = (char *) user_data;
 
-	char tmp[1024] = {0,};
+	char tmp[STRING_SIZE_1024] = {0,};
 	if(att_type != -1) {
-		sprintf(tmp, " | Attestation Type = [%d]", att_type);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Attestation Type = [%d]", att_type);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 }
 
 static char *
 __get_authinfo_string(const fido_authenticator_h auth)
 {
-	char str[5000] = {0,};
+	char str[STRING_SIZE_5000] = {0,};
 	str[0] = '\0';
 	strcpy(str, "DISCOVER RESPONSE");
-	char tmp[1024] = {0,};
+	char tmp[STRING_SIZE_1024] = {0,};
 
 	char *title =  NULL;
 	fido_authenticator_get_title(auth, &title);
 	if(title) {
-		sprintf(tmp, " | Title = [%s]", title);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Title = [%s]", title);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 	free(title);
 
 	char *aaid = NULL;
 	fido_authenticator_get_aaid(auth, &aaid);
 	if(aaid) {
-		sprintf(tmp, " | AAID = [%s]", aaid);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | AAID = [%s]", aaid);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 	free(aaid);
 
 	char *description = NULL;
 	fido_authenticator_get_description(auth, &description);
 	if(description) {
-		sprintf(tmp, " | Description = [%s]", description);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Description = [%s]", description);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 	free(description);
 
 	char *scheme = NULL;
 	fido_authenticator_get_assertion_scheme(auth, &scheme);
 	if(scheme) {
-		sprintf(tmp, " | Scheme = [%s]", scheme);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Scheme = [%s]", scheme);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 	free(scheme);
 
@@ -131,58 +134,58 @@ __get_authinfo_string(const fido_authenticator_h auth)
 	fido_auth_algo_e get_algo = -1;
 	fido_authenticator_get_algorithm(auth, &get_algo);
 	if(get_algo != -1) {
-		sprintf(tmp, " | Algo = [%d]", get_algo);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Algo = [%d]", get_algo);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 
 	fido_auth_user_verify_type_e user_ver = -1;
 	fido_authenticator_get_verification_method(auth, &user_ver);
 	if(user_ver != -1) {
-		sprintf(tmp, " | Verification = [%d]", user_ver);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Verification = [%d]", user_ver);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 
 	fido_auth_key_protection_type_e key_protection = -1;
 	fido_authenticator_get_key_protection_method(auth, &key_protection);
 	if(key_protection != -1) {
-		sprintf(tmp, " | Key Protection = [%d]", key_protection);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Key Protection = [%d]", key_protection);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 
 	fido_auth_matcher_protection_type_e matcher_protection = -1;
 	fido_authenticator_get_matcher_protection_method(auth, &matcher_protection);
 	if(matcher_protection != -1) {
-		sprintf(tmp, " | Matcher Protection = [%d]", matcher_protection);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Matcher Protection = [%d]", matcher_protection);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 
 	fido_auth_attachment_hint_e attachment_hint = -1;
 	fido_authenticator_get_attachment_hint(auth, &attachment_hint);
 	if(attachment_hint != -1) {
-		sprintf(tmp, " | Attachment Hint = [%d]", attachment_hint);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Attachment Hint = [%d]", attachment_hint);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 
 	fido_auth_tc_display_type_e tc_discplay = -1;
 	fido_authenticator_get_tc_discplay(auth, &tc_discplay);
 	if(tc_discplay != -1) {
-		sprintf(tmp, " | Tc Display = [%d]", tc_discplay);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Tc Display = [%d]", tc_discplay);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 
 	char *tc_display_type = NULL;
 	fido_authenticator_get_tc_display_type(auth, &tc_display_type);
 	if(tc_display_type) {
-		sprintf(tmp, " | Tc Display Type = [%s]", tc_display_type);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Tc Display Type = [%s]", tc_display_type);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 	free(tc_display_type);
 
 	char *icon = NULL;
 	fido_authenticator_get_icon(auth, &icon);
 	if(icon) {
-		sprintf(tmp, " | Icon = [%s]", icon);
-		strcat(str, tmp);
+		snprintf(tmp, STRING_SIZE_1024 - 1, " | Icon = [%s]", icon);
+		strncat(str, tmp, STRING_SIZE_1024 - 1);
 	}
 	free(icon);
 
@@ -332,11 +335,15 @@ _process_cb_for_notify_neg(fido_error_e tizen_error_code, const char *uaf_respon
 	if (tizen_error_code == 0) {
 
 		int ret = fido_uaf_set_server_result(0, uaf_response);
-
-		char *str = __get_error_code(ret);
-		printf("%s\n", str);
-		fflush(stdout);
-		free(str);
+		if (ret == FIDO_ERROR_NONE) {
+			printf("SUCCESS\n");
+		}
+		else {
+			char *str = __get_error_code(ret);
+			printf("Error Code = %s\n", str);
+			free(str);
+		}
+		fflush(stdout);		
 	}
 	else {
 		__show_error(tizen_error_code);

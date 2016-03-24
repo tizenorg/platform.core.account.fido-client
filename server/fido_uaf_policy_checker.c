@@ -73,8 +73,9 @@ _policy_checker_is_matched(_match_criteria_t *match_criteria, fido_authenticator
     GList *vendor_list = match_criteria->vendor_list;
 
     if (vendor_list && auth_info->aaid) {
+		char *save_ptr = NULL;
         char *auth_aaid = strdup(auth_info->aaid);
-        char *auth_vendor = strtok(auth_aaid, "#");
+		char *auth_vendor = strtok_r(auth_aaid, "#", &save_ptr);
 
         if (vendor_list &&
                 (g_list_length(vendor_list)) &&
