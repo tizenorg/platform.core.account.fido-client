@@ -44,6 +44,7 @@ pkg_check_modules(TEST_PKGS REQUIRED
 		efl-extension
 		capi-appfw-application
 		capi-system-system-settings
+		capi-base-common
 		dlog
 		json-glib-1.0
 		glib-2.0

@@ -4,21 +4,22 @@ INCLUDE(FindPkgConfig)
 
 if(USE_JSON_BUILDER)
 pkg_check_modules(SERVER_pkgs REQUIRED
-                dlog
-                glib-2.0
-                gio-unix-2.0
-                capi-base-common
-                json-glib-1.0
-                capi-appfw-application
-                aul
-                libsoup-2.4
-                capi-appfw-app-manager
-                openssl
-                bundle
-                cynara-client
-                cynara-session
-                cynara-creds-gdbus
-                libtzplatform-config
+		dlog
+		glib-2.0
+		gio-unix-2.0
+		gobject-2.0
+		capi-base-common
+		json-glib-1.0
+		capi-appfw-application
+		aul
+		libsoup-2.4
+		capi-appfw-app-manager
+		openssl
+		bundle
+		cynara-client
+		cynara-session
+		cynara-creds-gdbus
+		libtzplatform-config
 )
 else()
 pkg_check_modules(SERVER_pkgs REQUIRED

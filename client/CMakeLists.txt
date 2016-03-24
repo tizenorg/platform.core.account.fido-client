@@ -16,6 +16,7 @@ pkg_check_modules(CLIENT_PKGS REQUIRED
 		dlog
 		glib-2.0
 		gio-unix-2.0
+		gobject-2.0
 		capi-base-common
 		json-glib-1.0
 		openssl
