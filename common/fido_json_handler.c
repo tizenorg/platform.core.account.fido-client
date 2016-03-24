@@ -2767,16 +2767,21 @@ _uaf_parser_parse_message(const char *uaf_json, const gchar *channel_binding)
             uaf_message_temp->channel_binding = strdup(channel_binding);
     }
 
+	_INFO("Before json_parser_new");
+
     JsonParser *parser = json_parser_new();
     CATCH_IF_FAIL(parser != NULL);
 
+	_INFO("Before json_parser_load_from_data");
     GError *parse_err = NULL;
     json_parser_load_from_data(parser, uaf_json, -1, &parse_err);
     CATCH_IF_FAIL(parse_err == NULL);
 
+	_INFO("Before json_parser_get_root");
     JsonNode *root = json_parser_get_root(parser);
     CATCH_IF_FAIL(root != NULL);
 
+	_INFO("Before json_node_get_array");
     JsonArray *uaf_array = json_node_get_array(root);
     CATCH_IF_FAIL(uaf_array != NULL);
 

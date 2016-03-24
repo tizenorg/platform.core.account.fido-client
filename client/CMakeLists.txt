@@ -33,6 +33,10 @@ ADD_DEFINITIONS("-DPREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 ADD_DEFINITIONS("-DFACTORYFS=\"$ENV{FACTORYFS}\"")
 ADD_DEFINITIONS("-DSLP_DEBUG")
 
+if(USE_JSON_BUILDER)
+add_definitions(-DWITH_JSON_BUILDER)
+endif()
+
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_SOURCE_DIR}/common/fido-stub.c ${CMAKE_SOURCE_DIR}/common/fido-stub.h
 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/common/
 COMMAND gdbus-codegen --interface-prefix org.tizen. --generate-c-code fido-stub ${CMAKE_SOURCE_DIR}/common/dbus_interfaces/fido.xml 
