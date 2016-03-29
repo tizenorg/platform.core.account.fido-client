@@ -1887,6 +1887,7 @@ _uaf_composer_compose_final_challenge(const char *app_id, const char *challenge,
     }
 
     json_object_set_string_member(root_obj, _JSON_KEY_APPID, app_id);
+	json_object_set_string_member(root_obj, _JSON_KEY_FACET_ID, facet_id);
     json_object_set_string_member(root_obj, _JSON_KEY_CHALLENGE, challenge);
 
     JsonNode *jsonNode = NULL;

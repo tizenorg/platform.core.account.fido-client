@@ -283,3 +283,36 @@ This is a dummy ASM for testing FIDO client.
 %attr(0644,root,root) %{_datadir}/dbus-1/services/org.tizen.dummyasm.service
 %{_libdir}/fido/asm/dummy_asm.json
 %endif
+
+%if "%{?tizen_version}" == "2.3.1"
+#################################################################################
+## Fido Sample App
+
+%package -n org.tizen.FidoSample
+Summary:    Fido Sample App (Internal Dev)
+Group:      Account/Testing
+Requires:   %{name} = %{version}-%{release}
+
+BuildRequires: cmake
+BuildRequires: pkgconfig(capi-appfw-application)
+BuildRequires: pkgconfig(capi-system-system-settings)
+BuildRequires: pkgconfig(elementary)
+BuildRequires: pkgconfig(efl-extension)
+BuildRequires: pkgconfig(dlog)
+BuildRequires: pkgconfig(json-glib-1.0)
+BuildRequires: pkgconfig(glib-2.0) >= 2.26
+BuildRequires: pkgconfig(gio-unix-2.0)
+Requires: fido-client
+
+%description -n org.tizen.FidoSample
+This is a program to test the Fido service internally.
+
+%files -n org.tizen.FidoSample
+%defattr(-,root,root,-)
+%manifest org.tizen.FidoSample.manifest
+/opt/usr/apps/org.tizen.FidoSample/bin/*
+/opt/usr/apps/org.tizen.FidoSample/res/*
+/opt/usr/apps/org.tizen.FidoSample/shared/res/*
+/opt/share/packages/org.tizen.FidoSample.xml
+##/opt/share/icons/default/small/org.tizen.FidoSample.png
+%endif

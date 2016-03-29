@@ -14,4 +14,8 @@ ADD_DEPENDENCIES(fido-service fido-ui-service)
 #INSTALL(DIRECTORY lib/fido/asm/ DESTINATION lib/fido/asm/)
 ADD_SUBDIRECTORY(test/Dummy_ASM_DBUS)
 ADD_SUBDIRECTORY(test/shell_tc)
+MESSAGE( STATUS "USE_JSON_BUILDER: " ${USE_JSON_BUILDER} )
+if(NOT USE_JSON_BUILDER)
+ADD_SUBDIRECTORY(test/Fido_Sample_RPM)
+endif()
 
