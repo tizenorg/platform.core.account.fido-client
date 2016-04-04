@@ -154,9 +154,9 @@ _policy_checker_is_matched(_match_criteria_t *match_criteria, fido_authenticator
                         &&
                         ((auth_info->user_verification & match_criteria->user_verification) != 0)
                 )
-        )
+        ) {
             _INFO("User verification match passed");
-        else {
+    } else {
             _ERR("User verification match failed");
             return false;
         }
@@ -207,11 +207,9 @@ _policy_checker_is_matched(_match_criteria_t *match_criteria, fido_authenticator
 
     /* 10. If any assertion scheme is mentioned in match_criteria, then atleast one assertion scheme should match */
     GList *assertion_list = match_criteria->assertion_scheme_list;
-    if (assertion_list && (g_list_length(assertion_list))
-            && (auth_info->assertion_scheme) && (strlen(auth_info->assertion_scheme) > 0)) {
+    if (assertion_list && (g_list_length(assertion_list)) && (auth_info->assertion_scheme) && (strlen(auth_info->assertion_scheme) > 0)) {
         assertion_list = g_list_first(assertion_list);
-        if (g_list_find_custom(assertion_list, auth_info->assertion_scheme, (GCompareFunc)strcmp) == NULL)
-        {
+        if (g_list_find_custom(assertion_list, auth_info->assertion_scheme, (GCompareFunc)strcmp) == NULL) {
             _ERR("Assertion scheme match failed");
             return false;
         }
@@ -264,8 +262,7 @@ _get_attestation_type(_match_criteria_t *match_criteria, fido_authenticator_s *a
             }
             match_att_list_iter = match_att_list_iter->data;
         }
-    }
-    else {
+    } else {
         if (auth_info->attestation_types != NULL) {
             GList *att_type_iter = g_list_first(auth_info->attestation_types);
 
@@ -503,8 +500,7 @@ _policy_checker_get_matched_auth_list(_policy_t *policy, GList *auth_list)
                             }
                             disallowed_list_iter = disallowed_list_iter->next;
                         }
-                    }
-                    else {
+                    } else {
                         _INFO("[%s] adding since no disallowed list", authenticator->aaid);
                         _matched_auth_data_t *matched_auth_data = (_matched_auth_data_t*) calloc(1, sizeof(_matched_auth_data_t));
                         RET_IF_FAIL(matched_auth_data, NULL);

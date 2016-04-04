@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <glib.h>
-#if !GLIB_CHECK_VERSION (2, 31, 0)
+#if !GLIB_CHECK_VERSION(2, 31, 0)
 #include <glib/gmacros.h>
 #endif
 
@@ -94,7 +94,7 @@ __get_proc_path_of_dbus_caller(GDBusMethodInvocation *invocation)
     guint32 upid;
     const gchar *sender = NULL;
 
-    sender = g_dbus_method_invocation_get_sender (invocation);
+    sender = g_dbus_method_invocation_get_sender(invocation);
     if (!sender) {
         _ERR("Failed to get sender");
         return NULL;
@@ -103,28 +103,28 @@ __get_proc_path_of_dbus_caller(GDBusMethodInvocation *invocation)
     connection = g_dbus_method_invocation_get_connection(invocation);
     if (connection == NULL) {
         _ERR("Failed to open connection for the invocation [%s]", error->message);
-        g_error_free (error);
+        g_error_free(error);
         return NULL;
     }
 
     error = NULL;
-    response = g_dbus_connection_call_sync (connection,
+    response = g_dbus_connection_call_sync(connection,
             _FREEDESKTOP_SERVICE, _FREEDESKTOP_PATH,
             _FREEDESKTOP_INTERFACE, "GetConnectionUnixProcessID",
-            g_variant_new ("(s)", sender), ((const GVariantType *) "(u)"),
+            g_variant_new("(s)", sender), ((const GVariantType *) "(u)"),
             G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
 
     if (response == NULL) {
         _ERR("Failed to get caller id [%s]", error->message);
-        g_error_free (error);
+        g_error_free(error);
         return NULL;
     }
 
-    g_variant_get (response, "(u)", &upid);
+    g_variant_get(response, "(u)", &upid);
     _INFO("Remote msg-bus peer service=%s pid=%u", sender, upid);
     //remote_pid = (pid_t) upid;
 
-    g_variant_unref (response);
+    g_variant_unref(response);
 
     char buf[128];
     int ret = 0;
@@ -184,23 +184,23 @@ _dbus_on_asm_request(Dummyasm *object, GDBusMethodInvocation *invocation, const 
     }
 
     char *req_type = __get_request_type(uaf_request_json);
-    if (req_type == NULL){
+    if (req_type == NULL) {
          dummyasm_complete_asm_request(object, invocation, -1, NULL);
         return true;
     }
 
     _INFO("request type=[%s]", req_type);
 
-    if (strcmp(req_type, "GetInfo") == 0){
+    if (strcmp(req_type, "GetInfo") == 0) {
         dummyasm_complete_asm_request(object, invocation, 0, _GET_INFO_RESPONSE);
     }
-    if (strcmp(req_type, "Register") == 0){
+    if (strcmp(req_type, "Register") == 0) {
         dummyasm_complete_asm_request(object, invocation, 0, _REG_RESPONSE);
     }
-    if (strcmp(req_type, "Authenticate") == 0){
+    if (strcmp(req_type, "Authenticate") == 0) {
         dummyasm_complete_asm_request(object, invocation, 0, _AUTH_RESPONSE);
     }
-    if (strcmp(req_type, "Deregister") == 0){
+    if (strcmp(req_type, "Deregister") == 0) {
         dummyasm_complete_asm_request(object, invocation, 0, _DEREG_RESPONSE);
     }
     if (strcmp(req_type, "GetRegistrations") == 0) {
@@ -211,7 +211,7 @@ _dbus_on_asm_request(Dummyasm *object, GDBusMethodInvocation *invocation, const 
 }
 
 static void
-on_bus_acquired (GDBusConnection *connection, const gchar *name, gpointer user_data)
+on_bus_acquired(GDBusConnection *connection, const gchar *name, gpointer user_data)
 {
 		_INFO("on_bus_acquired");
 	 
@@ -233,7 +233,7 @@ on_bus_acquired (GDBusConnection *connection, const gchar *name, gpointer user_d
 }
 
 static void
-on_name_acquired (GDBusConnection *connection,
+on_name_acquired(GDBusConnection *connection,
                         const gchar     *name,
                         gpointer         user_data)
 {
@@ -241,18 +241,18 @@ on_name_acquired (GDBusConnection *connection,
 }
 
 static void
-on_name_lost (GDBusConnection *connection,
+on_name_lost(GDBusConnection *connection,
                         const gchar     *name,
                         gpointer         user_data)
 {
 	_INFO("on_name_lost");
-    exit (1);
+    exit(1);
 }
 
 static bool _initialize_dbus()
 {
 	_INFO("_initialize_dbus");
-    owner_id = g_bus_own_name (G_BUS_TYPE_SYSTEM,
+    owner_id = g_bus_own_name(G_BUS_TYPE_SYSTEM,
                              "org.tizen.dummyasm",
                              G_BUS_NAME_OWNER_FLAGS_NONE,
                              on_bus_acquired,
@@ -261,7 +261,7 @@ static bool _initialize_dbus()
                              NULL,
                              NULL);
 
-    if(owner_id == 0) {
+    if (owner_id == 0) {
             _INFO("owner_id is 0");
             return false;
     }
@@ -273,7 +273,7 @@ static bool _initialize_dbus()
 static void
 _initialize(void)
 {
-#if !GLIB_CHECK_VERSION(2,35,0)
+#if !GLIB_CHECK_VERSION(2, 35, 0)
     g_type_init();
 #endif
 
