@@ -164,8 +164,7 @@ __load_plugins(char **plugin_path)
 
                         asm_proxy->asm_id = strdup(conf_file_name);
                         g_hash_table_insert(asm_proxy_table, strdup(conf_file_name), asm_proxy);
-                    }
-                    else {
+                    } else {
                         _ERR("Failed to get dbus proxy for the ASM");
                         __free_asm_proxy_data((gpointer)asm_proxy);
                     }
@@ -270,8 +269,7 @@ __discover_cb_internal(int error_code, const char *asm_response_json, void *user
         g_list_free(cb_data->asm_proxy_list_iter);
 
         SAFE_DELETE(cb_data);
-    }
-    else {
+    } else {
 
         _fido_asm_proxy_t *asm_proxy = (_fido_asm_proxy_t*)(cb_data->asm_proxy_list_iter->data);
         int ret = _asm_ipc_send(asm_proxy->asm_id, _GET_INFO_ASM_REQUEST_JSON, __discover_cb_internal, cb_data);
@@ -411,7 +409,7 @@ _asm_ipc_send(const char *asm_id, const char *asm_request, _asm_ipc_response_cb 
 
     g_dbus_proxy_call(asm_proxy->dbus_proxy,
                         method_name,
-                        g_variant_new ("(s)",
+                        g_variant_new("(s)",
                         asm_request),
                         G_DBUS_CALL_FLAGS_NONE,
                         _DBUS_TIMEOUT_INFINITE,
@@ -459,7 +457,7 @@ _asm_ipc_send_sync(const char *asm_id, const char *asm_req)
 
     _ret = g_dbus_proxy_call_sync(asm_proxy->dbus_proxy,
                                   method_name,
-                                  g_variant_new ("(s)",
+                                  g_variant_new("(s)",
                                   asm_req),
                                   G_DBUS_CALL_FLAGS_NONE,
                                   _DBUS_TIMEOUT_USE_DEFAULT,
@@ -474,7 +472,7 @@ _asm_ipc_send_sync(const char *asm_id, const char *asm_req)
     if (_ret == NULL)
       goto CATCH;
 
-    g_variant_get (_ret, "(is)", &tz_err, &asm_res_json);
+    g_variant_get(_ret, "(is)", &tz_err, &asm_res_json);
     if (asm_res_json != NULL)
         _INFO("ASM returned = %s", asm_res_json);
 
