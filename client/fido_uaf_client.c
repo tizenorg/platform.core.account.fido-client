@@ -38,7 +38,7 @@ static void
 init_dbus(void)
 {
     _INFO("init_dbus");
-#if !GLIB_CHECK_VERSION(2,35,0)
+#if !GLIB_CHECK_VERSION(2, 35, 0)
     g_type_init();
 #endif
 
@@ -164,32 +164,27 @@ fido_foreach_authenticator(fido_authenticator_cb callback, void *user_data)
 		return FIDO_ERROR_NOT_SUPPORTED;
 	}
 
-	_INFO("ASM response len =[%d]", discovery_data_json_list_len);
+	       _INFO("ASM response len =[%d]", discovery_data_json_list_len);
 
-	tz_err = FIDO_ERROR_NONE;
+	       tz_err = FIDO_ERROR_NONE;
 
-	int parser_err = 0;
-	GList *auth_list = _uaf_parser_parse_asm_response_discover_client(discovery_data_json,
-																		  discovery_data_json_list_len, &parser_err);
-	if (parser_err != FIDO_ERROR_NONE) {
-		tz_err = _convert_asm_status_code_to_uaf_error(parser_err);
-	}
-	else {
+	       int parser_err = 0;
+	       GList *auth_list = _uaf_parser_parse_asm_response_discover_client(discovery_data_json, discovery_data_json_list_len, &parser_err);
+	       if (parser_err != FIDO_ERROR_NONE) {
+	              tz_err = _convert_asm_status_code_to_uaf_error(parser_err);
+	       } else {
 
-		if (g_list_length(auth_list) <= 0) {
+              if (g_list_length(auth_list) <= 0) {
 			tz_err = FIDO_ERROR_NOT_SUPPORTED;
-		}
-		else {
-
+              } else {
 			GList *auth_list_iter = g_list_first(auth_list);
 			while (auth_list_iter != NULL) {
-
-				fido_authenticator_s *auth_priv = (fido_authenticator_s *)(auth_list_iter->data);
-				(callback)((fido_authenticator_h)auth_priv, user_data);
-				auth_list_iter = auth_list_iter->next;
+                            fido_authenticator_s *auth_priv = (fido_authenticator_s *)(auth_list_iter->data);
+                            (callback)((fido_authenticator_h)auth_priv, user_data);
+                            auth_list_iter = auth_list_iter->next;
 			}
-		}
-	}
+	              }
+	       }
 
 	int i = 0;
 	for (; i < discovery_data_json_list_len; i++)
@@ -289,8 +284,7 @@ fido_uaf_get_response_message(const char *uaf_request_json, const char *channel_
     if (channel_binding_json != NULL) {
 		fido_call_fido_uaf_process_operation(dbus_proxy, uaf_request_json, channel_binding_json,
                                              NULL, _fido_uaf_process_operation_reply, cb_data);
-    }
-    else {
+    } else {
 		fido_call_fido_uaf_process_operation(dbus_proxy, uaf_request_json,
 											 _FIDO_NO_CHANNEL_BINDING_DBUS_STRING,
                                              NULL, _fido_uaf_process_operation_reply, cb_data);

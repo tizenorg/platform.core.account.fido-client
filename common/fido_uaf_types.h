@@ -46,8 +46,7 @@ typedef struct fido_authenticator_s* fido_authenticator_h;
  *  @brief    Enumerations of error codes for FIDO APIs.
  *  @since_tizen 3.0
  */
-typedef enum
-{
+typedef enum {
     FIDO_ERROR_NONE                  = TIZEN_ERROR_NONE,                   /**< Successful. */
     FIDO_ERROR_OUT_OF_MEMORY             = TIZEN_ERROR_OUT_OF_MEMORY,              /**< Out of memory. */
     FIDO_ERROR_INVALID_PARAMETER         = TIZEN_ERROR_INVALID_PARAMETER,        /**< Invalid parameter. */
@@ -71,8 +70,7 @@ typedef enum
  *  @remarks Refer to FIDO UAF Registry document for more details.
  *  @since_tizen 3.0
  */
-typedef enum
-{
+typedef enum {
 	FIDO_AUTH_ALGO_SECP256R1_ECDSA_SHA256_RAW = 0X01, /**< SECP256R1 ECDSA SHA256 Raw */
 	FIDO_AUTH_ALGO_SECP256R1_ECDSA_SHA256_DER = 0X02, /**< SECP256R1 ECDSA SHA256 DER*/
 	FIDO_AUTH_ALGO_RSASSA_PSS_SHA256_RAW = 0x03, /**< RSA PSS SHA256 Raw*/
@@ -86,8 +84,7 @@ typedef enum
  *  @remarks Refer to FIDO UAF Registry document for more details.
  *  @since_tizen 3.0
  */
-typedef enum
-{
+typedef enum {
 	FIDO_AUTH_ATT_TYPE_BASIC_FULL = 0x3E07, /**< Full basic attestation. */
 	FIDO_AUTH_ATT_TYPE_BASIC_SURROGATE = 0x3E08 /**< Surrogate basic attestation. */
 } fido_auth_attestation_type_e;
@@ -97,8 +94,7 @@ typedef enum
  *  @remarks Refer to FIDO UAF Registry document for more details.
  *  @since_tizen 3.0
  */
-typedef enum
-{
+typedef enum {
 	FIDO_AUTH_USR_VERIFY_TYPE_PRESENCE = 0x01, /**< User presence verification. */
 	FIDO_AUTH_USR_VERIFY_TYPE_FINGERPRINT = 0x02, /**< User fingerprint verification. */
 	FIDO_AUTH_USR_VERIFY_TYPE_PASSCODE = 0x04, /**< User passcode verification. */
@@ -122,8 +118,7 @@ typedef enum
  *  @remarks Refer to FIDO UAF Registry document for more details.
  *  @since_tizen 3.0
  */
-typedef enum
-{
+typedef enum {
 	FIDO_AUTH_KEY_PROT_TYPE_SOFTWARE = 0x01, /**< Software based key management. */
 	FIDO_AUTH_KEY_PROT_TYPE_HARDWARE = 0x02, /**< Hardware based key management. */
 	FIDO_AUTH_KEY_PROT_TYPE_TEE = 0x04, /**< Trusted Execution Environment based key management. */
@@ -138,8 +133,7 @@ typedef enum
  *  @remarks Refer to FIDO UAF Registry document for more details.
  *  @since_tizen 3.0
  */
-typedef enum
-{
+typedef enum {
 	FIDO_AUTH_MATCH_PROT_TYPE_SOFTWARE = 0x01, /**< Authenticator's matcher is running in software. */
 	FIDO_AUTH_MATCH_PROT_TYPE_TEE = 0x02, /**< Authenticator's matcher is running inside the Trusted Execution Environment. */
 	FIDO_AUTH_MATCH_PROT_TYPE_ON_CHIP  = 0x04 /**< Aauthenticator's matcher is running on the chip. */
@@ -150,8 +144,7 @@ typedef enum
  *  @remarks Refer to FIDO UAF Registry document for more details.
  *  @since_tizen 3.0
  */
-typedef enum
-{
+typedef enum {
 	FIDO_AUTH_ATTACH_HINT_INTERNAL = 0x01, /**< Authenticator is permanently attached to the FIDO User Device. */
 	FIDO_AUTH_ATTACH_HINT_EXTERNAL = 0x02, /**< Authenticator is removable or remote from the FIDO User Device. */
 	FIDO_AUTH_ATTACH_HINT_WIRED = 0x04, /**< The external authenticator currently has an exclusive wired connection. */
@@ -173,8 +166,7 @@ typedef enum
  *  @remarks Refer to FIDO UAF Registry document for more details.
  *  @since_tizen 3.0
  */
-typedef enum
-{
+typedef enum {
 	FIDO_AUTH_TC_DISP_TYPE_ANY = 0x01, /**< Some form of transaction confirmation display is available on this authenticator. */
 	FIDO_AUTH_TC_DISP_TYPE_PRIVILEGED_SOFTWARE = 0x02, /**< Software-based transaction confirmation display operating in a
 														* privileged context is available on this authenticator.
