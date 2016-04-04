@@ -34,7 +34,7 @@ typedef enum {
     _USER_VER_METHOD_NONE = 0X200,
     _USER_VER_METHOD_ALL = 0X400,
     _USER_VER_METHOD_MAX
-}_user_verification_method_e;
+} _user_verification_method_e;
 
 #define _UAF_OPERATION_NAME_KEY_REG "Reg"
 
