@@ -34,8 +34,7 @@ _get_client_pid(GDBusMethodInvocation* invoc)
 {
     const char *name = NULL;
     name = g_dbus_method_invocation_get_sender(invoc);
-    if (name == NULL)
-    {
+    if (name == NULL) {
         _ERR("g_dbus_method_invocation_get_sender failed");
         return -1;
     }
@@ -110,7 +109,7 @@ __get_information_for_cynara_check(GDBusMethodInvocation *invocation, char **cli
     int ret = -1;
 
     gdbus_conn = g_dbus_method_invocation_get_connection(invocation);
-    if(gdbus_conn == NULL) {
+    if (gdbus_conn == NULL) {
         _ERR("g_dbus_method_invocation_get_connection failed");
         return -1;
     }
@@ -157,7 +156,7 @@ is_allowed_to_call(GDBusMethodInvocation *invocation, const char* privilege)
 
     if (__cynara == NULL) {
         ret = cynara_initialize(&__cynara, NULL);
-        if(ret != CYNARA_API_SUCCESS) {
+        if (ret != CYNARA_API_SUCCESS) {
             _ERR("CYNARA Initialization fail");
             return false;
         }
@@ -168,7 +167,7 @@ is_allowed_to_call(GDBusMethodInvocation *invocation, const char* privilege)
     char *user = NULL;
 
     ret = __get_information_for_cynara_check(invocation, &client, &user, &session);
-    if ( ret != FIDO_ERROR_NONE) {
+    if (ret != FIDO_ERROR_NONE) {
         _ERR("__get_information_for_cynara_check failed");
         g_free(client);
         g_free(user);
@@ -181,7 +180,7 @@ is_allowed_to_call(GDBusMethodInvocation *invocation, const char* privilege)
 
     /*TODO enable after smack is defined*/
     #ifndef _DISABLE_PRIV_CHECK
-    if ( ret != FIDO_ERROR_NONE) {
+    if (ret != FIDO_ERROR_NONE) {
         _ERR("__check_privilege_by_cynara failed, ret = %d", ret);
         g_free(client);
         g_free(user);

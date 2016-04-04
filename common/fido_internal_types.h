@@ -26,42 +26,42 @@
 #include "fido_uaf_types.h"
 
 #define RET_IF_FAIL_VOID(cond) do {\
-        if (!(cond)){\
+        if (!(cond)) {\
             return;\
-        }\
-} while(0)
+        } \
+} while (0)
 
 #define RET_IF_FAIL(cond, err) do {\
-        if (!(cond)){\
+        if (!(cond)) {\
             return err;\
-        }\
-} while(0)
+        } \
+} while (0)
 
 #define CATCH_IF_FAIL(cond) do {\
-        if (!(cond)){\
+        if (!(cond)) {\
             goto CATCH;\
-        }\
-} while(0)
+        } \
+} while (0)
 
 #define CATCH_IF_FAIL_X(cond, expr) do {\
-        if (!(cond)){\
+        if (!(cond)) {\
             expr;\
             goto CATCH;\
-        }\
-} while(0)
+        } \
+} while (0)
 
 #define GOTO_IF_FAIL(cond, catch_block) do {\
-        if (!(cond)){\
+        if (!(cond)) {\
             goto catch_block;\
-        }\
-} while(0)
+        } \
+} while (0)
 
 #define SAFE_DELETE(x) do {\
     if (x != NULL) {\
         free(x);    \
         x = NULL;\
-    }\
-} while(0)
+    } \
+} while (0)
 
 #define _SAFE_DUP(x) ((x) ? strdup(x) : NULL)
 
@@ -144,7 +144,7 @@ typedef struct _op_header {
     char *app_id;
     char *server_data;
     GList *ext_list;
-}_op_header_t;
+} _op_header_t;
 
 void _free_op_header(_op_header_t *data);
 
@@ -154,7 +154,7 @@ typedef enum {
     _MESSAGE_TYPE_AUTH,
     _MESSAGE_TYPE_DEREG,
     _MESSAGE_TYPE_MAX
-}_message_type_e;
+} _message_type_e;
 
 typedef struct _message {
     char *facet_id;
@@ -179,7 +179,7 @@ typedef struct _auth_transaction {
     char *content_type;
     char *content;
     fido_display_png_characteristics_descriptor_s *display_charac;
-}_auth_transaction_t;
+} _auth_transaction_t;
 
 void _free_auth_transaction(_auth_transaction_t *data);
 
@@ -286,7 +286,7 @@ typedef struct _fido_asm_reg_in {
     char *user_name;
     char *final_challenge;
     int attestation_type;
-}_fido_asm_reg_in_t;
+} _fido_asm_reg_in_t;
 
 void _free_fido_asm_reg_in(_fido_asm_reg_in_t *data);
 
@@ -294,7 +294,7 @@ typedef struct _fido_asm_transaction {
     char *content_type;
     char *content;
     _fido_asm_display_png_characteristics_descriptor_t *display_charac;
-}_fido_asm_transaction_t;
+} _fido_asm_transaction_t;
 
 void _free_fido_asm_transaction(_fido_asm_transaction_t *data);
 
@@ -303,14 +303,14 @@ typedef struct _fido_asm_auth_in {
     GList *key_ids;
     char *final_challenge;
     GList *trans_list;//_fido_asm_transaction_t list
-}_fido_asm_auth_in_t;
+} _fido_asm_auth_in_t;
 
 void _free_fido_asm_auth_in(_fido_asm_auth_in_t *data);
 
 typedef struct _fido_asm_dereg_in {
     char *app_id;
     char *key_id;
-}_fido_asm_dereg_in_t;
+} _fido_asm_dereg_in_t;
 
 void _free_fido_asm_dereg_in(_fido_asm_dereg_in_t *data);
 
@@ -339,14 +339,14 @@ typedef enum {
     _ASM_OUT_TYPE_REG,
     _ASM_OUT_TYPE_AUTH,
     _ASM_OUT_TYPE_MAX
-}_asm_out_type_e;
+} _asm_out_type_e;
 
 typedef struct _asm_out {
     int status_code;
     _asm_out_type_e type;
     void *response_data;/*type can be : _asm_reg_out_t, _asm_auth_out_t*/
     GList *ext_list;
-}_asm_out_t;
+} _asm_out_t;
 
 void _free_asm_out(_asm_out_t *data);
 
@@ -421,7 +421,7 @@ typedef struct _auth_reg_assertion_tlv {
     char *aaid;
     unsigned char *key_id;
     int key_id_len;
-}_auth_reg_assertion_tlv_t;
+} _auth_reg_assertion_tlv_t;
 
 void _free_auth_reg_assertion_tlv(_auth_reg_assertion_tlv_t *data);
 
@@ -429,7 +429,7 @@ typedef struct _response_ {
     _op_header_t *header;
     char *fcp;
     GList *assertion_list;
-}_response_t;
+} _response_t;
 
 void _free_response(_response_t *data);
 
