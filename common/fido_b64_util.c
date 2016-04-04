@@ -88,22 +88,22 @@ _fido_b64url_decode(const unsigned char *in,  int inlen,
     memcpy(base64, in, inlen);
 
     int i;
-    for(i =0; i < inlen ; i++) {
-        if(base64[i] == '-')
+    for (i = 0; i < inlen ; i++) {
+        if (base64[i] == '-')
             base64[i] = '+';
 
-        else if(base64[i] == '_')
+        else if (base64[i] == '_')
             base64[i] = '/';
 
     }
 
-    if(npadChars != 0)
+    if (npadChars != 0)
         memset(base64 + inlen, '=', npadChars);
 
     BIO * b64 = NULL;
     BIO * bmem = NULL;
     b64 = BIO_new(BIO_f_base64());
-    if(b64 == NULL) {
+    if (b64 == NULL) {
         _ERR("BIO_new with BIO_f_base64 failed");
 
         SAFE_DELETE(base64);
@@ -111,7 +111,7 @@ _fido_b64url_decode(const unsigned char *in,  int inlen,
     }
     BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
     bmem = BIO_new_mem_buf(base64, inlen);
-    if(bmem == NULL) {
+    if (bmem == NULL) {
         _ERR("BIO_new_mem_buf failed");
 
         SAFE_DELETE(base64);
@@ -120,14 +120,14 @@ _fido_b64url_decode(const unsigned char *in,  int inlen,
 
     bmem = BIO_push(b64, bmem);
     *outlen = BIO_read(bmem, out, inlen);
-    if(*outlen <= 0) {
+    if (*outlen <= 0) {
         _ERR("BIO_read failed");
 
         SAFE_DELETE(base64);
         return -1;
     }
 
-    if(bmem)
+    if (bmem)
         BIO_free_all(bmem);
 
     _INFO("_fido_b64url_decode end");

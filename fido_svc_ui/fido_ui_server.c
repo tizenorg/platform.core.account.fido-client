@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <glib.h>
-#if !GLIB_CHECK_VERSION (2, 31, 0)
+#if !GLIB_CHECK_VERSION(2, 31, 0)
 #include <glib/gmacros.h>
 #endif
 
@@ -115,7 +115,7 @@ static void
 __init_dbus(void)
 {
     _INFO("init_dbus");
-#if !GLIB_CHECK_VERSION(2,35,0)
+#if !GLIB_CHECK_VERSION(2, 35, 0)
     g_type_init();
 #endif
 
@@ -234,13 +234,13 @@ _create_json_response(ui_data_s *selected_auth)
     JsonNode *root_node = NULL;
 
     generator = json_generator_new();
-    if(generator == NULL) {
+    if (generator == NULL) {
         _INFO("json_generator_new is NULL");
         goto CATCH;
     }
 
     root_obj = json_object_new();
-    if(root_obj == NULL) {
+    if (root_obj == NULL) {
         _INFO("json_object_new in NULL");
         goto CATCH;
     }
@@ -400,8 +400,7 @@ _auth_arr_cb(JsonArray *array, guint index, JsonNode *element_node, gpointer use
     if (label == NULL) {
         ui_data->label = calloc(1, 128);
         snprintf(ui_data->label, 127, "%s", "Unknown Authenticator");
-    }
-    else
+    } else
         ui_data->label = strdup(label);
 
     ui_data->att_t = att;

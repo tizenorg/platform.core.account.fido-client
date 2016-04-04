@@ -17,46 +17,41 @@
 #ifdef ROOTSTRAP_OUT
 
 #define LOGD(...)                                 \
-do                                                \
-{                                                 \
+do {                                                 \
     printf("<%s:%d>", __FUNCTION__, __LINE__);    \
     printf(TEXT_CYAN);                            \
     printf(__VA_ARGS__);                          \
     printf(TEXT_RESET "\n");                      \
-} while(0)
+} while (0)
 
 #define LOGI(...)                                 \
-do                                                \
-{                                                 \
+do {                                                 \
     printf("<%s:%d>", __FUNCTION__, __LINE__);    \
     printf(TEXT_GREEN);                           \
     printf(__VA_ARGS__);                          \
     printf(TEXT_RESET "\n");                      \
-} while(0)
+} while (0)
 
 #define LOGW(...)                                 \
-do                                                \
-{                                                 \
+do {                                                 \
     printf("<%s:%d>", __FUNCTION__, __LINE__);    \
     printf(TEXT_YELLOW);                          \
     printf(__VA_ARGS__);                          \
     printf(TEXT_RESET "\n");                      \
-} while(0)
+} while (0)
 
 #define LOGE(...)                                 \
-do                                                \
-{                                                 \
+do {                                                 \
     printf("<%s:%d>", __FUNCTION__, __LINE__);    \
     printf(TEXT_RED);                             \
     printf(__VA_ARGS__);                          \
     printf(TEXT_RESET "\n");                      \
-} while(0)
+} while (0)
 
 #endif
 
 
-typedef enum
-{
+typedef enum {
     FAIL_OR_SUCCESSS,
     FAIL_OR_DONE
 } notification_type_e;
