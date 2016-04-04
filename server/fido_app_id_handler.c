@@ -42,7 +42,7 @@ typedef struct _app_id_cb_data {
     char *real_app_id;
     _facet_id_cb cb;
     void *user_data;
-}_app_id_cb_data_t;
+} _app_id_cb_data_t;
 
 static inline int
 __read_proc(const char *path, char *buf, int size)
@@ -84,7 +84,7 @@ __get_appid_of_dbus_caller(GDBusMethodInvocation *invocation)
     guint32 upid;
     const gchar *sender = NULL;
 
-    sender = g_dbus_method_invocation_get_sender (invocation);
+    sender = g_dbus_method_invocation_get_sender(invocation);
     if (!sender) {
         _ERR("Failed to get sender");
         return NULL;
@@ -97,25 +97,25 @@ __get_appid_of_dbus_caller(GDBusMethodInvocation *invocation)
     }
 
     error = NULL;
-    response = g_dbus_connection_call_sync (connection,
+    response = g_dbus_connection_call_sync(connection,
             _FREEDESKTOP_SERVICE, _FREEDESKTOP_PATH,
             _FREEDESKTOP_INTERFACE, "GetConnectionUnixProcessID",
-            g_variant_new ("(s)", sender), ((const GVariantType *) "(u)"),
+            g_variant_new("(s)", sender), ((const GVariantType *) "(u)"),
             G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
 
     //g_object_unref (connection);
 
     if (response == NULL) {
         _ERR("Failed to get caller id [%s]", error->message);
-        g_error_free (error);
+        g_error_free(error);
         return NULL;
     }
 
-    g_variant_get (response, "(u)", &upid);
+    g_variant_get(response, "(u)", &upid);
     _INFO("Remote msg-bus peer service=%s pid=%u", sender, upid);
     remote_pid = (pid_t) upid;
 
-    g_variant_unref (response);
+    g_variant_unref(response);
 
     char *app_id = NULL;
     int ret = app_manager_get_app_id(remote_pid, &app_id);
@@ -260,8 +260,7 @@ _verify_and_get_facet_id(const char *uaf_app_id, GDBusMethodInvocation *invocati
             cb_data->real_app_id = strdup(uaf_app_id);
             g_timeout_add(2, __timer_expired, cb_data);
             return FIDO_ERROR_NONE;
-        }
-        else {
+        } else {
             _free_app_id_cb_data(cb_data);
             return FIDO_ERROR_PERMISSION_DENIED;
         }
@@ -280,7 +279,7 @@ _verify_and_get_facet_id(const char *uaf_app_id, GDBusMethodInvocation *invocati
 
     _INFO("%s", uaf_app_id);
 
-    SoupMessage *soup_message = soup_message_new_from_uri ("GET", parsed_uri);
+    SoupMessage *soup_message = soup_message_new_from_uri("GET", parsed_uri);
 
     soup_uri_free(parsed_uri);
 
