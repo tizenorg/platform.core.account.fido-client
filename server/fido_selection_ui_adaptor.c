@@ -150,8 +150,7 @@ _compose_json_ui_out(const char *response_json)
 	att = json_object_get_int_member(obj, UI_DATA_ATT_TYPE);
 
 	ui_auth_data = (_ui_auth_data_t *) calloc(1, sizeof(_ui_auth_data_t));
-	if (ui_auth_data == NULL)
-	{
+	if (ui_auth_data == NULL) {
 		_ERR("Out of memory");
 		goto CATCH;
 	}
@@ -193,7 +192,7 @@ _compose_json_ui_in(GList *auth_list)
 	JsonArray *ui_arr = NULL;
 
 	generator = json_generator_new();
-	if(generator == NULL) {
+	if (generator == NULL) {
         _ERR("json_generator_new is NULL");
 		goto CATCH;
 	}
@@ -411,7 +410,7 @@ __get_proc_path_of_dbus_caller(GDBusMethodInvocation *invocation)
     guint32 upid;
     const gchar *sender = NULL;
 
-    sender = g_dbus_method_invocation_get_sender (invocation);
+    sender = g_dbus_method_invocation_get_sender(invocation);
     if (!sender) {
         _ERR("Failed to get sender");
         return NULL;
@@ -420,28 +419,28 @@ __get_proc_path_of_dbus_caller(GDBusMethodInvocation *invocation)
     connection = g_dbus_method_invocation_get_connection(invocation);
     if (connection == NULL) {
         _ERR("Failed to open connection for the invocation [%s]", error->message);
-        g_error_free (error);
+        g_error_free(error);
         return NULL;
     }
 
     error = NULL;
-    response = g_dbus_connection_call_sync (connection,
+    response = g_dbus_connection_call_sync(connection,
             _FREEDESKTOP_SERVICE, _FREEDESKTOP_PATH,
             _FREEDESKTOP_INTERFACE, "GetConnectionUnixProcessID",
-            g_variant_new ("(s)", sender), ((const GVariantType *) "(u)"),
+            g_variant_new("(s)", sender), ((const GVariantType *) "(u)"),
             G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
 
     if (response == NULL) {
         _ERR("Failed to get caller id [%s]", error->message);
-        g_error_free (error);
+        g_error_free(error);
         return NULL;
     }
 
-    g_variant_get (response, "(u)", &upid);
+    g_variant_get(response, "(u)", &upid);
     _INFO("Remote msg-bus peer service=%s pid=%u", sender, upid);
     //remote_pid = (pid_t) upid;
 
-    g_variant_unref (response);
+    g_variant_unref(response);
 
     char buf[128];
     int ret = 0;
