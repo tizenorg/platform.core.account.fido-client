@@ -623,7 +623,6 @@ __handle_auth(_process_cb_data_t *cb_data, _matched_auth_data_t *matched_auth)
 		_ERR("ASM in data missing");
 		_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
 
-		_free_fido_asm_auth_in(auth_asm_in);
 		SAFE_DELETE(version);
 
 		return;
