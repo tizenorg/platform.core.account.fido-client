@@ -171,7 +171,8 @@ fido_foreach_authenticator(fido_authenticator_cb callback, void *user_data)
 	int parser_err = 0;
 	GList *auth_list = _uaf_parser_parse_asm_response_discover_client(discovery_data_json,
 																		  discovery_data_json_list_len, &parser_err);
-	if (parser_err != FIDO_ERROR_NONE) {
+	if ((auth_list == NULL) &&
+			(parser_err != FIDO_ERROR_NONE)) {
 		tz_err = _convert_asm_status_code_to_uaf_error(parser_err);
 	}
 	else {

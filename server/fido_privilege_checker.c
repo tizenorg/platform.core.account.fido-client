@@ -180,7 +180,7 @@ is_allowed_to_call(GDBusMethodInvocation *invocation, const char* privilege)
     ret = __check_privilege_by_cynara(client, session, user, privilege);
 
     /*TODO enable after smack is defined*/
-    #ifndef _DISABLE_PRIV_CHECK
+#ifndef _DISABLE_PRIV_CHECK
     if ( ret != FIDO_ERROR_NONE) {
         _ERR("__check_privilege_by_cynara failed, ret = %d", ret);
         g_free(client);
@@ -189,13 +189,13 @@ is_allowed_to_call(GDBusMethodInvocation *invocation, const char* privilege)
 
         return false;
     }
-    #endif
+#endif
     g_free(client);
     g_free(user);
     SAFE_DELETE(session);
 
     return true;
-    #endif
+#endif
 
     return true;
 }

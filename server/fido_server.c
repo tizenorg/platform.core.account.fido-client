@@ -833,15 +833,13 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 
 	_process_cb_data_t *cb_data = (_process_cb_data_t*)user_data;
 
-	if (tz_error_code != FIDO_ERROR_NONE) {
-		_ERR("Failed to get available authenticator info [%d]", tz_error_code);
-		_send_process_response(cb_data, FIDO_ERROR_NOT_SUPPORTED, NULL);
-		return;
-	}
-
 	if (available_authenticators == NULL) {
 		_ERR("No supported authenticators found");
-		_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
+
+		if (tz_error_code == FIDO_ERROR_NONE)
+			_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
+		else
+			_send_process_response(cb_data, tz_error_code, NULL);
 		return;
 	}
 
