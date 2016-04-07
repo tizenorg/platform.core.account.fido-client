@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <dlog.h>
 #include <glib.h>
-#if !GLIB_CHECK_VERSION (2, 31, 0)
+#if !GLIB_CHECK_VERSION(2, 31, 0)
 #include <glib/gmacros.h>
 #endif
 #include <json-glib/json-glib.h>
@@ -160,7 +160,7 @@ __uaf_composer_compose_asm_init(JsonGenerator **generator, JsonObject **root_obj
 	JsonNode *root_node = NULL;
 
 	*generator = json_generator_new();
-	if(*generator == NULL) {
+	if (*generator == NULL) {
 		_INFO("json_generator_new is NULL");
 		goto CATCH;
 	}
@@ -172,7 +172,7 @@ __uaf_composer_compose_asm_init(JsonGenerator **generator, JsonObject **root_obj
 	}
 
 	*root_obj = json_object_new();
-	if(*root_obj == NULL) {
+	if (*root_obj == NULL) {
 		_INFO("json_object_new in NULL");
 		goto CATCH;
 	}
@@ -181,7 +181,6 @@ __uaf_composer_compose_asm_init(JsonGenerator **generator, JsonObject **root_obj
 	json_generator_set_root(*generator, root_node);
 
 	return TRUE;
-
 
 	CATCH:
 	if (generator != NULL && *generator != NULL) {
@@ -211,7 +210,7 @@ __uaf_composer_compose_asm_response_init(JsonGenerator **generator, JsonObject *
 	JsonArray *rootArray = json_array_new();
 
 	*generator = json_generator_new();
-	if(*generator == NULL) {
+	if (*generator == NULL) {
 		_INFO("json_generator_new is NULL");
 		goto CATCH;
 	}
@@ -229,13 +228,13 @@ __uaf_composer_compose_asm_response_init(JsonGenerator **generator, JsonObject *
 	}
 
 	gen_object = json_object_new();
-	if(gen_object == NULL) {
+	if (gen_object == NULL) {
 		_INFO("json_object_new in NULL");
 		goto CATCH;
 	}
 
 	*root_obj = json_object_new();
-	if(*root_obj == NULL) {
+	if (*root_obj == NULL) {
 		_INFO("json_object_new in NULL");
 		goto CATCH;
 	}
@@ -246,7 +245,6 @@ __uaf_composer_compose_asm_response_init(JsonGenerator **generator, JsonObject *
 	json_generator_set_root(*generator, gen_node);
 
 	return TRUE;
-
 
 	CATCH:
 	if (generator != NULL && *generator != NULL) {
@@ -287,7 +285,7 @@ __uaf_composer_compose_asm_version(_version_t *version, JsonNode **node)
 	}
 
 	JsonObject *obj = json_object_new();
-	if(obj == NULL) {
+	if (obj == NULL) {
 		_INFO("json_object_new in NULL");
 		goto CATCH;
 	}
@@ -300,7 +298,7 @@ __uaf_composer_compose_asm_version(_version_t *version, JsonNode **node)
 	return TRUE;
 
 	CATCH:
-	if (node !=NULL && *node != NULL) {
+	if (node != NULL && *node != NULL) {
 		json_node_free(*node);
 		*node = NULL;
 	}
@@ -315,7 +313,7 @@ __uaf_composer_compose_asm_version(_version_t *version, JsonNode **node)
 static gboolean
 __uaf_composer_compose_asm_reg_in(_fido_asm_reg_in_t *reg_in, JsonNode **node)
 {
-	_INFO("__uaf_composer_compose_asm_versiom");
+	 _INFO("__uaf_composer_compose_asm_versiom");
 	if (!reg_in) {
 		_INFO("invalid uaf version");
 		return FALSE;
@@ -328,7 +326,7 @@ __uaf_composer_compose_asm_reg_in(_fido_asm_reg_in_t *reg_in, JsonNode **node)
 	}
 
 	JsonObject *obj = json_object_new();
-	if(obj == NULL) {
+	if (obj == NULL) {
 		_INFO("json_object_new in NULL");
 		goto CATCH;
 	}
@@ -357,7 +355,7 @@ __uaf_composer_compose_asm_reg_in(_fido_asm_reg_in_t *reg_in, JsonNode **node)
 
 	if (obj != NULL && obj != NULL) {
 		g_object_unref(obj);
-		obj = NULL;
+	obj = NULL;
 	}
 	return FALSE;
 }
@@ -379,7 +377,7 @@ __uaf_composer_compose_asm_auth_in(_fido_asm_auth_in_t *auth_in, JsonNode **node
 	}
 
 	JsonObject *obj = json_object_new();
-	if(obj == NULL) {
+	if (obj == NULL) {
 		_INFO("json_object_new in NULL");
 		goto CATCH;
 	}
@@ -390,9 +388,9 @@ __uaf_composer_compose_asm_auth_in(_fido_asm_auth_in_t *auth_in, JsonNode **node
 	if (auth_in->key_ids) {
 		JsonArray *ids = json_array_new();
 
-	for (iter = auth_in->key_ids; iter != NULL; iter = g_list_next(iter)) {
+		for (iter = auth_in->key_ids; iter != NULL; iter = g_list_next(iter)) {
 			json_array_add_string_element(ids, (char *)iter->data);
-	}
+		}
 
 		json_object_set_array_member(obj, _JSON_KEY_KEY_IDS, ids);
 	}
@@ -400,10 +398,10 @@ __uaf_composer_compose_asm_auth_in(_fido_asm_auth_in_t *auth_in, JsonNode **node
 	if (auth_in->final_challenge)
 		json_object_set_string_member(obj, _JSON_KEY_FINAL_CHALLENGE, auth_in->final_challenge);
 
-	if(auth_in->trans_list != NULL) {
+	if (auth_in->trans_list != NULL) {
 		JsonArray *transArray = json_array_new();
 		GList *iter = g_list_first(auth_in->trans_list);
-		while(iter != NULL) {
+		while (iter != NULL) {
 			_fido_asm_transaction_t *val = (_fido_asm_transaction_t*)(iter->data);
 			JsonNode *transNode = json_node_new(JSON_NODE_OBJECT);
 			JsonObject *transObject = json_object_new();
@@ -414,7 +412,7 @@ __uaf_composer_compose_asm_auth_in(_fido_asm_auth_in_t *auth_in, JsonNode **node
 			JsonNode *tcNode = json_node_new(JSON_NODE_OBJECT);
 			JsonObject *tcObject = json_object_new();
 
-			if(val->display_charac != NULL) {
+			if (val->display_charac != NULL) {
 				json_object_set_int_member(tcObject, _JSON_KEY_WIDTH, val->display_charac->width);
 				json_object_set_int_member(tcObject, _JSON_KEY_HEIGHT, val->display_charac->height);
 				json_object_set_int_member(tcObject, _JSON_KEY_BIT_DEPTH, val->display_charac->bit_depth);
@@ -423,11 +421,11 @@ __uaf_composer_compose_asm_auth_in(_fido_asm_auth_in_t *auth_in, JsonNode **node
 				json_object_set_int_member(tcObject, _JSON_KEY_FILTER, val->display_charac->filter);
 				json_object_set_int_member(tcObject, _JSON_KEY_INTERLACE, val->display_charac->interlace);
 
-				if(val->display_charac != NULL) {
+				if (val->display_charac != NULL) {
 					JsonArray *plteArray = json_array_new();
 
 					GList *plte_iter = g_list_first(val->display_charac->plte);
-					while(plte_iter != NULL) {
+					while (plte_iter != NULL) {
 						_fido_asm_rgb_pallette_entry_t *plte = (_fido_asm_rgb_pallette_entry_t*)(plte_iter->data);
 						JsonNode *plteNode = json_node_new(JSON_NODE_OBJECT);
 						JsonObject *plteObject = json_object_new();
@@ -480,7 +478,7 @@ __get_string_from_json_object(JsonObject *obj, const char *key)
 		return NULL;
 
 	const char *str = json_object_get_string_member(obj, key);
-	_INFO("[%s] = [%s]", key, str);
+		_INFO("[%s] = [%s]", key, str);
 
 	return strdup(str);
 }
@@ -513,7 +511,6 @@ __get_extension(JsonObject *ext_json_obj)
 	ext->fail_if_unknown = json_object_get_boolean_member(ext_json_obj, _JSON_KEY_FAIL_IF_UNKNOWN);
 
 	return ext;
-
 }
 
 static GList *
@@ -534,8 +531,8 @@ __get_extension_list(JsonObject *root_obj)
 		JsonObject *ext_json_obj = json_array_get_object_element(ext_json_arr, i);
 		if (ext_json_obj != NULL) {
 			_extension_t *ext = __get_extension(ext_json_obj);
-			if (ext != NULL)
-				ext_list = g_list_append(ext_list, ext);
+		if (ext != NULL)
+			ext_list = g_list_append(ext_list, ext);
 		}
 	}
 
@@ -561,7 +558,6 @@ __parse_uaf_header(JsonObject *header_obj)
 	int minor = __get_int_from_json_object(ver_obj, _JSON_KEY_MINOR);
 
 	if (major == _INVALID_INT || minor == _INVALID_INT) {
-
 		_free_op_header(header);
 		return NULL;
 	}
@@ -615,7 +611,6 @@ __get_int_list_from_json_array(JsonArray *json_arr)
 	for (; i < arr_len; i++) {
 		int val = json_array_get_int_element(json_arr, i);
 		list = g_list_append(list, GINT_TO_POINTER(val));
-
 	}
 
 	return list;
@@ -631,51 +626,51 @@ _uaf_parser_parse_match(JsonObject *match_obj)
 		_match_criteria_t *match_criteria = (_match_criteria_t*)calloc(1, sizeof(_match_criteria_t));
 
 		JsonArray *aaid_arr = json_object_get_array_member(match_obj, _JSON_KEY_AAID);
-		if (aaid_arr != NULL) {
-			match_criteria->aaid_list = __get_string_list_from_json_array(aaid_arr);
-		}
+	if (aaid_arr != NULL) {
+		match_criteria->aaid_list = __get_string_list_from_json_array(aaid_arr);
+	}
 
-		JsonArray *vendor_arr = json_object_get_array_member(match_obj, _JSON_KEY_VENDOR_ID);
-		if (vendor_arr != NULL) {
-			match_criteria->vendor_list = __get_string_list_from_json_array(vendor_arr);
-		}
+	JsonArray *vendor_arr = json_object_get_array_member(match_obj, _JSON_KEY_VENDOR_ID);
+	if (vendor_arr != NULL) {
+		match_criteria->vendor_list = __get_string_list_from_json_array(vendor_arr);
+	}
 
-		JsonArray *key_id_arr = json_object_get_array_member(match_obj, _JSON_KEY_KEY_IDS);
-		if (key_id_arr != NULL) {
-			match_criteria->key_id_list = __get_string_list_from_json_array(key_id_arr);
-		}
+	JsonArray *key_id_arr = json_object_get_array_member(match_obj, _JSON_KEY_KEY_IDS);
+	if (key_id_arr != NULL) {
+		match_criteria->key_id_list = __get_string_list_from_json_array(key_id_arr);
+	}
 
-		match_criteria->user_verification = __get_int_from_json_object(match_obj, _JSON_KEY_USER_VERIFICATION);
+	match_criteria->user_verification = __get_int_from_json_object(match_obj, _JSON_KEY_USER_VERIFICATION);
 
-		match_criteria->key_protection = __get_int_from_json_object(match_obj, _JSON_KEY_KEY_PROTECTION);
+	match_criteria->key_protection = __get_int_from_json_object(match_obj, _JSON_KEY_KEY_PROTECTION);
 
-		match_criteria->matcher_protection = __get_int_from_json_object(match_obj, _JSON_KEY_MATCHER_PROTECTION);
+	match_criteria->matcher_protection = __get_int_from_json_object(match_obj, _JSON_KEY_MATCHER_PROTECTION);
 
-		match_criteria->attachement_hint = __get_int_from_json_object(match_obj, _JSON_KEY_ATTACHMENT_HINT);
+	match_criteria->attachement_hint = __get_int_from_json_object(match_obj, _JSON_KEY_ATTACHMENT_HINT);
 
-		match_criteria->tc_display = __get_int_from_json_object(match_obj, _JSON_KEY_TC_DISPLAY);
+	match_criteria->tc_display = __get_int_from_json_object(match_obj, _JSON_KEY_TC_DISPLAY);
 
 
-		JsonArray *auth_algo_arr = json_object_get_array_member(match_obj, _JSON_KEY_AUTH_ALGOS);
-		if (auth_algo_arr) {
-			match_criteria->auth_algo_list = __get_int_list_from_json_array(auth_algo_arr);
-		}
+	JsonArray *auth_algo_arr = json_object_get_array_member(match_obj, _JSON_KEY_AUTH_ALGOS);
+	if (auth_algo_arr) {
+		match_criteria->auth_algo_list = __get_int_list_from_json_array(auth_algo_arr);
+	}
 
-		JsonArray *assertion_schm_arr = json_object_get_array_member(match_obj, _JSON_KEY_ASSERT_SCHEMES);
-		if (assertion_schm_arr) {
-			match_criteria->assertion_scheme_list = __get_string_list_from_json_array(assertion_schm_arr);
-		}
+	JsonArray *assertion_schm_arr = json_object_get_array_member(match_obj, _JSON_KEY_ASSERT_SCHEMES);
+	if (assertion_schm_arr) {
+		match_criteria->assertion_scheme_list = __get_string_list_from_json_array(assertion_schm_arr);
+	}
 
-		JsonArray *att_type_arr = json_object_get_array_member(match_obj, _JSON_KEY_ATT_TYPES);
-		if (att_type_arr) {
-			match_criteria->attestation_type_list = __get_string_list_from_json_array(att_type_arr);
-		}
+	JsonArray *att_type_arr = json_object_get_array_member(match_obj, _JSON_KEY_ATT_TYPES);
+	if (att_type_arr) {
+		match_criteria->attestation_type_list = __get_string_list_from_json_array(att_type_arr);
+	}
 
-		match_criteria->auth_version = __get_int_from_json_object(match_obj, _JSON_KEY_AUTH_VERSION);
+	match_criteria->auth_version = __get_int_from_json_object(match_obj, _JSON_KEY_AUTH_VERSION);
 
-		_INFO("_uaf_parser_parse_match is returning match_criteria");
+	_INFO("_uaf_parser_parse_match is returning match_criteria");
 
-		return match_criteria;
+	return match_criteria;
 	}
 
 	_INFO("_uaf_parser_parse_match is returning NULL");
@@ -701,7 +696,7 @@ __get_plte_list(JsonObject *png_json_obj)
 		JsonObject *plte_json_obj = json_array_get_object_element(plte_json_arr, i);
 		if (plte_json_obj != NULL) {
 			fido_rgb_pallette_entry_s *pallete =
-					(fido_rgb_pallette_entry_s *) calloc(1, sizeof(fido_rgb_pallette_entry_s));
+				(fido_rgb_pallette_entry_s *) calloc(1, sizeof(fido_rgb_pallette_entry_s));
 
 			if (pallete != NULL) {
 				pallete->r = __get_int_from_json_object(plte_json_obj, _JSON_KEY_R);
@@ -710,7 +705,6 @@ __get_plte_list(JsonObject *png_json_obj)
 
 				plte_list_priv = g_list_append(plte_list_priv, pallete);
 			}
-
 		}
 	}
 
@@ -732,7 +726,7 @@ __get_png_data(JsonObject *png_json_obj)
 	_INFO("");
 
 	fido_display_png_characteristics_descriptor_s *png_data = (fido_display_png_characteristics_descriptor_s*)
-			calloc(1, sizeof(fido_display_png_characteristics_descriptor_s));
+	calloc(1, sizeof(fido_display_png_characteristics_descriptor_s));
 
 	png_data->width = __get_int_from_json_object(png_json_obj, _JSON_KEY_WIDTH);
 	png_data->height = __get_int_from_json_object(png_json_obj, _JSON_KEY_HEIGHT);
@@ -787,113 +781,38 @@ _uaf_parser_parse_asm_response_discover_client(char **asm_response_list, int len
 	int i = 0;
 	for (; i < len; i++) {
 
-		_INFO("");
-
 		JsonParser *parser = json_parser_new();
 		CATCH_IF_FAIL(parser != NULL);
 
 		GError *parse_err = NULL;
 		json_parser_load_from_data(parser, asm_response_list[i], -1, &parse_err);
-		if (parse_err != NULL) {
-			_ERR("json_parser_load_from_data failed");
-
-			if (parser != NULL) {
-				g_object_unref(parser);
-				parser = NULL;
-			}
-
-			continue;
-		}
-		/*CATCH_IF_FAIL(parse_err == NULL);*/
+		CATCH_IF_FAIL(parse_err == NULL);
 
 		JsonNode *root = json_parser_get_root(parser);
-		if (root == NULL) {
-
-			_ERR("json_parser_get_root failed");
-			if (parser != NULL) {
-				g_object_unref(parser);
-				parser = NULL;
-			}
-
-			continue;
-		}
-		/*CATCH_IF_FAIL(root != NULL);*/
+		CATCH_IF_FAIL(root != NULL);
 
 		JsonObject *root_obj = json_node_get_object(root);
-		if (root_obj == NULL) {
+		CATCH_IF_FAIL(root_obj != NULL);
 
-			_ERR("json_node_get_object failed");
-
-			if (parser != NULL) {
-				g_object_unref(parser);
-				parser = NULL;
-			}
-
-			continue;
-		}
-		/*CATCH_IF_FAIL(root_obj != NULL);*/
-
-		int err_temp = -1;
+		int err_temp = 0;
 		err_temp = json_object_get_int_member(root_obj, _JSON_KEY_STATUS_CODE);
 
-		if (err_temp != 0) {
-
-			_ERR("json_object_get_int_member failed");
-
-			if (parser != NULL) {
-				g_object_unref(parser);
-				parser = NULL;
-			}
-
-			if (err_temp == -1)
-				*error_code = _ASM_STATUS_ERROR;
-			else
-				*error_code = err_temp;
-
-			continue;
-		}
-		/*CATCH_IF_FAIL(*error_code == 0);*/
+		*error_code = err_temp;
+		CATCH_IF_FAIL(*error_code == 0);
 
 		JsonObject *response_obj = json_object_get_object_member(root_obj, _JSON_KEY_RESP_DATA);
-		if (response_obj == NULL) {
-
-			_ERR("json_object_get_object_member failed");
-
-			if (parser != NULL) {
-				g_object_unref(parser);
-				parser = NULL;
-			}
-
-			continue;
-		}
-		/*CATCH_IF_FAIL(response_obj != NULL);*/
-
-		_INFO("");
+		CATCH_IF_FAIL(response_obj != NULL);
 
 		JsonArray *auth_arr = json_object_get_array_member(response_obj, _JSON_KEY_AUTHENTICATORS);
-		if (auth_arr == NULL) {
-
-			_ERR("json_object_get_array_member failed");
-
-			if (parser != NULL) {
-				g_object_unref(parser);
-				parser = NULL;
-			}
-
-			continue;
-		}
-		/*CATCH_IF_FAIL(auth_arr != NULL);*/
-
-		_INFO("");
+		CATCH_IF_FAIL(auth_arr != NULL);
 
 		int auth_arr_len = json_array_get_length(auth_arr);
 
-		int auth_arr_index = 0;
+        	int auth_arr_index = 0;
 		for (auth_arr_index = 0; auth_arr_index < auth_arr_len; auth_arr_index++) {
 			JsonObject *auth_obj = json_array_get_object_element(auth_arr, auth_arr_index);
 			if (auth_obj != NULL) {
 				fido_authenticator_s *auth_info = (fido_authenticator_s *)calloc(1, sizeof(fido_authenticator_s));
-
 
 				int auth_index = json_object_get_int_member(auth_obj, _JSON_KEY_AUTH_INDEX);
 				char *auth_idx_str = (char*)calloc(1, 128);
@@ -901,7 +820,6 @@ _uaf_parser_parse_asm_response_discover_client(char **asm_response_list, int len
 
 				auth_info->auth_index = auth_idx_str;
 				_INFO("auth_info->auth_index = [%s]", auth_info->auth_index);
-
 
 				/* FIXME : ASM version list */
 
@@ -911,13 +829,11 @@ _uaf_parser_parse_asm_response_discover_client(char **asm_response_list, int len
 				bool has_settings = json_object_get_boolean_member(auth_obj, _JSON_KEY_HAS_SETTINGS);
 				auth_info->has_settings = has_settings;
 
-
 				const char *aaid = json_object_get_string_member(auth_obj, _JSON_KEY_AAID);
 				if (aaid != NULL) {
 					auth_info->aaid = strdup(aaid);
 					_INFO("auth_info->aaid = [%s]", auth_info->aaid);
 				}
-
 
 				const char *assertion_schm = json_object_get_string_member(auth_obj, _JSON_KEY_ASSERT_SCHEME);
 				if (assertion_schm != NULL)
@@ -986,20 +902,18 @@ _uaf_parser_parse_asm_response_discover_client(char **asm_response_list, int len
 				if (desc != NULL)
 					auth_info->description = strdup(desc);
 
-
 				const char *icon  = json_object_get_string_member(auth_obj, _JSON_KEY_ICON);
 				if (icon != NULL)
 					auth_info->icon = strdup(icon);
 
 				/* Supported UAF versions is fixed to 1.0*/
-				 fido_version_s *version = calloc(1, sizeof(fido_version_s));
-				 version->major = _VERSION_MAJOR;
-				 version->minor = _VERSION_MINOR;
+				fido_version_s *version = calloc(1, sizeof(fido_version_s));
+				version->major = _VERSION_MAJOR;
+				version->minor = _VERSION_MINOR;
 
-				 auth_info->supported_versions = g_list_append(auth_info->supported_versions, version);
+				auth_info->supported_versions = g_list_append(auth_info->supported_versions, version);
 
-				 available_authenticators = g_list_append(available_authenticators, auth_info);
-				 _INFO("");
+				available_authenticators = g_list_append(available_authenticators, auth_info);
 			}
 		}
 
@@ -1007,7 +921,6 @@ _uaf_parser_parse_asm_response_discover_client(char **asm_response_list, int len
 			g_object_unref(parser);
 
 	}
-
 
 	available_authenticators = g_list_first(available_authenticators);
 
@@ -1029,79 +942,35 @@ _uaf_parser_parse_asm_response_discover(GList *asm_response_list, int *error_cod
 	GList *available_authenticators = NULL;
 
 	GList *asm_response_list_iter = g_list_first(asm_response_list);
-
-	for (; asm_response_list_iter != NULL;
-		 asm_response_list_iter = g_list_next(asm_response_list_iter)) {
+	while (asm_response_list_iter != NULL) {
 
 		_asm_discover_response_t *asm_resp = (_asm_discover_response_t*)(asm_response_list_iter->data);
-
-		 _INFO("ASM Response error code = [%d]", asm_resp->error_code);
-		 if (asm_resp->asm_response_json != NULL) {
-			 _INFO("ASM Response = %s", asm_resp->asm_response_json);
-		 }
-
-		if (asm_resp->error_code == FIDO_ERROR_NONE
-				&&
-				asm_resp->asm_response_json != NULL) {
+		if (asm_resp->error_code == FIDO_ERROR_NONE && asm_resp->asm_response_json != NULL) {
 
 			JsonParser *parser = json_parser_new();
 			CATCH_IF_FAIL(parser != NULL);
 
 			GError *parse_err = NULL;
 			json_parser_load_from_data(parser, asm_resp->asm_response_json, -1, &parse_err);
-
-			if (parse_err != NULL) {
-				g_object_unref(parser);
-				_ERR("json_parser_load_from_data failed");
-				continue;
-			}
+			CATCH_IF_FAIL(parse_err == NULL);
 
 			JsonNode *root = json_parser_get_root(parser);
-
-			if (root == NULL) {
-				g_object_unref(parser);
-				_ERR("json_parser_get_root failed");
-				continue;
-			}
+			CATCH_IF_FAIL(root != NULL);
 
 			JsonObject *root_obj = json_node_get_object(root);
+			CATCH_IF_FAIL(root_obj != NULL);
 
-			if (root_obj == NULL) {
-				g_object_unref(parser);
-				_ERR("json_node_get_object failed");
-				continue;
-			}
-
-			int err_temp = -1;
+			int err_temp = 0;
 			err_temp = json_object_get_int_member(root_obj, _JSON_KEY_STATUS_CODE);
 
-			if (err_temp != 0) {
-				g_object_unref(parser);
-				_ERR("json_object_get_int_member failed");
-
-				if (err_temp == -1)
-					*error_code = _ASM_STATUS_ERROR;
-				else
-					*error_code = err_temp;
-
-				continue;
-			}
+			*error_code = err_temp;
+			CATCH_IF_FAIL(*error_code == 0);
 
 			JsonObject *response_obj = json_object_get_object_member(root_obj, _JSON_KEY_RESP_DATA);
-
-			if (response_obj == NULL) {
-				g_object_unref(parser);
-				_ERR("json_object_get_object_member failed");
-				continue;
-			}
+			CATCH_IF_FAIL(response_obj != NULL);
 
 			JsonArray *auth_arr = json_object_get_array_member(response_obj, _JSON_KEY_AUTHENTICATORS);
-
-			if (auth_arr == NULL) {
-				g_object_unref(parser);
-				_ERR("json_object_get_array_member failed");
-				continue;
-			}
+			CATCH_IF_FAIL(auth_arr != NULL);
 
 			int auth_arr_len = json_array_get_length(auth_arr);
 
@@ -1111,14 +980,12 @@ _uaf_parser_parse_asm_response_discover(GList *asm_response_list, int *error_cod
 				if (auth_obj != NULL) {
 					fido_authenticator_s *auth_info = (fido_authenticator_s *)calloc(1, sizeof(fido_authenticator_s));
 
-
 					int auth_index = json_object_get_int_member(auth_obj, _JSON_KEY_AUTH_INDEX);
 					char *auth_idx_str = (char*)calloc(1, 128);
 					snprintf(auth_idx_str, 127, "%d", auth_index);
 
 					auth_info->auth_index = auth_idx_str;
 					_INFO("auth_info->auth_index = [%s]", auth_info->auth_index);
-
 
 					/* FIXME : ASM version list */
 
@@ -1127,7 +994,6 @@ _uaf_parser_parse_asm_response_discover(GList *asm_response_list, int *error_cod
 
 					bool has_settings = json_object_get_boolean_member(auth_obj, _JSON_KEY_HAS_SETTINGS);
 					auth_info->has_settings = has_settings;
-
 
 					const char *aaid = json_object_get_string_member(auth_obj, _JSON_KEY_AAID);
 					if (aaid != NULL)
@@ -1161,26 +1027,21 @@ _uaf_parser_parse_asm_response_discover(GList *asm_response_list, int *error_cod
 					int key_prot  = json_object_get_int_member(auth_obj, _JSON_KEY_KEY_PROTECTION);
 					auth_info->key_protection = key_prot;
 
-
 					int matcher_prot  = json_object_get_int_member(auth_obj, _JSON_KEY_MATCHER_PROTECTION);
 					auth_info->matcher_protection = matcher_prot;
 
 					int attch_hint  = json_object_get_int_member(auth_obj, _JSON_KEY_ATTACHMENT_HINT);
 					auth_info->attachment_hint = attch_hint;
 
-
 					bool is_sec_only  = json_object_get_boolean_member(auth_obj, _JSON_KEY_IS_2_FACTOR_ONLY);
 					auth_info->is_second_factor_only = is_sec_only;
-
 
 					bool is_roaming  = json_object_get_boolean_member(auth_obj, _JSON_KEY_IS_ROAMING_AUTH);
 					auth_info->is_roaming = is_roaming;
 
-
 					JsonArray *ext_id_json_arr = json_object_get_array_member(auth_obj, _JSON_KEY_SUPPORTED_EXT_IDS);
 					if (ext_id_json_arr != NULL)
 						auth_info->supported_extension_IDs = __get_string_list_from_json_array(ext_id_json_arr);
-
 
 					int tc_disp  = json_object_get_int_member(auth_obj, _JSON_KEY_TC_DISPLAY);
 					auth_info->tc_display = tc_disp;
@@ -1189,13 +1050,11 @@ _uaf_parser_parse_asm_response_discover(GList *asm_response_list, int *error_cod
 					if (tc_dis_type != NULL)
 						auth_info->tc_display_content_type = strdup(tc_dis_type);
 
-
 					auth_info->tc_display_png_characteristics = __get_tc_disp_png_array(auth_obj);
 
 					const char *title = json_object_get_string_member(auth_obj, _JSON_KEY_TITLE);
 					if (title != NULL)
 						auth_info->title = strdup(title);
-
 
 					const char *desc = json_object_get_string_member(auth_obj, _JSON_KEY_DESC);
 					if (desc != NULL)
@@ -1205,7 +1064,6 @@ _uaf_parser_parse_asm_response_discover(GList *asm_response_list, int *error_cod
 					const char *icon  = json_object_get_string_member(auth_obj, _JSON_KEY_ICON);
 					if (icon != NULL)
 						auth_info->icon = strdup(icon);
-
 
 					if (asm_resp->asm_id != NULL)
 						auth_info->asm_id = strdup(asm_resp->asm_id);
@@ -1220,6 +1078,9 @@ _uaf_parser_parse_asm_response_discover(GList *asm_response_list, int *error_cod
 				g_object_unref(parser);
 
 		}
+
+		asm_response_list_iter = g_list_next(asm_response_list_iter);
+
 	}
 
 
@@ -1278,7 +1139,7 @@ _uaf_parser_parse_asm_response_reg(const char *asm_response_json, int *error_cod
 	asm_out->ext_list = __get_extension_list(root_obj);
 
 	if (parser != NULL)
-		g_object_unref(parser);
+	g_object_unref(parser);
 
 	*error_code = 0;
 	return asm_out;
@@ -1430,10 +1291,8 @@ _uaf_composer_compose_asm_reg_request(_version_t *version, int auth_index, _fido
 		json_builder_add_int_value(builder, reg_in->attestation_type);
 	}
 
-
 	json_builder_end_object(builder);
 	/*args*/
-
 
 	json_builder_end_object(builder);
 	/*Builder end*/
@@ -1483,8 +1342,7 @@ _uaf_composer_compose_asm_reg_request(_version_t *version, int auth_index, _fido
 	if (__uaf_composer_compose_asm_version(version, &version_node) != TRUE) {
 		_INFO("__uaf_composer_compose_asm_version fail");
 		goto CATCH;
-	}
-	else
+	} else
 		json_object_set_member(root_obj, _JSON_KEY_ASM_VERSION, version_node);
 
 	json_object_set_int_member(root_obj, _JSON_KEY_AUTH_INDEX, auth_index);
@@ -1492,8 +1350,7 @@ _uaf_composer_compose_asm_reg_request(_version_t *version, int auth_index, _fido
 	if (!__uaf_composer_compose_asm_reg_in(reg_in, &register_node)) {
 		_INFO("__uaf_composer_compose_asm_reg_in fail");
 		goto CATCH;
-	}
-	else
+	} else
 		json_object_set_member(root_obj, _JSON_KEY_ARGS, register_node);
 
 	*asm_reg_json = json_generator_to_data(generator, NULL);
@@ -1531,7 +1388,7 @@ _uaf_composer_compose_asm_reg_request(_version_t *version, int auth_index, _fido
 
 int
 _uaf_composer_compose_asm_auth_request(_version_t *version, int auth_index, _fido_asm_auth_in_t *auth_in,
-									   char **asm_auth_json)
+										char **asm_auth_json)
 {
 	_INFO("_uaf_composer_compose_asm_auth_request start");
 
@@ -1705,16 +1562,14 @@ _uaf_composer_compose_asm_auth_request(_version_t *version, int auth_index, _fid
 	if (__uaf_composer_compose_asm_version(version, &version_node) != TRUE) {
 		_INFO("_uaf_composer_compose_asm_auth_request fail");
 		goto CATCH;
-	}
-	else
+	} else
 		json_object_set_member(root_obj, _JSON_KEY_ASM_VERSION, version_node);
 
 	/*args*/
 	if (__uaf_composer_compose_asm_auth_in(auth_in, &auth_node) != TRUE) {
 		_INFO("_uaf_composer_compose_asm_auth_request fail");
 		goto CATCH;
-	}
-	else
+	} else
 		json_object_set_member(root_obj, _JSON_KEY_ARGS, auth_node);
 
 	/*Transaction list composing*/
@@ -1843,8 +1698,7 @@ _uaf_composer_compose_asm_dereg_request(_version_t *version, int auth_index, _ma
 	if (__uaf_composer_compose_asm_version(version, &version_node) != TRUE) {
 		_INFO("_uaf_composer_compose_asm_dereg_request fail");
 		goto CATCH;
-	}
-	else
+	} else
 		json_object_set_member(root_obj, _JSON_KEY_ASM_VERSION, version_node);
 
 	/*args*/
@@ -1995,7 +1849,7 @@ _uaf_composer_compose_final_challenge(const char *app_id, const char *challenge,
 	JsonGenerator *generator = json_generator_new();
 	JsonObject *root_obj = json_object_new();
 
-	if(__uaf_composer_compose_asm_init(&generator, &root_obj) != TRUE) {
+	if (__uaf_composer_compose_asm_init(&generator, &root_obj) != TRUE) {
 		_INFO("_uaf_composer_compose_asm_init fail");
 		goto CATCH;
 	}
@@ -2007,7 +1861,7 @@ _uaf_composer_compose_final_challenge(const char *app_id, const char *challenge,
 	JsonNode *jsonNode = NULL;
 	JsonObject *jsonObject = json_object_new();
 
-	if(ch_bin != NULL) {
+	if (ch_bin != NULL) {
 		JsonParser *chb_parser = json_parser_new();
 
 		GError *chb_err = NULL;
@@ -2017,17 +1871,17 @@ _uaf_composer_compose_final_challenge(const char *app_id, const char *challenge,
 		}
 
 		JsonNode *chb_root = json_parser_get_root(chb_parser);
-		if(chb_root == NULL) {
+		if (chb_root == NULL) {
 			return NULL;
 		}
 
 		JsonObject *chb_root_obj = json_node_get_object(chb_root);
-		if(chb_root_obj == NULL) {
+		if (chb_root_obj == NULL) {
 			return NULL;
 		}
 
 		char *end_pt = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_SERVER_END_POINT);
-		char *cert =(char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_TLS_SERVER_CERT);
+		char *cert = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_TLS_SERVER_CERT);
 		char *uni = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_TLS_UNIQUE);
 		char *cid = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_CID_PUB_KEY);
 
@@ -2075,12 +1929,12 @@ _uaf_composer_compose_final_challenge(const char *app_id, const char *challenge,
 	return ((char*)fc_enc);
 
 CATCH:
-	if(generator!=NULL) {
+	if (generator != NULL) {
 		g_object_unref(generator);
 		generator = NULL;
 	}
 
-	if(root_obj!=NULL) {
+	if (root_obj != NULL) {
 		g_object_unref(root_obj);
 		root_obj = NULL;
 	}
@@ -2166,16 +2020,15 @@ _uaf_composer_compose_uaf_process_response_reg(_op_header_t *header, char *final
 
 					json_builder_begin_object(builder);
 
-				__add_int_to_json_object(builder, _JSON_KEY_WIDTH, png_data->width);
-				__add_int_to_json_object(builder, _JSON_KEY_HEIGHT, png_data->height);
-				__add_int_to_json_object(builder, _JSON_KEY_BIT_DEPTH, png_data->bit_depth);
-				__add_int_to_json_object(builder, _JSON_KEY_COLOR_TYPE, png_data->color_type);
-				__add_int_to_json_object(builder, _JSON_KEY_COMPRESSION, png_data->compression);
-				__add_int_to_json_object(builder, _JSON_KEY_FILTER, png_data->filter);
-				__add_int_to_json_object(builder, _JSON_KEY_INTERLACE, png_data->interlace);
+					__add_int_to_json_object(builder, _JSON_KEY_WIDTH, png_data->width);
+					__add_int_to_json_object(builder, _JSON_KEY_HEIGHT, png_data->height);
+					__add_int_to_json_object(builder, _JSON_KEY_BIT_DEPTH, png_data->bit_depth);
+					__add_int_to_json_object(builder, _JSON_KEY_COLOR_TYPE, png_data->color_type);
+					__add_int_to_json_object(builder, _JSON_KEY_COMPRESSION, png_data->compression);
+					__add_int_to_json_object(builder, _JSON_KEY_FILTER, png_data->filter);
+					__add_int_to_json_object(builder, _JSON_KEY_INTERLACE, png_data->interlace);
 
-
-				if (png_data->plte != NULL) {
+					if (png_data->plte != NULL) {
 						/*plte array start*/
 
 						json_builder_set_member_name(builder, _JSON_KEY_PLTE);
@@ -2255,7 +2108,7 @@ _uaf_composer_compose_uaf_process_response_reg(_op_header_t *header, char *final
 	JsonGenerator *generator = json_generator_new();
 	JsonObject *root_obj = json_object_new();
 
-	if(__uaf_composer_compose_asm_response_init(&generator, &root_obj) != TRUE) {
+	if (__uaf_composer_compose_asm_response_init(&generator, &root_obj) != TRUE) {
 		_INFO("_uaf_composer_compose_asm_init fail");
 		goto CATCH;
 	}
@@ -2263,7 +2116,7 @@ _uaf_composer_compose_uaf_process_response_reg(_op_header_t *header, char *final
 	/*header*/
 	JsonNode *_header = json_node_new(JSON_NODE_OBJECT);
 	JsonObject *obj1 = json_object_new();
-	if(obj1 == NULL) {
+	if (obj1 == NULL) {
 		_INFO("json_object_new is NULL");
 		goto CATCH;
 	}
@@ -2274,7 +2127,7 @@ _uaf_composer_compose_uaf_process_response_reg(_op_header_t *header, char *final
 
 	JsonNode *upv = json_node_new(JSON_NODE_OBJECT);
 	JsonObject *obj2 = json_object_new();
-	if(obj2 == NULL) {
+	if (obj2 == NULL) {
 		_INFO("json_object_new is NULL");
 		goto CATCH;
 	}
@@ -2311,7 +2164,7 @@ _uaf_composer_compose_uaf_process_response_reg(_op_header_t *header, char *final
 			GList *iter = g_list_first(ass_data->tc_disp_char_list);
 			while (iter != NULL) {
 				fido_display_png_characteristics_descriptor_s *png_data =
-						(fido_display_png_characteristics_descriptor_s*) (iter->data);
+					(fido_display_png_characteristics_descriptor_s*) (iter->data);
 
 				if (png_data != NULL) {
 					JsonNode *tcNode = json_node_new(JSON_NODE_OBJECT);;
@@ -2374,19 +2227,19 @@ _uaf_composer_compose_uaf_process_response_reg(_op_header_t *header, char *final
 
 	_INFO("_uaf_composer_compose_uaf_process_response_reg return fail");
 
-	if(generator!=NULL) {
+	if (generator != NULL) {
 		g_object_unref(generator);
 		generator = NULL;
 	}
 	return 0;
 
 CATCH:
-	if(generator!=NULL) {
+	if (generator != NULL) {
 		g_object_unref(generator);
 		generator = NULL;
 	}
 
-	if(root_obj!=NULL) {
+	if (root_obj != NULL) {
 		g_object_unref(root_obj);
 		root_obj = NULL;
 	}
@@ -2436,7 +2289,7 @@ _uaf_composer_compose_dereg_request(_response_t *uaf_res)
 	json_builder_add_int_value(upv_root, uaf_res->header->version->major);
 
 	json_builder_set_member_name(upv_root, _JSON_KEY_MINOR);
-	json_builder_add_int_value(upv_root,uaf_res->header->version->minor);
+	json_builder_add_int_value(upv_root, uaf_res->header->version->minor);
 
 	json_builder_end_object(upv_root);
 
@@ -2554,7 +2407,7 @@ _uaf_composer_compose_dereg_request(_response_t *uaf_res)
 	JsonGenerator *generator = json_generator_new();
 	JsonObject *root_obj = json_object_new();
 
-	if(__uaf_composer_compose_asm_init(&generator, &root_obj) != TRUE) {
+	if (__uaf_composer_compose_asm_init(&generator, &root_obj) != TRUE) {
 		_INFO("_uaf_composer_compose_asm_init fail");
 		goto CATCH;
 	}
@@ -2646,7 +2499,7 @@ _uaf_composer_compose_dereg_request(_response_t *uaf_res)
 
 	gsize len = 0;
 	char *dereg_json = json_generator_to_data(generator, &len);
-	if(generator!=NULL) {
+	if (generator != NULL) {
 		g_object_unref(generator);
 		generator = NULL;
 	}
@@ -2660,12 +2513,12 @@ _uaf_composer_compose_dereg_request(_response_t *uaf_res)
 	return NULL;
 
 CATCH:
-	if(generator!=NULL) {
+	if (generator != NULL) {
 		g_object_unref(generator);
 		generator = NULL;
 	}
 
-	if(root_obj!=NULL) {
+	if (root_obj != NULL) {
 		g_object_unref(root_obj);
 		root_obj = NULL;
 	}
@@ -2686,7 +2539,7 @@ __get_policy(JsonObject *uaf_object)
 	RET_IF_FAIL(accepted_array != NULL, NULL);
 
 	int accepted_len = json_array_get_length(accepted_array);
-   _INFO("Parser accepted list count [%d]", accepted_len);
+	_INFO("Parser accepted list count [%d]", accepted_len);
 
 	_policy_t *policy_info = (_policy_t *)calloc(1, sizeof(_policy_t));
 	policy_info->is_keyid_present = false;
@@ -2762,19 +2615,19 @@ __get_policy(JsonObject *uaf_object)
 static _reg_request_t*
 __parse_uaf_reg_message(JsonObject *uaf_object)
 {
-		_reg_request_t *reg_req_temp = (_reg_request_t *)calloc(1, sizeof(_reg_request_t));
+	_reg_request_t *reg_req_temp = (_reg_request_t *)calloc(1, sizeof(_reg_request_t));
 
-		reg_req_temp->challenge = __get_string_from_json_object(uaf_object, _JSON_KEY_CHALLENGE);
+	reg_req_temp->challenge = __get_string_from_json_object(uaf_object, _JSON_KEY_CHALLENGE);
 
-		reg_req_temp->user_name = __get_string_from_json_object(uaf_object, _JSON_KEY_USER_NAME);
+	reg_req_temp->user_name = __get_string_from_json_object(uaf_object, _JSON_KEY_USER_NAME);
 
-		reg_req_temp->policy = __get_policy(uaf_object);
-		if (reg_req_temp->policy != NULL)
-			_INFO("parsed policy [%p]", reg_req_temp->policy);
-		else
-			_INFO("parsed policy [NULL]");
+	reg_req_temp->policy = __get_policy(uaf_object);
+	if (reg_req_temp->policy != NULL)
+		_INFO("parsed policy [%p]", reg_req_temp->policy);
+	else
+		_INFO("parsed policy [NULL]");
 
-		return reg_req_temp;
+	return reg_req_temp;
 }
 
 static GList*
@@ -2791,7 +2644,7 @@ __get_transaction_list(JsonObject *uaf_obj)
 
 	int tr_arr_len = json_array_get_length(tr_arr);
 	int i = 0;
-	for (; i< tr_arr_len; i++) {
+	for (; i < tr_arr_len; i++) {
 		JsonObject *tr_obj = json_array_get_object_element(tr_arr, i);
 		if (tr_obj != NULL) {
 
@@ -2841,17 +2694,17 @@ __parse_uaf_auth_message(JsonObject *uaf_object)
 static void
 __dereg_auth_parser(JsonArray *array, guint index_, JsonNode *element_node, gpointer user_data)
 {
-	 _dereg_request_t *dereg_req_temp = (_dereg_request_t *)user_data;
+	_dereg_request_t *dereg_req_temp = (_dereg_request_t *)user_data;
 
-	 JsonObject *auth_obj = json_node_get_object(element_node);
-	 if (auth_obj != NULL) {
+	JsonObject *auth_obj = json_node_get_object(element_node);
+	if (auth_obj != NULL) {
 		 _dereg_auth_info_t *dereg_auth = (_dereg_auth_info_t*)calloc(1, sizeof(_dereg_auth_info_t));
 
 		 dereg_auth->aaid = __get_string_from_json_object(auth_obj, _JSON_KEY_AAID);
 		 dereg_auth->key_id = __get_string_from_json_object(auth_obj, _JSON_KEY_KEY_ID);
 
 		 dereg_req_temp->auth_info_list = g_list_append(dereg_req_temp->auth_info_list, dereg_auth);
-	 }
+	}
 }
 
 static _dereg_request_t*
@@ -2925,7 +2778,7 @@ _uaf_parser_parse_message(const char *uaf_json, const gchar *channel_binding)
 		if (uaf_message_temp->header == NULL)
 			continue;
 
-		if (strcmp(uaf_message_temp->header->operation, _UAF_OPERATION_NAME_KEY_REG) == 0){
+		if (strcmp(uaf_message_temp->header->operation, _UAF_OPERATION_NAME_KEY_REG) == 0) {
 			uaf_message_temp->data = (void *)__parse_uaf_reg_message(uaf_object);
 			if (uaf_message_temp->data == NULL) {
 
@@ -2933,8 +2786,7 @@ _uaf_parser_parse_message(const char *uaf_json, const gchar *channel_binding)
 				g_object_unref(parser);
 
 				return NULL;
-			}
-			else {
+			} else {
 				uaf_message_temp->type = _MESSAGE_TYPE_REG;
 
 				g_object_unref(parser);
@@ -2943,7 +2795,7 @@ _uaf_parser_parse_message(const char *uaf_json, const gchar *channel_binding)
 			}
 		}
 
-		if (strcmp(uaf_message_temp->header->operation, _UAF_OPERATION_NAME_KEY_AUTH) == 0){
+		if (strcmp(uaf_message_temp->header->operation, _UAF_OPERATION_NAME_KEY_AUTH) == 0) {
 			uaf_message_temp->data = (void *)__parse_uaf_auth_message(uaf_object);
 			if (uaf_message_temp->data == NULL) {
 
@@ -2951,17 +2803,16 @@ _uaf_parser_parse_message(const char *uaf_json, const gchar *channel_binding)
 				g_object_unref(parser);
 
 				return NULL;
-			}
-			else {
-			   uaf_message_temp->type = _MESSAGE_TYPE_AUTH;
+			} else {
+				uaf_message_temp->type = _MESSAGE_TYPE_AUTH;
 
-			   g_object_unref(parser);
-			   return uaf_message_temp;
+				g_object_unref(parser);
+				return uaf_message_temp;
 
 			}
 		}
 
-		if (strcmp(uaf_message_temp->header->operation, _UAF_OPERATION_NAME_KEY_DE_REG) == 0){
+		if (strcmp(uaf_message_temp->header->operation, _UAF_OPERATION_NAME_KEY_DE_REG) == 0) {
 			uaf_message_temp->data = (void *)__parse_uaf_dereg_message(uaf_object);
 			if (uaf_message_temp->data == NULL) {
 
@@ -2969,15 +2820,13 @@ _uaf_parser_parse_message(const char *uaf_json, const gchar *channel_binding)
 				g_object_unref(parser);
 
 				return NULL;
-			}
-			else {
+			} else {
 				uaf_message_temp->type = _MESSAGE_TYPE_DEREG;
 
 				g_object_unref(parser);
 				return uaf_message_temp;
 			}
 		}
-
 	}
 
 CATCH:
@@ -3096,7 +2945,7 @@ _uaf_parser_parse_uaf_response(const char *uaf_response)
 
 		/*Only process reg and auth responses*/
 		if ((strcmp(op, _UAF_OPERATION_NAME_KEY_REG) != 0)
-				&& (strcmp(op, _UAF_OPERATION_NAME_KEY_AUTH) != 0)) {
+			&& (strcmp(op, _UAF_OPERATION_NAME_KEY_AUTH) != 0)) {
 			goto CATCH;
 		}
 
@@ -3116,10 +2965,8 @@ _uaf_parser_parse_uaf_response(const char *uaf_response)
 				assrt_data->assertion_schm = __get_string_from_json_object(assrt_json_obj, _JSON_KEY_ASSERT_SCHEME);
 
 				uaf_res_temp->assertion_list = g_list_append(uaf_res_temp->assertion_list, assrt_data);
-
 			}
 		}
-
 	}
 
 	g_object_unref(parser);
@@ -3220,7 +3067,6 @@ _uaf_parser_parser_asm_get_reg_response(const char *get_reg_resp)
 
 				reg_out->app_reg_list = g_list_append(reg_out->app_reg_list, app_reg);
 				_INFO("");
-
 			}
 		}
 	}
@@ -3290,7 +3136,7 @@ _uaf_composer_compose_get_registrations_request(const char *auth_index)
 	JsonGenerator *generator = json_generator_new();
 	JsonObject *root_obj = json_object_new();
 
-	if(__uaf_composer_compose_asm_init(&generator, &root_obj) != TRUE) {
+	if (__uaf_composer_compose_asm_init(&generator, &root_obj) != TRUE) {
 		_INFO("_uaf_composer_compse_asm_init fail");
 		goto CATCH;
 	}
@@ -3315,7 +3161,7 @@ _uaf_composer_compose_get_registrations_request(const char *auth_index)
 	gsize len = 0;
 	char *get_reg_json = json_generator_to_data(generator, &len);
 
-	if(generator != NULL) {
+	if (generator != NULL) {
 		g_object_unref(generator);
 		generator = NULL;
 	}
@@ -3323,12 +3169,12 @@ _uaf_composer_compose_get_registrations_request(const char *auth_index)
 	return get_reg_json;
 
 CATCH:
-	if(generator != NULL) {
+	if (generator != NULL) {
 		g_object_unref(generator);
 		generator = NULL;
 	}
 
-	if(root_obj != NULL) {
+	if (root_obj != NULL) {
 		g_object_unref(root_obj);
 		root_obj = NULL;
 	}
@@ -3421,5 +3267,4 @@ _parse_asm_conf_file(const char *file_name)
 CATCH:
 	g_object_unref(parser);
 	return proxy;
-
 }
