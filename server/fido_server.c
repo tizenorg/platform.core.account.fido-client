@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <glib.h>
-#if !GLIB_CHECK_VERSION (2, 31, 0)
+#if !GLIB_CHECK_VERSION(2, 31, 0)
 #include <glib/gmacros.h>
 #endif
 
@@ -42,10 +42,10 @@ static Fido* fido_dbus_obj = NULL;
 
 //TODO : current assumption is, ASM will handle multiple request queueing
 
-typedef struct _dbus_info{
+typedef struct _dbus_info {
 	Fido *dbus_obj;
 	GDBusMethodInvocation *invocation;
-}_dbus_info_t;
+} _dbus_info_t;
 
 typedef struct _discover_cb {
 	//fido_authenticator_cb cb;
@@ -56,7 +56,7 @@ typedef struct _discover_cb {
 typedef struct _fido_discover_asm_cb_data {
 	_fido_discover_asm_cb cb;
 	void *user_data;
-}_fido_discover_asm_cb_data_t;
+} _fido_discover_asm_cb_data_t;
 
 typedef enum {
 	_PROCESS_TYPE_MIN = 0,
@@ -125,14 +125,14 @@ __send_discover_response(Fido *object, GDBusMethodInvocation *invocation, int er
 
 		char **empty_arr = __create_empty_json_2d_array();
 		fido_complete_fido_uaf_discover(object, invocation, err,
-										(const gchar * const*)empty_arr, 0);
+										(const gchar * const *)empty_arr, 0);
 
 		__free_2d_string_array(empty_arr, 1);
 		return;
 	}
 
 	fido_complete_fido_uaf_discover(object, invocation, err,
-									(const gchar * const*)asm_resp_2d_arr, asm_resp_len);
+									(const gchar * const *)asm_resp_2d_arr, asm_resp_len);
 
 	__free_2d_string_array(asm_resp_2d_arr, asm_resp_len);
 }
@@ -165,8 +165,7 @@ _asm_get_info_cb(GList *asm_resp_list, void *user_data)
 
 		   __send_discover_response(dbus_info->dbus_obj, dbus_info->invocation, FIDO_ERROR_NONE,
 										   asm_resp_json_arr, data_len);
-		}
-		else
+		} else
 		   __send_discover_response(dbus_info->dbus_obj, dbus_info->invocation, FIDO_ERROR_NOT_SUPPORTED,
 										   NULL, 0);
 	}
@@ -182,8 +181,7 @@ _send_process_response(_process_cb_data_t *cb_data, int tz_err_code, char *uaf_r
 
 	/*TODO*/
 	_dbus_info_t *dbus_info = (_dbus_info_t *)(cb_data->dbus_info);
-	if (dbus_info != NULL)
-	{
+	if (dbus_info != NULL) {
 		if (cb_data->type == _PROCESS_TYPE_CHECK_POLICY) {
 			_INFO("before fido_complete_fido_uaf_check_policy");
 			fido_complete_fido_uaf_check_policy(dbus_info->dbus_obj, dbus_info->invocation, tz_err_code);
@@ -434,8 +432,7 @@ __handle_reg(_process_cb_data_t *cb_data, _matched_auth_data_t *matched_auth)
 		/* app id*/
 		cb_data->uaf_req->header->app_id = strdup(cb_data->uaf_req->facet_id);
 		reg_in->app_id = strdup(cb_data->uaf_req->header->app_id);
-	}
-	else {
+	} else {
 		/* app id*/
 		reg_in->app_id = strdup(cb_data->uaf_req->header->app_id);
 	}
@@ -584,8 +581,7 @@ __handle_auth(_process_cb_data_t *cb_data, _matched_auth_data_t *matched_auth)
 		}
 		cb_data->uaf_req->header->app_id = strdup(cb_data->uaf_req->facet_id);
 		auth_asm_in->app_id = strdup(cb_data->uaf_req->facet_id);
-	}
-	else {
+	} else {
 		auth_asm_in->app_id = strdup(cb_data->uaf_req->header->app_id);
 	}
 
@@ -632,8 +628,7 @@ __handle_auth(_process_cb_data_t *cb_data, _matched_auth_data_t *matched_auth)
 	if (ret == 0 && asm_req_json != NULL) {
 		_asm_ipc_send(matched_auth->asm_id,
 					  asm_req_json, _asm_response_auth_process, cb_data);
-	}
-	else {
+	} else {
 		_send_process_response(cb_data, FIDO_ERROR_INVALID_PARAMETER, NULL);
 	}
 
@@ -736,8 +731,7 @@ __process_dereg_queue(_dereg_q_t *dereg_q)
 	if (ret == 0 && asm_req_json != NULL) {
 		_asm_ipc_send(dereg_data->asm_id,
 					  asm_req_json, _asm_response_dereg_process, dereg_q);
-	}
-	else {
+	} else {
 		_send_process_response(cb_data, FIDO_ERROR_INVALID_PARAMETER, NULL);
 	}
 
@@ -833,13 +827,15 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 
 	_process_cb_data_t *cb_data = (_process_cb_data_t*)user_data;
 
+	if (tz_error_code != FIDO_ERROR_NONE) {
+		_ERR("Failed to get available authenticator info [%d]", tz_error_code);
+		_send_process_response(cb_data, FIDO_ERROR_NOT_SUPPORTED, NULL);
+		return;
+	}
+
 	if (available_authenticators == NULL) {
 		_ERR("No supported authenticators found");
-
-		if (tz_error_code == FIDO_ERROR_NONE)
-			_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
-		else
-			_send_process_response(cb_data, tz_error_code, NULL);
+		_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
 		return;
 	}
 
@@ -865,8 +861,7 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 				_reg_request_t *uaf_reg_req = (_reg_request_t *)(cb_data->uaf_req->data);
 				policy = uaf_reg_req->policy;
 				 _INFO("_PROCESS_TYPE_CHECK_POLICY for reg");
-			}
-			else if (strcmp(cb_data->uaf_req->header->operation, _UAF_OPERATION_NAME_KEY_AUTH) == 0) {
+			} else if (strcmp(cb_data->uaf_req->header->operation, _UAF_OPERATION_NAME_KEY_AUTH) == 0) {
 				_auth_request_t *uaf_auth_req = (_auth_request_t *)(cb_data->uaf_req->data);
 				policy = uaf_auth_req->policy;
 				_INFO("_PROCESS_TYPE_CHECK_POLICY for auth");
@@ -889,16 +884,14 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 			if ((allowed_auth_list != NULL) && g_list_length(allowed_auth_list) > 0) {
 
 				_send_process_response(cb_data, FIDO_ERROR_NONE, NULL);
-			}
-			else {
+			} else {
 				_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
 			}
 
 			if (allowed_auth_list != NULL)
 				g_list_free_full(allowed_auth_list, _free_matched_auth_data);
 
-		}
-		else if (strcmp(cb_data->uaf_req->header->operation, _UAF_OPERATION_NAME_KEY_DE_REG) == 0) {
+		} else if (strcmp(cb_data->uaf_req->header->operation, _UAF_OPERATION_NAME_KEY_DE_REG) == 0) {
 
 			_dereg_request_t *dereg_req = (_dereg_request_t*)(cb_data->uaf_req->data);
 
@@ -913,8 +906,7 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 			if ((matched_auth_list != NULL) && g_list_length(matched_auth_list) > 0) {
 
 				_send_process_response(cb_data, FIDO_ERROR_NONE, NULL);
-			}
-			else {
+			} else {
 				_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
 			}
 
@@ -939,7 +931,7 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 
 		g_list_free_full(available_authenticators_full, _free_asm_auth_list);
 
-		if (matched_auth_list == NULL){
+		if (matched_auth_list == NULL) {
 			_ERR("No supported authenticators found");
 			_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
 			return;
@@ -977,12 +969,10 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 	if (cb_data->type == _PROCESS_TYPE_REG) {
 		_reg_request_t *uaf_reg_req = (_reg_request_t *)(cb_data->uaf_req->data);
 		policy = uaf_reg_req->policy;
-	}
-	else if (cb_data->type == _PROCESS_TYPE_AUTH) {
+	} else if (cb_data->type == _PROCESS_TYPE_AUTH) {
 		_auth_request_t *uaf_auth_req = (_auth_request_t *)(cb_data->uaf_req->data);
 		policy = uaf_auth_req->policy;
-	}
-	else {
+	} else {
 		_send_process_response(cb_data, FIDO_ERROR_UNKNOWN, NULL);
 		return;
 	}
@@ -1001,7 +991,7 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 	GList *allowed_auth_list = _policy_checker_get_matched_auth_list(policy, available_authenticators_full);
 	g_list_free_full(available_authenticators_full, _free_asm_auth_list);
 
-	if (allowed_auth_list == NULL){
+	if (allowed_auth_list == NULL) {
 		_ERR("No supported authenticators found");
 		_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
 
@@ -1047,8 +1037,7 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 				g_list_free_full(allowed_auth_list, _free_matched_auth_data);
 			return;
 		}
-	}
-	else {
+	} else {
 		_INFO("");
 		GList *allowed_auth_list_iter = allowed_auth_list;
 		_matched_auth_data_t *match_data = (_matched_auth_data_t *)(allowed_auth_list_iter->data);
@@ -1134,8 +1123,7 @@ _dbus_on_fido_deinit(Fido *object, GDBusMethodInvocation *invocation)
 {
 	if (is_allowed_to_call(invocation, _FIDO_CLIENT_PRIVILEGE) == false) {
 		fido_complete_fido_uaf_deinit(object, invocation, FIDO_ERROR_PERMISSION_DENIED);
-	}
-	else {
+	} else {
 		//_auth_ui_selector_deinit();
 		fido_complete_fido_uaf_deinit(object, invocation, FIDO_ERROR_NONE);
 	}
@@ -1247,7 +1235,7 @@ _dbus_on_fido_uaf_notify_result(Fido *object, GDBusMethodInvocation *invocation,
 }*/
 
 static void
-on_bus_acquired (GDBusConnection *connection, const gchar *name, gpointer user_data)
+on_bus_acquired(GDBusConnection *connection, const gchar *name, gpointer user_data)
 {
 		dlog_print(DLOG_INFO, "FIDO", "on_bus_acquired");
 
@@ -1303,7 +1291,7 @@ on_bus_acquired (GDBusConnection *connection, const gchar *name, gpointer user_d
 }
 
 static void
-on_name_acquired (GDBusConnection *connection,
+on_name_acquired(GDBusConnection *connection,
 						const gchar     *name,
 						gpointer         user_data)
 {
@@ -1312,13 +1300,13 @@ on_name_acquired (GDBusConnection *connection,
 }
 
 static void
-on_name_lost (GDBusConnection *connection,
+on_name_lost(GDBusConnection *connection,
 						const gchar     *name,
 						gpointer         user_data)
 {
 		_INFO("on_name_lost");
 		_asm_plugin_mgr_destroy();
-		exit (1);
+		exit(1);
 }
 
 static bool
@@ -1326,7 +1314,7 @@ __initialize_dbus(void)
 {
 	_INFO("__initialize_dbus Enter");
 
-	owner_id = g_bus_own_name (G_BUS_TYPE_SYSTEM,
+	owner_id = g_bus_own_name(G_BUS_TYPE_SYSTEM,
 							 _FIDO_DBUS_NAME,
 							 G_BUS_NAME_OWNER_FLAGS_NONE,
 							 on_bus_acquired,
@@ -1337,7 +1325,7 @@ __initialize_dbus(void)
 
 	_INFO("owner_id=[%d]", owner_id);
 
-	if(owner_id == 0) {
+	if (owner_id == 0) {
 			_INFO("gdbus own failed!!");
 			return false;
 	}
@@ -1349,7 +1337,7 @@ __initialize_dbus(void)
 static void
 __initialize(void)
 {
-#if !GLIB_CHECK_VERSION(2,35,0)
+#if !GLIB_CHECK_VERSION(2, 35, 0)
 	g_type_init();
 #endif
 

@@ -1,18 +1,18 @@
 [
-    {
-        "header": {
-            "upv": {
-                "major": "1",
-                "minor": "0"
-            },
-            "op": "Dereg",
-            "appID": "org.tizen.FidoSample"
-        },
-        "authenticators": [
-            {
-                "aaid": "0001#8001",
-                "keyID": "uWrbo_8JI1HmPESrNAStTVV8ZbBrzLsf_kZu1QKX2YY"
-            }
-        ]
-    }
+	{
+		"header": {
+			"upv": {
+				"major": "1",
+				"minor": "0"
+			},
+			"op": "Dereg",
+			"appID": "org.tizen.FidoSample"
+		},
+		"authenticators": [
+			{
+				"aaid": "0001#8001",
+				"keyID": "uWrbo_8JI1HmPESrNAStTVV8ZbBrzLsf_kZu1QKX2YY"
+			}
+		]
+	}
 ]
