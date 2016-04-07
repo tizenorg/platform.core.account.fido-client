@@ -120,19 +120,11 @@ install -m 0644 %SOURCE1 %{buildroot}/usr/share/dbus-1/system-services/org.tizen
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d
 install -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 
-mkdir -p %{buildroot}%{_unitdir}/multi-user.target.wants
-install -m 644 %SOURCE3 %{buildroot}%{_unitdir}/fido.service
-%install_service multi-user.target.wants fido.service
-
 mkdir -p %{buildroot}/usr/share/dbus-1/system-services
 install -m 0644 %SOURCE4 %{buildroot}/usr/share/dbus-1/system-services/org.tizen.dummyasm.service
 
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d
 install -m 0644 %{SOURCE5} %{buildroot}%{_sysconfdir}/dbus-1/system.d/
-
-mkdir -p %{buildroot}%{_unitdir}/multi-user.target.wants
-install -m 644 %SOURCE4 %{buildroot}%{_unitdir}/org.tizen.dummyasm.service
-%install_service multi-user.target.wants org.tizen.dummyasm.service
 
 %else
 %install
@@ -178,8 +170,6 @@ chsmack -a '_' %{_libdir}/fido/asm/
 %{_bindir}/fido-service
 
 %if "%{?tizen_version}" == "3.0"
-%attr(0644,root,root) %{_unitdir}/fido.service
-%attr(0644,root,root) %{_unitdir}/multi-user.target.wants/fido.service
 %attr(0644,root,root) /usr/share/dbus-1/system-services/org.tizen.fido.service
 
 %else
@@ -271,8 +261,6 @@ This is a dummy ASM for testing FIDO client.
 %if "%{?tizen_version}" == "3.0"
 %config %{_sysconfdir}/dbus-1/system.d/org.tizen.dummyasm.conf
 %{_bindir}/dummyasm-service
-%attr(0644,root,root) %{_unitdir}/org.tizen.dummyasm.service
-%attr(0644,root,root) %{_unitdir}/multi-user.target.wants/org.tizen.dummyasm.service
 %attr(0644,root,root) /usr/share/dbus-1/system-services/org.tizen.dummyasm.service
 %{_libdir}/fido/asm/dummy_asm.json
 
