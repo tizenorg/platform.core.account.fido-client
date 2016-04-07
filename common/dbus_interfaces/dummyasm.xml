@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <node name="/org/tizen/dummyasm">
-  <interface name="org.tizen.dummyasm">
-    <method name="asm_request">
-      <arg type="s" name="uaf_request_json" direction="in" />
-      <arg type="i" name="tizen_error_code" direction="out" />
-      <arg type="s" name="uaf_response_json" direction="out" />
-    </method>
-  </interface>
+	<interface name="org.tizen.dummyasm">
+	<method name="asm_request">
+		<arg type="s" name="uaf_request_json" direction="in" />
+		<arg type="i" name="tizen_error_code" direction="out" />
+		<arg type="s" name="uaf_response_json" direction="out" />
+	</method>
+	</interface>
 </node>
