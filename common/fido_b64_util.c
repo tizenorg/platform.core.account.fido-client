@@ -26,111 +26,110 @@
 int
 _fido_b64url_encode(const unsigned char *input,  int inlen, unsigned char *output, int *outlen)
 {
-    _INFO("_fido_b64url_encode start");
+	_INFO("_fido_b64url_encode start");
 
-    BIO * bmem = NULL;
-    BIO * b64 = NULL;
-    BUF_MEM * bptr = NULL;
-    b64 = BIO_new(BIO_f_base64());
-    if(b64 == NULL) {
-        _ERR("BIO_new with BIO_f_base64 failed ");
-        return -1;
-    }
+	BIO * bmem = NULL;
+	BIO * b64 = NULL;
+	BUF_MEM * bptr = NULL;
+	b64 = BIO_new(BIO_f_base64());
+	if(b64 == NULL) {
+		_ERR("BIO_new with BIO_f_base64 failed ");
+		return -1;
+	}
 
-    BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
 
-    bmem = BIO_new(BIO_s_mem());
-    b64 = BIO_push(b64, bmem);
-    BIO_write(b64, input, inlen);
-    BIO_flush(b64);
-    BIO_get_mem_ptr(b64, &bptr);
+	bmem = BIO_new(BIO_s_mem());
+	b64 = BIO_push(b64, bmem);
+	BIO_write(b64, input, inlen);
+	BIO_flush(b64);
+	BIO_get_mem_ptr(b64, &bptr);
 
-    memcpy(output, bptr->data, bptr->length);
-    output[bptr->length] = 0;
-    *outlen = bptr->length;
+	memcpy(output, bptr->data, bptr->length);
+	output[bptr->length] = 0;
+	*outlen = bptr->length;
 
-    int i;
-    for(i =0; i < *outlen ; i++) {
-        if(output[i] == '+')
-            output[i] = '-';
+	int i;
+	for(i =0; i < *outlen ; i++) {
+		if(output[i] == '+')
+			output[i] = '-';
 
-        else if(output[i] == '/')
-            output[i] = '_';
+		else if(output[i] == '/')
+			output[i] = '_';
 
-        else if(output[i] == '=') {
-            *outlen = i ;
-            output[i] = '\0';
-            break;
-        }
-    }
+		else if(output[i] == '=') {
+			*outlen = i ;
+			output[i] = '\0';
+		break;
+		}
+	}
 
-    BIO_free_all(b64);
+	BIO_free_all(b64);
 
-    _INFO("%s", output);
-    _INFO("_fido_b64url_encode end");
+	_INFO("%s", output);
+	_INFO("_fido_b64url_encode end");
 
-    return 0;
+	return 0;
 }
 
 int
 _fido_b64url_decode(const unsigned char *in,  int inlen,
-                        unsigned char *out, int *outlen)
+			unsigned char *out, int *outlen)
 {
-    _INFO("_fido_b64url_decode start");
+	_INFO("_fido_b64url_decode start");
 
-    int npadChars = (inlen %4) == 0 ? 0 : (4 - (inlen%4));
-    unsigned char *base64 = (unsigned char *) malloc(inlen + npadChars);
-    if(base64 == NULL) {
-        _ERR("malloc failed");
-        return -1;
-    }
+	int npadChars = (inlen %4) == 0 ? 0 : (4 - (inlen%4));
+	unsigned char *base64 = (unsigned char *) malloc(inlen + npadChars);
+	if(base64 == NULL) {
+	_ERR("malloc failed");
+	return -1;
+	}
 
-    memcpy(base64, in, inlen);
+	memcpy(base64, in, inlen);
 
-    int i;
-    for(i =0; i < inlen ; i++) {
-        if(base64[i] == '-')
-            base64[i] = '+';
+	int i;
+	for (i = 0; i < inlen ; i++) {
+		if (base64[i] == '-')
+			base64[i] = '+';
 
-        else if(base64[i] == '_')
-            base64[i] = '/';
+		else if (base64[i] == '_')
+			base64[i] = '/';
+	}
 
-    }
+	if (npadChars != 0)
+		memset(base64 + inlen, '=', npadChars);
 
-    if(npadChars != 0)
-        memset(base64 + inlen, '=', npadChars);
+	BIO * b64 = NULL;
+	BIO * bmem = NULL;
+	b64 = BIO_new(BIO_f_base64());
+	if (b64 == NULL) {
+		_ERR("BIO_new with BIO_f_base64 failed");
 
-    BIO * b64 = NULL;
-    BIO * bmem = NULL;
-    b64 = BIO_new(BIO_f_base64());
-    if(b64 == NULL) {
-        _ERR("BIO_new with BIO_f_base64 failed");
+		SAFE_DELETE(base64);
+		return -1;
+	}
+	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+	bmem = BIO_new_mem_buf(base64, inlen);
+	if (bmem == NULL) {
+		_ERR("BIO_new_mem_buf failed");
 
-        SAFE_DELETE(base64);
-        return -1;
-    }
-    BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
-    bmem = BIO_new_mem_buf(base64, inlen);
-    if(bmem == NULL) {
-        _ERR("BIO_new_mem_buf failed");
+		SAFE_DELETE(base64);
+		return -1;
+	}
 
-        SAFE_DELETE(base64);
-        return -1;
-    }
+	bmem = BIO_push(b64, bmem);
+	*outlen = BIO_read(bmem, out, inlen);
+	if (*outlen <= 0) {
+		_ERR("BIO_read failed");
 
-    bmem = BIO_push(b64, bmem);
-    *outlen = BIO_read(bmem, out, inlen);
-    if(*outlen <= 0) {
-        _ERR("BIO_read failed");
+		SAFE_DELETE(base64);
+		return -1;
+	}
 
-        SAFE_DELETE(base64);
-        return -1;
-    }
+	if (bmem)
+		BIO_free_all(bmem);
 
-    if(bmem)
-        BIO_free_all(bmem);
+	_INFO("_fido_b64url_decode end");
 
-    _INFO("_fido_b64url_decode end");
-
-    return 0;
+	return 0;
 }
