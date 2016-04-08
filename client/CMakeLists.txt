@@ -3,9 +3,9 @@ SET(CLIENT_SRCS
 	fido_uaf_client.c
 	fido_uaf_authenticator.c
 	../common/fido_json_handler.c
-        ../common/fido_b64_util.c
-    ../common/fido_tlv_util.c
-    ../common/fido_uaf_utils.c
+	../common/fido_b64_util.c
+	../common/fido_tlv_util.c
+	../common/fido_uaf_utils.c
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)

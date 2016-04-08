@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <manifest xmlns="http://tizen.org/ns/packages" api-version="2.4" package="org.tizen.fidosvcui" version="1.0.0">
-    <profile name="mobile"/>
-    <ui-application appid="org.tizen.fidosvcui" exec="/usr/apps/org.tizen.fidosvcui/bin/org.tizen.fidosvcui" multiple="false" nodisplay="true" taskmanage="false" type="capp">
-        <label>fidosvcui</label>
-        <icon>org.tizen.fidosvcui.png</icon>
-    </ui-application>
-    <privileges>
-        <privilege>http://tizen.org/privilege/account.read</privilege>
-        <privilege>http://tizen.org/privilege/account.write</privilege>
-    </privileges>
+	<profile name="mobile"/>
+	<ui-application appid="org.tizen.fidosvcui" exec="/usr/apps/org.tizen.fidosvcui/bin/org.tizen.fidosvcui" multiple="false" nodisplay="true" taskmanage="false" type="capp">
+		<label>fidosvcui</label>
+		<icon>org.tizen.fidosvcui.png</icon>
+	</ui-application>
+	<privileges>
+		<privilege>http://tizen.org/privilege/account.read</privilege>
+		<privilege>http://tizen.org/privilege/account.write</privilege>
+	</privileges>
 </manifest>
