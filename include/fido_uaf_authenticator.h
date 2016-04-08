@@ -160,8 +160,8 @@ typedef void (*fido_attestation_type_cb)(fido_auth_attestation_type_e att_type, 
  * @retval     #FIDO_ERROR_NONE               Successful
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_foreach_attestation_type(const fido_authenticator_h auth, fido_attestation_type_cb cb,
-                                                          void *user_data);
+EXPORT_API int fido_authenticator_foreach_attestation_type(const fido_authenticator_h auth, 
+	fido_attestation_type_cb cb,	void *user_data);
 
 /**
  * @brief Retrieves the user verification method of this Authenticator.
@@ -176,7 +176,7 @@ EXPORT_API int fido_authenticator_foreach_attestation_type(const fido_authentica
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
 EXPORT_API int fido_authenticator_get_verification_method(const fido_authenticator_h auth,
-														  fido_auth_user_verify_type_e *user_verification);
+	fido_auth_user_verify_type_e *user_verification);
 
 /**
  * @brief Retrieves the key protection method of this Authenticator.
@@ -190,8 +190,8 @@ EXPORT_API int fido_authenticator_get_verification_method(const fido_authenticat
  * @retval     #FIDO_ERROR_NONE               Successful
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_key_protection_method(const fido_authenticator_h auth,
-															fido_auth_key_protection_type_e *key_protection);
+EXPORT_APIint fido_authenticator_get_key_protection_method(const fido_authenticator_h auth,
+	fido_auth_key_protection_type_e *key_protection);
 
 /**
  * @brief Retrieves the matcher protection method of this Authenticator.
@@ -206,7 +206,7 @@ EXPORT_API int fido_authenticator_get_key_protection_method(const fido_authentic
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
 EXPORT_API int fido_authenticator_get_matcher_protection_method(const fido_authenticator_h auth,
-																fido_auth_matcher_protection_type_e *matcher_protection);
+	fido_auth_matcher_protection_type_e *matcher_protection);
 
 /**
  * @brief Retrieves the attachment hint of this Authenticator.
@@ -221,7 +221,7 @@ EXPORT_API int fido_authenticator_get_matcher_protection_method(const fido_authe
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
 EXPORT_API int fido_authenticator_get_attachment_hint(const fido_authenticator_h auth,
-													  fido_auth_attachment_hint_e *attachment_hint);
+	fido_auth_attachment_hint_e *attachment_hint);
 
 /**
  * @brief Checks if the Authenticator is Second factor only which is supported by U2F standards.
@@ -247,7 +247,7 @@ EXPORT_API bool fido_authenticator_get_is_second_factor_only(const fido_authenti
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
 EXPORT_API int fido_authenticator_get_tc_discplay(const fido_authenticator_h auth,
-												  fido_auth_tc_display_type_e *tc_display);
+	fido_auth_tc_display_type_e *tc_display);
 
 /**
  * @brief Retrieves the Transaction Confirmation display content type of this Authenticator.
