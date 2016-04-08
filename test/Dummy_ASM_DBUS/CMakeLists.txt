@@ -20,14 +20,14 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/common)
 
 ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/common/dummy-asm-stub.c ${CMAKE_SOURCE_DIR}/common/dummy-asm-stub.h
 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/common/
-COMMAND gdbus-codegen --interface-prefix org.tizen. --generate-c-code dummy-asm-stub ${CMAKE_SOURCE_DIR}/common/dbus_interfaces/dummyasm.xml 
+COMMAND gdbus-codegen --interface-prefix org.tizen. --generate-c-code dummy-asm-stub ${CMAKE_SOURCE_DIR}/common/dbus_interfaces/dummyasm.xml
 COMMENT "Generating Dummy ASM GDBus stubs........................")
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -Wall -Werror")
 SET(CMAKE_LDFLAGS "-Wl,-zdefs")
 
 SET(DUMMY_ASM_SRCS
-        dummy_asm_server.c
+		dummy_asm_server.c
 )
 
 ADD_EXECUTABLE(${ASM_DAEMON} ${DUMMY_ASM_SRCS} ${CMAKE_SOURCE_DIR}/common/dummy-asm-stub.c)
