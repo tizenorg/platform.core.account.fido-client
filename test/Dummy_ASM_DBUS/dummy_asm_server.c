@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <glib.h>
-#if !GLIB_CHECK_VERSION (2, 31, 0)
+#if !GLIB_CHECK_VERSION(2, 31, 0)
 #include <glib/gmacros.h>
 #endif
 
@@ -57,243 +57,240 @@ static Dummyasm* __dbus_obj = NULL;
 static inline int
 __read_proc(const char *path, char *buf, int size)
 {
-    int fd = 0;
-    int ret = 0;
+	int fd = 0;
+	int ret = 0;
 
-    if (buf == NULL || path == NULL) {
-        _ERR("path and buffer is mandatory\n");
-        return -1;
-    }
+	if (buf == NULL || path == NULL) {
+		_ERR("path and buffer is mandatory\n");
+		return -1;
+	}
 
-    fd = open(path, O_RDONLY);
-    if (fd < 0) {
-        _ERR("fd open error(%d)\n", fd);
-        return -1;
-    }
+	fd = open(path, O_RDONLY);
+	if (fd < 0) {
+		_ERR("fd open error(%d)\n", fd);
+		return -1;
+	}
 
-    ret = read(fd, buf, size - 1);
-    if (ret <= 0) {
-        _ERR("fd read error(%d)\n", fd);
-        close(fd);
-        return -1;
-    } else
-        buf[ret] = 0;
+	ret = read(fd, buf, size - 1);
+	if (ret <= 0) {
+		_ERR("fd read error(%d)\n", fd);
+		close(fd);
+		return -1;
+	} else
+		buf[ret] = 0;
 
-    close(fd);
+	close(fd);
 
-    return ret;
+	return ret;
 }
 
 static char*
 __get_proc_path_of_dbus_caller(GDBusMethodInvocation *invocation)
 {
-    //pid_t remote_pid = 0;
-    GError *error = NULL;
-    GDBusConnection *connection = NULL;
-    GVariant *response = NULL;
-    guint32 upid;
-    const gchar *sender = NULL;
+	//pid_t remote_pid = 0;
+	GError *error = NULL;
+	GDBusConnection *connection = NULL;
+	GVariant *response = NULL;
+	guint32 upid;
+	const gchar *sender = NULL;
 
-    sender = g_dbus_method_invocation_get_sender (invocation);
-    if (!sender) {
-        _ERR("Failed to get sender");
-        return NULL;
-    }
+	sender = g_dbus_method_invocation_get_sender(invocation);
+	if (!sender) {
+		_ERR("Failed to get sender");
+		return NULL;
+	}
 
-    connection = g_dbus_method_invocation_get_connection(invocation);
-    if (connection == NULL) {
-        _ERR("Failed to open connection for the invocation [%s]", error->message);
-        g_error_free (error);
-        return NULL;
-    }
+	connection = g_dbus_method_invocation_get_connection(invocation);
+	if (connection == NULL) {
+		_ERR("Failed to open connection for the invocation [%s]", error->message);
+		g_error_free(error);
+		return NULL;
+	}
 
-    error = NULL;
-    response = g_dbus_connection_call_sync (connection,
-            _FREEDESKTOP_SERVICE, _FREEDESKTOP_PATH,
-            _FREEDESKTOP_INTERFACE, "GetConnectionUnixProcessID",
-            g_variant_new ("(s)", sender), ((const GVariantType *) "(u)"),
-            G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
+	error = NULL;
+	response = g_dbus_connection_call_sync(connection,
+			_FREEDESKTOP_SERVICE, _FREEDESKTOP_PATH,
+			_FREEDESKTOP_INTERFACE, "GetConnectionUnixProcessID",
+			g_variant_new("(s)", sender), ((const GVariantType *) "(u)"),
+			G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
 
-    if (response == NULL) {
-        _ERR("Failed to get caller id [%s]", error->message);
-        g_error_free (error);
-        return NULL;
-    }
+	if (response == NULL) {
+		_ERR("Failed to get caller id [%s]", error->message);
+		g_error_free(error);
+		return NULL;
+	}
 
-    g_variant_get (response, "(u)", &upid);
-    _INFO("Remote msg-bus peer service=%s pid=%u", sender, upid);
-    //remote_pid = (pid_t) upid;
+	g_variant_get(response, "(u)", &upid);
+	_INFO("Remote msg-bus peer service=%s pid=%u", sender, upid);
+	//remote_pid = (pid_t) upid;
 
-    g_variant_unref (response);
+	g_variant_unref(response);
 
-    char buf[128];
-    int ret = 0;
+	char buf[128];
+	int ret = 0;
 
-    snprintf(buf, sizeof(buf), "/proc/%d/cmdline", upid);
-    ret = __read_proc(buf, buf, sizeof(buf));
-    if (ret <= 0) {
-        _ERR("No proc directory (%d)\n", upid);
-        return NULL;
-    }
+	snprintf(buf, sizeof(buf), "/proc/%d/cmdline", upid);
+	ret = __read_proc(buf, buf, sizeof(buf));
+	if (ret <= 0) {
+		_ERR("No proc directory (%d)\n", upid);
+		return NULL;
+	}
 
-    _INFO("Caller=[%s]", buf);
+	_INFO("Caller=[%s]", buf);
 
-    return strdup(buf);
+	return strdup(buf);
 }
 
 static char*
 __get_request_type(const char *asm_req_json)
 {
-    if (asm_req_json == NULL)
-        return NULL;
+	if (asm_req_json == NULL)
+		return NULL;
 
-    JsonParser *parser = json_parser_new();
-    RET_IF_FAIL(parser != NULL, NULL);
+	JsonParser *parser = json_parser_new();
+	RET_IF_FAIL(parser != NULL, NULL);
 
-    GError *parse_err = NULL;
-    json_parser_load_from_data(parser, asm_req_json, -1, &parse_err);
-    RET_IF_FAIL(parse_err == NULL, NULL);
+	GError *parse_err = NULL;
+	json_parser_load_from_data(parser, asm_req_json, -1, &parse_err);
+	RET_IF_FAIL(parse_err == NULL, NULL);
 
-    JsonNode *root = json_parser_get_root(parser);
-    RET_IF_FAIL(root != NULL, NULL);
+	JsonNode *root = json_parser_get_root(parser);
+	RET_IF_FAIL(root != NULL, NULL);
 
-    JsonObject *root_obj = json_node_get_object(root);
+	JsonObject *root_obj = json_node_get_object(root);
 
-    const char *req_type = json_object_get_string_member(root_obj, "requestType");
+	const char *req_type = json_object_get_string_member(root_obj, "requestType");
 
-    return strdup(req_type);
+	return strdup(req_type);
 
 }
 
 gboolean
 _dbus_on_asm_request(Dummyasm *object, GDBusMethodInvocation *invocation, const gchar *uaf_request_json)
 {
-    _INFO("_dbus_on_asm_request");
+	_INFO("_dbus_on_asm_request");
 
-    char *caller_path = __get_proc_path_of_dbus_caller(invocation);
-    if (caller_path == NULL) {
-        _ERR("Failed to get caller path");
-        dummyasm_complete_asm_request(object, invocation, -1, NULL);
-        return true;
-    }
+	char *caller_path = __get_proc_path_of_dbus_caller(invocation);
+	if (caller_path == NULL) {
+		_ERR("Failed to get caller path");
+		dummyasm_complete_asm_request(object, invocation, -1, NULL);
+		return true;
+	}
 
-    if (strcmp(caller_path, _FIDO_SERVICE_PATH) != 0) {
-        _ERR("Only fido-service is allowed to call ASM");
-        dummyasm_complete_asm_request(object, invocation, -1, NULL);
-        return true;
-    }
+	if (strcmp(caller_path, _FIDO_SERVICE_PATH) != 0) {
+		_ERR("Only fido-service is allowed to call ASM");
+		dummyasm_complete_asm_request(object, invocation, -1, NULL);
+		return true;
+	}
 
-    char *req_type = __get_request_type(uaf_request_json);
-    if (req_type == NULL){
-         dummyasm_complete_asm_request(object, invocation, -1, NULL);
-        return true;
-    }
+	char *req_type = __get_request_type(uaf_request_json);
+	if (req_type == NULL) {
+		 dummyasm_complete_asm_request(object, invocation, -1, NULL);
+		return true;
+	}
 
-    _INFO("request type=[%s]", req_type);
+	_INFO("request type=[%s]", req_type);
 
-    if (strcmp(req_type, "GetInfo") == 0){
-        dummyasm_complete_asm_request(object, invocation, 0, _GET_INFO_RESPONSE);
-    }
-    if (strcmp(req_type, "Register") == 0){
-        dummyasm_complete_asm_request(object, invocation, 0, _REG_RESPONSE);
-    }
-    if (strcmp(req_type, "Authenticate") == 0){
-        dummyasm_complete_asm_request(object, invocation, 0, _AUTH_RESPONSE);
-    }
-    if (strcmp(req_type, "Deregister") == 0){
-        dummyasm_complete_asm_request(object, invocation, 0, _DEREG_RESPONSE);
-    }
-    if (strcmp(req_type, "GetRegistrations") == 0) {
-        dummyasm_complete_asm_request(object, invocation, 0, _GET_REGISTRATIONS_RESPONSE);
-    }
+	if (strcmp(req_type, "GetInfo") == 0) {
+		dummyasm_complete_asm_request(object, invocation, 0, _GET_INFO_RESPONSE);
+	}
+	if (strcmp(req_type, "Register") == 0) {
+		dummyasm_complete_asm_request(object, invocation, 0, _REG_RESPONSE);
+	}
+	if (strcmp(req_type, "Authenticate") == 0) {
+		dummyasm_complete_asm_request(object, invocation, 0, _AUTH_RESPONSE);
+	}
+	if (strcmp(req_type, "Deregister") == 0) {
+		dummyasm_complete_asm_request(object, invocation, 0, _DEREG_RESPONSE);
+	}
+	if (strcmp(req_type, "GetRegistrations") == 0) {
+		dummyasm_complete_asm_request(object, invocation, 0, _GET_REGISTRATIONS_RESPONSE);
+	}
 
-    return true;
+	return true;
 }
 
 static void
-on_bus_acquired (GDBusConnection *connection, const gchar *name, gpointer user_data)
+on_bus_acquired(GDBusConnection *connection, const gchar *name, gpointer user_data)
 {
 		_INFO("on_bus_acquired");
-	 
-        GDBusInterfaceSkeleton* interface = NULL;
-        __dbus_obj = dummyasm_skeleton_new();
-        if (__dbus_obj == NULL) {
-            return;
-        }
 
-        interface = G_DBUS_INTERFACE_SKELETON(__dbus_obj);
-        if (!g_dbus_interface_skeleton_export(interface, connection, _DUMMY_ASM_SERVICE_DBUS_PATH, NULL)) {
-            return;
-        }
+		GDBusInterfaceSkeleton* interface = NULL;
+		__dbus_obj = dummyasm_skeleton_new();
+		if (__dbus_obj == NULL) {
+			return;
+		}
 
-        _INFO("before g_signal_connect");
-        g_signal_connect(__dbus_obj, "handle_asm_request",
-                        G_CALLBACK(_dbus_on_asm_request), NULL);
+		interface = G_DBUS_INTERFACE_SKELETON(__dbus_obj);
+		if (!g_dbus_interface_skeleton_export(interface, connection, _DUMMY_ASM_SERVICE_DBUS_PATH, NULL)) {
+			return;
+		}
 
+		_INFO("before g_signal_connect");
+		g_signal_connect(__dbus_obj, "handle_asm_request",
+						G_CALLBACK(_dbus_on_asm_request), NULL);
 }
 
 static void
-on_name_acquired (GDBusConnection *connection,
-                        const gchar     *name,
-                        gpointer         user_data)
+on_name_acquired(GDBusConnection *connection,
+						const gchar     *name,
+						gpointer         user_data)
 {
 	_INFO("on_name_acquired");
 }
 
 static void
-on_name_lost (GDBusConnection *connection,
-                        const gchar     *name,
-                        gpointer         user_data)
+on_name_lost(GDBusConnection *connection,
+						const gchar     *name,
+						gpointer         user_data)
 {
 	_INFO("on_name_lost");
-    exit (1);
+	exit(1);
 }
 
 static bool _initialize_dbus()
 {
 	_INFO("_initialize_dbus");
-    owner_id = g_bus_own_name (G_BUS_TYPE_SYSTEM,
-                             "org.tizen.dummyasm",
-                             G_BUS_NAME_OWNER_FLAGS_NONE,
-                             on_bus_acquired,
-                             on_name_acquired,
-                             on_name_lost,
-                             NULL,
-                             NULL);
+	owner_id = g_bus_own_name(G_BUS_TYPE_SYSTEM,
+							 "org.tizen.dummyasm",
+							 G_BUS_NAME_OWNER_FLAGS_NONE,
+							 on_bus_acquired,
+							 on_name_acquired,
+							 on_name_lost,
+							 NULL,
+							 NULL);
 
-    if(owner_id == 0) {
-            _INFO("owner_id is 0");
-            return false;
-    }
+	if (owner_id == 0) {
+			_INFO("owner_id is 0");
+			return false;
+	}
 
-    
-    return true;
+	return true;
 }
 
 static void
 _initialize(void)
 {
-#if !GLIB_CHECK_VERSION(2,35,0)
-    g_type_init();
+#if !GLIB_CHECK_VERSION(2, 35, 0)
+	g_type_init();
 #endif
 
-    if (_initialize_dbus() == false) {
-        /* because dbus's initialize failed, we cannot continue any more. */
-        exit(1);
-    }
+	if (_initialize_dbus() == false) {
+		/* because dbus's initialize failed, we cannot continue any more. */
+		exit(1);
+	}
 }
 
 int
 main(void)
 {
-    GMainLoop *mainloop = NULL;
+	GMainLoop *mainloop = NULL;
 
-    mainloop = g_main_loop_new(NULL, FALSE);
+	mainloop = g_main_loop_new(NULL, FALSE);
 
-    _initialize();
+	_initialize();
 
-    g_main_loop_run(mainloop);
+	g_main_loop_run(mainloop);
 
-    
-    return 0;
+	return 0;
 }
