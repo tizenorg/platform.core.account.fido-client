@@ -27,7 +27,7 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -Wall -Werror")
 SET(CMAKE_LDFLAGS "-Wl,-zdefs")
 
 SET(DUMMY_ASM_SRCS
-        dummy_asm_server.c
+		dummy_asm_server.c
 )
 
 ADD_EXECUTABLE(${ASM_DAEMON} ${DUMMY_ASM_SRCS} ${CMAKE_SOURCE_DIR}/common/dummy-asm-stub.c)
