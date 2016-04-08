@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <manifest xmlns="http://tizen.org/ns/packages" api-version="2.4" package="org.tizen.FidoSample" version="1.0.0">
-    <profile name="mobile"/>
-    <ui-application appid="org.tizen.FidoSample" exec="/opt/usr/apps/org.tizen.FidoSample/bin/org.tizen.FidoSample" multiple="false" nodisplay="false" taskmanage="true" type="capp">
-        <label>fidosample</label>
-        <icon>org.tizen.FidoSample.png</icon>
-    </ui-application>
-    <privileges>
-        <privilege>http://tizen.org/privilege/account.read</privilege>
-        <privilege>http://tizen.org/privilege/account.write</privilege>
-        <privilege>http://tizen.org/privilege/internet</privilege>
-    </privileges>
+	<profile name="mobile"/>
+	<ui-application appid="org.tizen.FidoSample" exec="/opt/usr/apps/org.tizen.FidoSample/bin/org.tizen.FidoSample" multiple="false" nodisplay="false" taskmanage="true" type="capp">
+		<label>fidosample</label>
+		<icon>org.tizen.FidoSample.png</icon>
+	</ui-application>
+	<privileges>
+		<privilege>http://tizen.org/privilege/account.read</privilege>
+		<privilege>http://tizen.org/privilege/account.write</privilege>
+		<privilege>http://tizen.org/privilege/internet</privilege>
+	</privileges>
 </manifest>

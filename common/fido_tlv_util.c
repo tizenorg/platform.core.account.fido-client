@@ -27,49 +27,49 @@
 static _tlv_t*
 __get_tlv_pack_by_type(const guchar *tlv_buffer_in, uint16_t type_in, int max_len_in)
 {
-    //_INFO("__get_tlv_pack_by_type [%u]", type_in);
+	//_INFO("__get_tlv_pack_by_type [%u]", type_in);
 
-    int i = 0;
+	int i = 0;
 
-    while (1) {
-        uint16_t lb = tlv_buffer_in[i + 0];
-        uint16_t  hb = tlv_buffer_in[i + 1];
+	while (1) {
+		uint16_t lb = tlv_buffer_in[i + 0];
+		uint16_t  hb = tlv_buffer_in[i + 1];
 
-        uint16_t val = hb << 8;
-        val = val | lb;
+		uint16_t val = hb << 8;
+		val = val | lb;
 
-        uint16_t type = val;
+		uint16_t type = val;
 
-        lb = 0;
-        hb = 0;
-        val = 0;
+		lb = 0;
+		hb = 0;
+		val = 0;
 
-        lb = tlv_buffer_in[i + 2];
-        hb = tlv_buffer_in[i + 3];
+		lb = tlv_buffer_in[i + 2];
+		hb = tlv_buffer_in[i + 3];
 
-        val = hb << 8;
-        val = val | lb;
+		val = hb << 8;
+		val = val | lb;
 
-        uint16_t length = val;
+		uint16_t length = val;
 
-        if (type == type_in) {
-            _tlv_t *tlv = (_tlv_t*)calloc(1, sizeof(_tlv_t));
-            tlv->type = type;
-            tlv->len = length;
-            if (tlv->len > 0) {
-                tlv->val = (uint8_t *)calloc(1, tlv->len);
-                memcpy(tlv->val, tlv_buffer_in + i + 2 + 2, tlv->len);
-            }
-            //_INFO("Found key");
-            return tlv;
-        }
+		if (type == type_in) {
+			_tlv_t *tlv = (_tlv_t*)calloc(1, sizeof(_tlv_t));
+			tlv->type = type;
+			tlv->len = length;
+			if (tlv->len > 0) {
+				tlv->val = (uint8_t *)calloc(1, tlv->len);
+				memcpy(tlv->val, tlv_buffer_in + i + 2 + 2, tlv->len);
+			}
+			//_INFO("Found key");
+			return tlv;
+		}
 
-        i += 2 + 2 + length;
-        if (i >= max_len_in)
-            break;
-    }
+		i += 2 + 2 + length;
+		if (i >= max_len_in)
+			break;
+	}
 
-    return NULL;
+	return NULL;
 }
 
 
