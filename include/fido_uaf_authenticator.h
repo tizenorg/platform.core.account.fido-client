@@ -39,7 +39,10 @@
  * @param[out] user_data The user data that was attached during fido_foreach_authenticator() call.
  * @see fido_foreach_authenticator()
  */
-typedef void (*fido_authenticator_cb)(const fido_authenticator_h auth_info, void *user_data);
+typedef void (
+  *fido_authenticator_cb) (
+  const fido_authenticator_h auth_info,
+  void *user_data);
 
 /**
  * @brief Retrieves  all the available FIDO authenticators supported by this Device.
@@ -58,7 +61,9 @@ typedef void (*fido_authenticator_cb)(const fido_authenticator_h auth_info, void
  * @retval     #FIDO_ERROR_PERMISSION_DENIED The application does not have permission to call this API.
  * @retval     #FIDO_ERROR_NOT_SUPPORTED FIDO is not supported on this device.
  */
-EXPORT_API int fido_foreach_authenticator(fido_authenticator_cb cb, void *user_data);
+EXPORT_API int fido_foreach_authenticator (
+  fido_authenticator_cb cb,
+  void *user_data);
 
 /**
  * @brief Gets the Authenticator title.
@@ -74,7 +79,9 @@ EXPORT_API int fido_foreach_authenticator(fido_authenticator_cb cb, void *user_d
  * @retval     #FIDO_ERROR_OUT_OF_MEMORY      Out of Memory
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_title(const fido_authenticator_h auth, char **title);
+EXPORT_API int fido_authenticator_get_title (
+  const fido_authenticator_h auth,
+  char **title);
 
 /**
  * @brief Retrieves the Authenticator AAID(Authenticator Attestation ID).
@@ -90,7 +97,9 @@ EXPORT_API int fido_authenticator_get_title(const fido_authenticator_h auth, cha
  * @retval     #FIDO_ERROR_OUT_OF_MEMORY      Out of Memory
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_aaid(const fido_authenticator_h auth, char **aaid);
+EXPORT_API int fido_authenticator_get_aaid (
+  const fido_authenticator_h auth,
+  char **aaid);
 
 /**
  * @brief Retrieves the Authenticator description
@@ -106,7 +115,9 @@ EXPORT_API int fido_authenticator_get_aaid(const fido_authenticator_h auth, char
  * @retval     #FIDO_ERROR_OUT_OF_MEMORY      Out of Memory
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_description(const fido_authenticator_h auth, char **desc);
+EXPORT_API int fido_authenticator_get_description (
+  const fido_authenticator_h auth,
+  char **desc);
 
 /**
  * @brief Retrieves the Authenticator assertion scheme.
@@ -122,7 +133,9 @@ EXPORT_API int fido_authenticator_get_description(const fido_authenticator_h aut
  * @retval     #FIDO_ERROR_OUT_OF_MEMORY      Out of Memory
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_assertion_scheme(const fido_authenticator_h auth, char **scheme);
+EXPORT_API int fido_authenticator_get_assertion_scheme (
+  const fido_authenticator_h auth,
+  char **scheme);
 
 /**
  * @brief Retrieves the Authenticator algorithm
@@ -136,7 +149,9 @@ EXPORT_API int fido_authenticator_get_assertion_scheme(const fido_authenticator_
  * @retval     #FIDO_ERROR_NONE               Successful
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_algorithm(const fido_authenticator_h auth, fido_auth_algo_e *algo);
+EXPORT_API int fido_authenticator_get_algorithm (
+  const fido_authenticator_h auth,
+  fido_auth_algo_e * algo);
 
 /**
  * @brief Called once for each result of calling fido_authenticator_foreach_attestation_type()
@@ -145,7 +160,10 @@ EXPORT_API int fido_authenticator_get_algorithm(const fido_authenticator_h auth,
  * @param[out] att_type The Authenticator attestation type.
  * @param[out] user_data The user data that was attached during fido_authenticator_foreach_attestation_type() call.
  */
-typedef void (*fido_attestation_type_cb)(fido_auth_attestation_type_e att_type, void *user_data);
+typedef void (
+  *fido_attestation_type_cb) (
+  fido_auth_attestation_type_e att_type,
+  void *user_data);
 
 /**
  * @brief Retrieves all the available attestation types for this Authenticator.
@@ -160,8 +178,10 @@ typedef void (*fido_attestation_type_cb)(fido_auth_attestation_type_e att_type, 
  * @retval     #FIDO_ERROR_NONE               Successful
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_foreach_attestation_type(const fido_authenticator_h auth, fido_attestation_type_cb cb,
-                                                          void *user_data);
+EXPORT_API int fido_authenticator_foreach_attestation_type (
+  const fido_authenticator_h auth,
+  fido_attestation_type_cb cb,
+  void *user_data);
 
 /**
  * @brief Retrieves the user verification method of this Authenticator.
@@ -175,8 +195,9 @@ EXPORT_API int fido_authenticator_foreach_attestation_type(const fido_authentica
  * @retval     #FIDO_ERROR_NONE               Successful
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_verification_method(const fido_authenticator_h auth,
-														  fido_auth_user_verify_type_e *user_verification);
+EXPORT_API int fido_authenticator_get_verification_method (
+  const fido_authenticator_h auth,
+  fido_auth_user_verify_type_e * user_verification);
 
 /**
  * @brief Retrieves the key protection method of this Authenticator.
@@ -190,8 +211,9 @@ EXPORT_API int fido_authenticator_get_verification_method(const fido_authenticat
  * @retval     #FIDO_ERROR_NONE               Successful
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_key_protection_method(const fido_authenticator_h auth,
-															fido_auth_key_protection_type_e *key_protection);
+EXPORT_APIint fido_authenticator_get_key_protection_method (
+  const fido_authenticator_h auth,
+  fido_auth_key_protection_type_e * key_protection);
 
 /**
  * @brief Retrieves the matcher protection method of this Authenticator.
@@ -205,8 +227,9 @@ EXPORT_API int fido_authenticator_get_key_protection_method(const fido_authentic
  * @retval     #FIDO_ERROR_NONE               Successful
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_matcher_protection_method(const fido_authenticator_h auth,
-																fido_auth_matcher_protection_type_e *matcher_protection);
+EXPORT_API int fido_authenticator_get_matcher_protection_method (
+  const fido_authenticator_h auth,
+  fido_auth_matcher_protection_type_e * matcher_protection);
 
 /**
  * @brief Retrieves the attachment hint of this Authenticator.
@@ -220,8 +243,9 @@ EXPORT_API int fido_authenticator_get_matcher_protection_method(const fido_authe
  * @retval     #FIDO_ERROR_NONE               Successful
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_attachment_hint(const fido_authenticator_h auth,
-													  fido_auth_attachment_hint_e *attachment_hint);
+EXPORT_API int fido_authenticator_get_attachment_hint (
+  const fido_authenticator_h auth,
+  fido_auth_attachment_hint_e * attachment_hint);
 
 /**
  * @brief Checks if the Authenticator is Second factor only which is supported by U2F standards.
@@ -232,7 +256,8 @@ EXPORT_API int fido_authenticator_get_attachment_hint(const fido_authenticator_h
  * @return     @c true if its only second factor,
  *             otherwise false.
  */
-EXPORT_API bool fido_authenticator_get_is_second_factor_only(const fido_authenticator_h auth);
+EXPORT_API bool fido_authenticator_get_is_second_factor_only (
+  const fido_authenticator_h auth);
 
 /**
  * @brief Retrieves the Transaction Confirmation display type of this Authenticator.
@@ -246,8 +271,9 @@ EXPORT_API bool fido_authenticator_get_is_second_factor_only(const fido_authenti
  * @retval     #FIDO_ERROR_NONE               Successful
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_tc_discplay(const fido_authenticator_h auth,
-												  fido_auth_tc_display_type_e *tc_display);
+EXPORT_API int fido_authenticator_get_tc_discplay (
+  const fido_authenticator_h auth,
+  fido_auth_tc_display_type_e * tc_display);
 
 /**
  * @brief Retrieves the Transaction Confirmation display content type of this Authenticator.
@@ -263,7 +289,9 @@ EXPORT_API int fido_authenticator_get_tc_discplay(const fido_authenticator_h aut
  * @retval     #FIDO_ERROR_OUT_OF_MEMORY      Out of Memory
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_tc_display_type(const fido_authenticator_h auth, char **tc_display_content_type);
+EXPORT_API int fido_authenticator_get_tc_display_type (
+  const fido_authenticator_h auth,
+  char **tc_display_content_type);
 
 /**
  * @brief Retrieves the icon of this Authenticator.
@@ -279,7 +307,9 @@ EXPORT_API int fido_authenticator_get_tc_display_type(const fido_authenticator_h
  * @retval     #FIDO_ERROR_OUT_OF_MEMORY      Out of Memory
  * @retval     #FIDO_ERROR_INVALID_PARAMETER  Invalid parameter
  */
-EXPORT_API int fido_authenticator_get_icon(const fido_authenticator_h auth, char **icon);
+EXPORT_API int fido_authenticator_get_icon (
+  const fido_authenticator_h auth,
+  char **icon);
 
 /**
  * @}

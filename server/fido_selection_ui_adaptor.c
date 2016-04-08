@@ -46,34 +46,34 @@ static int __ui_svc_pid = -1;
 static int _process_ui_selection_queue(void);
 
 typedef struct _ui_response_cb_data {
-    GList *auth_list;
-    _ui_response_cb cb;
-    void *user_data;
+	GList *auth_list;
+	_ui_response_cb cb;
+	void *user_data;
 } _ui_response_cb_data_t;
 
 static void
 __free_ui_auth_data(gpointer data)
 {
-    RET_IF_FAIL_VOID(data != NULL);
+	RET_IF_FAIL_VOID(data != NULL);
 
-    _ui_auth_data_t *auth_data = data;
+	_ui_auth_data_t *auth_data = data;
 
-    SAFE_DELETE(auth_data->asm_id);
-    SAFE_DELETE(auth_data->auth_index);
-    SAFE_DELETE(auth_data->label);
+	SAFE_DELETE(auth_data->asm_id);
+	SAFE_DELETE(auth_data->auth_index);
+	SAFE_DELETE(auth_data->label);
 
-    SAFE_DELETE(auth_data);
+	SAFE_DELETE(auth_data);
 }
 
 static void
 __free_ui_response_cb_data(_ui_response_cb_data_t *data)
 {
-    RET_IF_FAIL_VOID(data != NULL);
+	RET_IF_FAIL_VOID(data != NULL);
 
-    if (data->auth_list != NULL)
-        g_list_free_full(data->auth_list, __free_ui_auth_data);
+	if (data->auth_list != NULL)
+		g_list_free_full(data->auth_list, __free_ui_auth_data);
 
-    SAFE_DELETE(data);
+	SAFE_DELETE(data);
 }
 
 static GQueue *
@@ -126,11 +126,11 @@ _compose_json_ui_out(const char *response_json)
 		goto CATCH;
 	}
 
-    const char *asm_id = json_object_get_string_member(obj, UI_DATA_ASM_ID);
-    if (!asm_id) {
-        _ERR("json_object_get_string_member() failed");
-        goto CATCH;
-    }
+	const char *asm_id = json_object_get_string_member(obj, UI_DATA_ASM_ID);
+	if (!asm_id) {
+		_ERR("json_object_get_string_member() failed");
+		goto CATCH;
+	}
 
 	const char *auth_idx = NULL;
 	auth_idx = json_object_get_string_member(obj, UI_DATA_AUTH_INDEX);
@@ -150,13 +150,12 @@ _compose_json_ui_out(const char *response_json)
 	att = json_object_get_int_member(obj, UI_DATA_ATT_TYPE);
 
 	ui_auth_data = (_ui_auth_data_t *) calloc(1, sizeof(_ui_auth_data_t));
-	if (ui_auth_data == NULL)
-	{
+	if (ui_auth_data == NULL) 	{
 		_ERR("Out of memory");
 		goto CATCH;
 	}
 
-    ui_auth_data->asm_id = strdup(asm_id);
+	ui_auth_data->asm_id = strdup(asm_id);
 	ui_auth_data->auth_index = strdup(auth_idx);
 	ui_auth_data->label = strdup(label);
 	ui_auth_data->att_type = att;
@@ -193,20 +192,20 @@ _compose_json_ui_in(GList *auth_list)
 	JsonArray *ui_arr = NULL;
 
 	generator = json_generator_new();
-	if(generator == NULL) {
-        _ERR("json_generator_new is NULL");
+	if (generator == NULL) {
+		_ERR("json_generator_new is NULL");
 		goto CATCH;
 	}
 
 	root_node = json_node_new(JSON_NODE_ARRAY);
 	if (root_node == NULL) {
-        _ERR("json_node_new is NULL");
+		_ERR("json_node_new is NULL");
 		goto CATCH;
 	}
 
 	ui_arr = json_array_new();
 	if (ui_arr == NULL) {
-        _ERR("json_array_new is NULL");
+		_ERR("json_array_new is NULL");
 		goto CATCH;
 	}
 
@@ -220,12 +219,12 @@ _compose_json_ui_in(GList *auth_list)
 		if (ui_data) {
 			JsonObject *obj = json_object_new();
 
-            if (ui_data->asm_id != NULL)
-                json_object_set_string_member(obj, UI_DATA_ASM_ID, ui_data->asm_id);
+			if (ui_data->asm_id != NULL)
+				json_object_set_string_member(obj, UI_DATA_ASM_ID, ui_data->asm_id);
 
 			json_object_set_string_member(obj, UI_DATA_AUTH_INDEX, ui_data->auth_index);
-            if (ui_data->label != NULL)
-                json_object_set_string_member(obj, UI_DATA_LABEL, ui_data->label);
+			if (ui_data->label != NULL)
+				json_object_set_string_member(obj, UI_DATA_LABEL, ui_data->label);
 			json_object_set_int_member(obj, UI_DATA_ATT_TYPE, ui_data->att_type);
 
 			json_array_add_object_element(ui_arr, obj);
@@ -269,49 +268,49 @@ CATCH:
 static void
 __terminate_ui_svc(void)
 {
-    _INFO("Killing inactive UI Service [%d]", __ui_svc_pid);
+	_INFO("Killing inactive UI Service [%d]", __ui_svc_pid);
 
-    if (__ui_svc_pid > 0)
-        aul_terminate_pid(__ui_svc_pid);
+	if (__ui_svc_pid > 0)
+		aul_terminate_pid(__ui_svc_pid);
 
-    __ui_svc_pid = -1;
+	__ui_svc_pid = -1;
 }
 
 static gboolean
 __timer_expired(gpointer data)
 {
-    if (g_queue_is_empty(_ui_q) == TRUE)
-        __terminate_ui_svc();
+	if (g_queue_is_empty(_ui_q) == TRUE)
+		__terminate_ui_svc();
 
-    return FALSE;
+	return FALSE;
 }
 
 static void
 __start_ui_svc_term_timer(void)
 {
-    g_timeout_add(_UI_SVC_TERMINATE_TIMEOUT, __timer_expired, NULL);
+	g_timeout_add(_UI_SVC_TERMINATE_TIMEOUT, __timer_expired, NULL);
 }
 
 static int
 __launch_svc_ui(bundle *ui_req)
 {
-    int i = 0;
-    for (; i < _UI_LAUNCH_RETRY_COUNT; i++) {
-        if (__ui_svc_pid < 0)
-            __ui_svc_pid = aul_launch_app(_UI_SVC_PACKAGE, ui_req);
-        else {
-            aul_terminate_pid(__ui_svc_pid);
-            __ui_svc_pid = -1;
+	int i = 0;
+	for (; i < _UI_LAUNCH_RETRY_COUNT; i++) {
+		if (__ui_svc_pid < 0)
+			__ui_svc_pid = aul_launch_app(_UI_SVC_PACKAGE, ui_req);
+		else {
+			aul_terminate_pid(__ui_svc_pid);
+			__ui_svc_pid = -1;
 
-            __ui_svc_pid = aul_launch_app(_UI_SVC_PACKAGE, ui_req);
-        }
+			__ui_svc_pid = aul_launch_app(_UI_SVC_PACKAGE, ui_req);
+		}
 
-        _INFO("fido svc pid = [%d]", __ui_svc_pid);
+		_INFO("fido svc pid = [%d]", __ui_svc_pid);
 
-        if (__ui_svc_pid > 0)
-            return FIDO_ERROR_NONE;
-    }
-    return FIDO_ERROR_UNKNOWN;
+		if (__ui_svc_pid > 0)
+			return FIDO_ERROR_NONE;
+	}
+	return FIDO_ERROR_UNKNOWN;
 }
 
 static int
@@ -329,18 +328,18 @@ _process_ui_selection_queue(void)
 
 	char *ui_data = _compose_json_ui_in(ui_res_data->auth_list);
 	if (ui_data == NULL) {
-        ui_res_data->cb(FIDO_ERROR_OUT_OF_MEMORY, NULL, ui_res_data->user_data);
+		ui_res_data->cb(FIDO_ERROR_OUT_OF_MEMORY, NULL, ui_res_data->user_data);
 		g_queue_pop_head(q);
-        return FIDO_ERROR_OUT_OF_MEMORY;
+		return FIDO_ERROR_OUT_OF_MEMORY;
 	}
 
-    _INFO("Sending to UI SVC");
-    _INFO("%s", ui_data);
+	_INFO("Sending to UI SVC");
+	_INFO("%s", ui_data);
 
-    bundle *ui_req = bundle_create();
-    bundle_add_str(ui_req, _UI_IPC_KEY_REQ, ui_data);
+	bundle *ui_req = bundle_create();
+	bundle_add_str(ui_req, _UI_IPC_KEY_REQ, ui_data);
 
-    return __launch_svc_ui(ui_req);
+	return __launch_svc_ui(ui_req);
 }
 
 int
@@ -357,13 +356,13 @@ _auth_ui_selector_send(GList *auth_list, _ui_response_cb cb, void *user_data)
 	ui_cb_data->user_data = user_data;
 
 	GQueue *q = _get_ui_queue();
-    if (q == NULL) {
-        __free_ui_response_cb_data(ui_cb_data);
-        return FIDO_ERROR_OUT_OF_MEMORY;
-    }
+	if (q == NULL) {
+		__free_ui_response_cb_data(ui_cb_data);
+		return FIDO_ERROR_OUT_OF_MEMORY;
+	}
 
 	g_queue_push_tail(q, ui_cb_data);
-    _INFO("Q len=[%d]", g_queue_get_length(q));
+	_INFO("Q len=[%d]", g_queue_get_length(q));
 
 	if (g_queue_get_length(q) == 1)
 		_process_ui_selection_queue();
@@ -374,141 +373,141 @@ _auth_ui_selector_send(GList *auth_list, _ui_response_cb cb, void *user_data)
 static inline int
 __read_proc(const char *path, char *buf, int size)
 {
-    int fd = 0;
-    int ret = 0;
+	int fd = 0;
+	int ret = 0;
 
-    if (buf == NULL || path == NULL) {
-        _ERR("path and buffer is mandatory\n");
-        return -1;
-    }
+	if (buf == NULL || path == NULL) {
+		_ERR("path and buffer is mandatory\n");
+		return -1;
+	}
 
-    fd = open(path, O_RDONLY);
-    if (fd < 0) {
-        _ERR("fd open error(%d)\n", fd);
-        return -1;
-    }
+	fd = open(path, O_RDONLY);
+	if (fd < 0) {
+		_ERR("fd open error(%d)\n", fd);
+		return -1;
+	}
 
-    ret = read(fd, buf, size - 1);
-    if (ret <= 0) {
-        _ERR("fd read error(%d)\n", fd);
-        close(fd);
-        return -1;
-    } else
-        buf[ret] = 0;
+	ret = read(fd, buf, size - 1);
+	if (ret <= 0) {
+		_ERR("fd read error(%d)\n", fd);
+		close(fd);
+		return -1;
+	} else
+		buf[ret] = 0;
 
-    close(fd);
+	close(fd);
 
-    return ret;
+	return ret;
 }
 
 static char*
 __get_proc_path_of_dbus_caller(GDBusMethodInvocation *invocation)
 {
-    //pid_t remote_pid = 0;
-    GError *error = NULL;
-    GDBusConnection *connection = NULL;
-    GVariant *response = NULL;
-    guint32 upid;
-    const gchar *sender = NULL;
+	//pid_t remote_pid = 0;
+	GError *error = NULL;
+	GDBusConnection *connection = NULL;
+	GVariant *response = NULL;
+	guint32 upid;
+	const gchar *sender = NULL;
 
-    sender = g_dbus_method_invocation_get_sender (invocation);
-    if (!sender) {
-        _ERR("Failed to get sender");
-        return NULL;
-    }
+	sender = g_dbus_method_invocation_get_sender(invocation);
+	if (!sender) {
+		_ERR("Failed to get sender");
+		return NULL;
+	}
 
-    connection = g_dbus_method_invocation_get_connection(invocation);
-    if (connection == NULL) {
-        _ERR("Failed to open connection for the invocation [%s]", error->message);
-        g_error_free (error);
-        return NULL;
-    }
+	connection = g_dbus_method_invocation_get_connection(invocation);
+	if (connection == NULL) {
+		_ERR("Failed to open connection for the invocation [%s]", error->message);
+		g_error_free(error);
+		return NULL;
+	}
 
-    error = NULL;
-    response = g_dbus_connection_call_sync (connection,
-            _FREEDESKTOP_SERVICE, _FREEDESKTOP_PATH,
-            _FREEDESKTOP_INTERFACE, "GetConnectionUnixProcessID",
-            g_variant_new ("(s)", sender), ((const GVariantType *) "(u)"),
-            G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
+	error = NULL;
+	response = g_dbus_connection_call_sync(connection,
+		_FREEDESKTOP_SERVICE, _FREEDESKTOP_PATH,
+		_FREEDESKTOP_INTERFACE, "GetConnectionUnixProcessID",
+		g_variant_new("(s)", sender), ((const GVariantType *) "(u)"),
+		G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
 
-    if (response == NULL) {
-        _ERR("Failed to get caller id [%s]", error->message);
-        g_error_free (error);
-        return NULL;
-    }
+	if (response == NULL) {
+		_ERR("Failed to get caller id [%s]", error->message);
+		g_error_free(error);
+		return NULL;
+	}
 
-    g_variant_get (response, "(u)", &upid);
-    _INFO("Remote msg-bus peer service=%s pid=%u", sender, upid);
-    //remote_pid = (pid_t) upid;
+	g_variant_get(response, "(u)", &upid);
+	_INFO("Remote msg-bus peer service=%s pid=%u", sender, upid);
+	//remote_pid = (pid_t) upid;
 
-    g_variant_unref (response);
+	g_variant_unref(response);
 
-    char buf[128];
-    int ret = 0;
+	char buf[128];
+	int ret = 0;
 
-    snprintf(buf, sizeof(buf), "/proc/%d/cmdline", upid);
-    ret = __read_proc(buf, buf, sizeof(buf));
-    if (ret <= 0) {
+	snprintf(buf, sizeof(buf), "/proc/%d/cmdline", upid);
+	ret = __read_proc(buf, buf, sizeof(buf));
+	if (ret <= 0) {
         _ERR("No proc directory (%d)\n", upid);
         return NULL;
     }
 
-    _INFO("Caller=[%s]", buf);
+	_INFO("Caller=[%s]", buf);
 
-    return strdup(buf);
+	return strdup(buf);
 }
 
 gboolean
 _auth_ui_selector_on_ui_response(Fido *object, GDBusMethodInvocation *invocation, int error, const char *ui_resp)
 {
-    _INFO("");
+	_INFO("");
 
-    char *caller = __get_proc_path_of_dbus_caller(invocation);
-    if (caller == NULL) {
-        _ERR("__get_proc_path_of_dbus_caller failed");
-        __start_ui_svc_term_timer();
-        return true;
-    }
+	char *caller = __get_proc_path_of_dbus_caller(invocation);
+	if (caller == NULL) {
+		_ERR("__get_proc_path_of_dbus_caller failed");
+		__start_ui_svc_term_timer();
+		return true;
+	}
 
-    if (strcmp(caller, _UI_SVC_BIN_PATH) != 0) {
-        _ERR("[%s] is not allowed", caller);
-        __start_ui_svc_term_timer();
-        return true;
-    }
+	if (strcmp(caller, _UI_SVC_BIN_PATH) != 0) {
+		_ERR("[%s] is not allowed", caller);
+		__start_ui_svc_term_timer();
+		return true;
+	}
 
-    _ui_response_cb_data_t *cb_data = (_ui_response_cb_data_t*)(g_queue_pop_head(_ui_q));
-    if (cb_data == NULL) {
-        _ERR("Can not proceed since callback data is NULL");
-        goto CATCH;
-    }
+	_ui_response_cb_data_t *cb_data = (_ui_response_cb_data_t*)(g_queue_pop_head(_ui_q));
+	if (cb_data == NULL) {
+		_ERR("Can not proceed since callback data is NULL");
+		goto CATCH;
+	}
 
-    if (cb_data->cb == NULL) {
-        _ERR("Can not proceed since callback data's cb part is NULL");
-        goto CATCH;
-    }
+	if (cb_data->cb == NULL) {
+		_ERR("Can not proceed since callback data's cb part is NULL");
+		goto CATCH;
+	}
 
-    if (error != FIDO_ERROR_NONE)
-        cb_data->cb(error, NULL, cb_data->user_data);
-    else {
-        if (ui_resp == NULL)
-            cb_data->cb(FIDO_ERROR_PERMISSION_DENIED, NULL, cb_data->user_data);
-        else {
-            _INFO("response from server = [%s]", ui_resp);
+	if (error != FIDO_ERROR_NONE)
+		cb_data->cb(error, NULL, cb_data->user_data);
+	else {
+		if (ui_resp == NULL)
+			cb_data->cb(FIDO_ERROR_PERMISSION_DENIED, NULL, cb_data->user_data);
+		else {
+			_INFO("response from server = [%s]", ui_resp);
 
-            _ui_auth_data_t *ui_auth_data = _compose_json_ui_out(ui_resp);
-            cb_data->cb(FIDO_ERROR_NONE, ui_auth_data, cb_data->user_data);
-        }
-    }
+			_ui_auth_data_t *ui_auth_data = _compose_json_ui_out(ui_resp);
+			cb_data->cb(FIDO_ERROR_NONE, ui_auth_data, cb_data->user_data);
+		}
+	}
 
 CATCH:
 
-    if (g_queue_is_empty(_ui_q) == false)
-        _process_ui_selection_queue();
-    else {
-        g_queue_free(_ui_q);
-        _ui_q = NULL;
-        __start_ui_svc_term_timer();
-    }
+	if (g_queue_is_empty(_ui_q) == false)
+		_process_ui_selection_queue();
+	else {
+		g_queue_free(_ui_q);
+		_ui_q = NULL;
+		__start_ui_svc_term_timer();
+	}
 
-    return true;
+	return true;
 }
