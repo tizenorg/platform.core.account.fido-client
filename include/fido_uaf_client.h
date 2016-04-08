@@ -132,7 +132,7 @@ typedef void (*fido_uaf_response_message_cb) (fido_error_e tizen_error_code, con
  * @see fido_uaf_response_message_cb()
  */
 EXPORT_API int fido_uaf_get_response_message(const char *uaf_request_json, const char *channel_binding,
-                                          fido_uaf_response_message_cb callback, void *user_data);
+	fido_uaf_response_message_cb callback, void *user_data);
 
 /**
  * @brief Notifies the server result to the FIDO client. FIDO Server sends the result of processing a UAF message to FIDO client.

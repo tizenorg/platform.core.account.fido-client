@@ -1,9 +1,9 @@
 <manifest>
-    <request>
-        <domain name="_"/>
-    </request>
-    <assign>
+	<request>
+		<domain name="_"/>
+	</request>
+	<assign>
 	<filesystem path="/usr/lib/fido/" label="_"/>
 	<filesystem path="/usr/lib/fido/asm/" label="_"/>
-    </assign>
+	</assign>
 </manifest>
