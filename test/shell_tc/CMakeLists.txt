@@ -2,10 +2,10 @@ SET(FIDO_SHELL_TC fido-shell-tc)
 
 INCLUDE(FindPkgConfig)
 pkg_check_modules(FIDO_SHELL_TC_PKGS REQUIRED
-                dlog
-                glib-2.0
-                gio-unix-2.0
-                capi-base-common
+				dlog
+				glib-2.0
+				gio-unix-2.0
+				capi-base-common
 )
 
 FOREACH(flag ${FIDO_SHELL_TC_PKGS_CFLAGS})
