@@ -106,7 +106,7 @@ cmake . \
 -DUSE_JSON_BUILDER:BOOL=${_JSON_BUILDER}
 %endif
 
-make %{?jobs:-j%jobs}
+make %{?_smp_mflags}
 
 %if "%{?tizen_version}" == "3.0"
 %install
