@@ -19,9 +19,9 @@
 #define __FIDO_DOC_H__
 
 /**
- * @defgroup  CAPI_FIDO_MODULE FIDO
+ * @defgroup  CAPI_FIDO_MODULE FIDO Client
  * @ingroup   CAPI_ACCOUNT_FRAMEWORK
- * @brief     The FIDO APIs provide Fast IDentity Online UAF Client specification APIs.
+ * @brief     The FIDO Client APIs provide Fast IDentity Online UAF Client specification APIs.
  *
  * @section   CAPI_FIDO_HEADER Required Header
  *  \#include <fido.h>
