@@ -19,18 +19,18 @@
 #define __FIDO_DOC_H__
 
 /**
- * @defgroup  CAPI_FIDO_MODULE FIDO
+ * @defgroup  CAPI_FIDO_MODULE FIDO Client
  * @ingroup   CAPI_ACCOUNT_FRAMEWORK
- * @brief     The FIDO APIs provide Fast IDentity Online UAF Client specification APIs.
+ * @brief     The FIDO Client APIs provide Fast IDentity Online UAF Client specification APIs.
  *
  * @section   CAPI_FIDO_HEADER Required Header
  *  \#include <fido.h>
  *
-  * @section CAPI_FIDO_MODULE_OVERVIEW Overview
+ * @section CAPI_FIDO_MODULE_OVERVIEW Overview
  * The FIDO Universal Authentication Framework (UAF) Client APIs provide APIs for application developers to utilize Device's available authenticators for online service integration.
  * The goal of this Universal Authentication Framework is to provide a unified and extensible authentication mechanism that supplants passwords while avoiding the shortcomings of current alternative authentication approaches.
  * More details about the FIDO specification can be found in https://fidoalliance.org/specifications/download/
-  * @section CAPI_FIDO_MODULE_FEATURE Related Features
+ * @section CAPI_FIDO_MODULE_FEATURE Related Features
  * This API is related with the following feature:\n
  * - http://tizen.org/feature/fido.uaf
  *
