@@ -31,32 +31,32 @@ static char *json_dereg = NULL;
 static char*
 __read(const char *file_name)
 {
-    FILE *file = fopen(file_name, "rb");
-    if (file == NULL)
-        return NULL;
+	FILE *file = fopen(file_name, "rb");
+	if (file == NULL)
+		return NULL;
 
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file);
-    if (size <= 0) {
-        fclose(file);
-        return NULL;
-    }
+	fseek(file, 0, SEEK_END);
+	long size = ftell(file);
+	if (size <= 0) {
+		fclose(file);
+		return NULL;
+	}
 
-    fseek(file, 0, SEEK_SET);
+	fseek(file, 0, SEEK_SET);
 
-    char *json = calloc(1, size + 1);
-    int num_bytes = fread(json, size, 1, file);
-    if (num_bytes <= 0) {
-        free(json);
-        fclose(file);
-        return NULL;
-    }
+	char *json = calloc(1, size + 1);
+	int num_bytes = fread(json, size, 1, file);
+	if (num_bytes <= 0) {
+		free(json);
+		fclose(file);
+		return NULL;
+	}
 
-    json[size] = 0;
+	json[size] = 0;
 
-    fclose(file);
+	fclose(file);
 
-    return json;
+	return json;
 
 }
 
@@ -277,7 +277,7 @@ __print_discovery_data(fido_discovery_data_h discovery_data, appdata_s *ad)
 	int ret = fido_discovery_data_foreach_authenticator(discovery_data, auth_list_cb, ad);
 	dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_discovery_data_foreach_authenticator =[%d]", ret);
 
-    fido_discovery_data_destroy(discovery_data);
+	fido_discovery_data_destroy(discovery_data);
 }
 
 static void
@@ -408,7 +408,7 @@ _process_cb_for_notify_pos(int tizen_error_code, char *uaf_response, void *user_
 		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "uaf response = %s", uaf_response);
 
 		int ret = fido_request_set_result(FIDO_SERVER_STATUS_CODE_OK, uaf_response);
-        dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_request_set_result =[%d]", ret);
+		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_request_set_result =[%d]", ret);
 
 		char *error_string = get_error_code(tizen_error_code);
 		create_popup(error_string, (appdata_s *) user_data);
@@ -429,7 +429,7 @@ _process_cb_for_notify_neg(int tizen_error_code, char *uaf_response, void *user_
 		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "uaf response = %s", uaf_response);
 
 		int ret = fido_request_set_result(0, uaf_response);
-        dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_request_set_result =[%d]", ret);
+		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_request_set_result =[%d]", ret);
 
 		char *error_string = get_error_code(tizen_error_code);
 		create_popup(error_string, (appdata_s *) user_data);

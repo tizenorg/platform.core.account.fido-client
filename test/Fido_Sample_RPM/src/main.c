@@ -296,7 +296,7 @@ start_check_policy(void *data, Evas_Object *obj, void *event_info)
 static void
 _process_cb(fido_error_e tizen_error_code, const char *uaf_response, void *user_data)
 {
-    dlog_print(DLOG_INFO, "org.tizen.Fidosample", "process response = [%d]", tizen_error_code);
+	dlog_print(DLOG_INFO, "org.tizen.Fidosample", "process response = [%d]", tizen_error_code);
 
 	if (tizen_error_code == 0 && uaf_response != NULL) {
 		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "uaf response = %s", uaf_response);
@@ -372,7 +372,7 @@ _process_cb_for_notify_pos(fido_error_e tizen_error_code, const char *uaf_respon
 		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "uaf response = %s", uaf_response);
 
 		int ret = fido_uaf_set_server_result(FIDO_SERVER_STATUS_CODE_OK, uaf_response);
-        dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_uaf_set_server_result =[%d]", ret);
+		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_uaf_set_server_result =[%d]", ret);
 
 		char *error_string = get_error_code(tizen_error_code);
 		create_popup(error_string, (appdata_s *) user_data);
@@ -385,13 +385,13 @@ _process_cb_for_notify_pos(fido_error_e tizen_error_code, const char *uaf_respon
 static void
 _process_cb_for_notify_neg(fido_error_e tizen_error_code, const char *uaf_response, void *user_data)
 {
-    dlog_print(DLOG_INFO, "org.tizen.Fidosample", "process response = [%d]", tizen_error_code);
+	dlog_print(DLOG_INFO, "org.tizen.Fidosample", "process response = [%d]", tizen_error_code);
 
 	if (tizen_error_code == 0) {
 		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "uaf response = %s", uaf_response);
 
 		int ret = fido_uaf_set_server_result(0, uaf_response);
-        dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_uaf_set_server_result =[%d]", ret);
+		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_uaf_set_server_result =[%d]", ret);
 
 		char *error_string = get_error_code(tizen_error_code);
 		create_popup(error_string, (appdata_s *) user_data);

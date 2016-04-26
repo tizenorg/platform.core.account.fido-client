@@ -22,7 +22,7 @@
 #include <dlog.h>
 
 void
- print_fail_result(
+print_fail_result(
 		const char *action_name,
 		int action_return_value)
 {

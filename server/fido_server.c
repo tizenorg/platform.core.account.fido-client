@@ -1268,7 +1268,7 @@ on_bus_acquired(GDBusConnection *connection, const gchar *name, gpointer user_da
 						G_CALLBACK(_dbus_on_fido_discover), NULL);
 
 		g_signal_connect(fido_dbus_obj, "handle_fido_uaf_check_policy",
-                        G_CALLBACK(_dbus_on_fido_uaf_is_supported), NULL);
+						G_CALLBACK(_dbus_on_fido_uaf_is_supported), NULL);
 
 		g_signal_connect(fido_dbus_obj, "handle_fido_uaf_process_operation",
 						G_CALLBACK(_dbus_on_fido_process_operation), NULL);

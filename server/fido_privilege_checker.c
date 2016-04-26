@@ -78,18 +78,18 @@ __check_privilege_by_cynara(const char *client, const char *session, const char 
 
 	ret = cynara_check(__cynara, client, session, user, privilege);
 	switch (ret) {
-		case CYNARA_API_ACCESS_ALLOWED:
-			_DBG("cynara_check success");
-			return FIDO_ERROR_NONE;
+	case CYNARA_API_ACCESS_ALLOWED:
+		_DBG("cynara_check success");
+		return FIDO_ERROR_NONE;
 
-		case CYNARA_API_ACCESS_DENIED:
-			_ERR("cynara_check permission deined, privilege=%s, error = CYNARA_API_ACCESS_DENIED", privilege);
-			return FIDO_ERROR_PERMISSION_DENIED;
+	case CYNARA_API_ACCESS_DENIED:
+		_ERR("cynara_check permission deined, privilege=%s, error = CYNARA_API_ACCESS_DENIED", privilege);
+		return FIDO_ERROR_PERMISSION_DENIED;
 
-		default:
-			cynara_strerror(ret, err_buf, sizeof(err_buf));
-			_ERR("cynara_check error : %s, privilege=%s, ret = %d", err_buf, privilege, ret);
-			return FIDO_ERROR_PERMISSION_DENIED;
+	default:
+		cynara_strerror(ret, err_buf, sizeof(err_buf));
+		_ERR("cynara_check error : %s, privilege=%s, ret = %d", err_buf, privilege, ret);
+		return FIDO_ERROR_PERMISSION_DENIED;
 	}
 
 	return FIDO_ERROR_NONE;

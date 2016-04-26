@@ -32,7 +32,7 @@ _fido_b64url_encode(const unsigned char *input,  int inlen, unsigned char *outpu
 	BIO * b64 = NULL;
 	BUF_MEM * bptr = NULL;
 	b64 = BIO_new(BIO_f_base64());
-	if(b64 == NULL) {
+	if (b64 == NULL) {
 		_ERR("BIO_new with BIO_f_base64 failed ");
 		return -1;
 	}
@@ -50,14 +50,14 @@ _fido_b64url_encode(const unsigned char *input,  int inlen, unsigned char *outpu
 	*outlen = bptr->length;
 
 	int i;
-	for(i =0; i < *outlen ; i++) {
-		if(output[i] == '+')
+	for (i =0; i < *outlen ; i++) {
+		if (output[i] == '+')
 			output[i] = '-';
 
-		else if(output[i] == '/')
+		else if (output[i] == '/')
 			output[i] = '_';
 
-		else if(output[i] == '=') {
+		else if (output[i] == '=') {
 			*outlen = i ;
 			output[i] = '\0';
 		break;
@@ -79,7 +79,7 @@ _fido_b64url_decode(const unsigned char *in,  int inlen, unsigned char *out, int
 
 	int npadChars = (inlen %4) == 0 ? 0 : (4 - (inlen%4));
 	unsigned char *base64 = (unsigned char *) malloc(inlen + npadChars);
-	if(base64 == NULL) {
+	if (base64 == NULL) {
 	_ERR("malloc failed");
 	return -1;
 	}

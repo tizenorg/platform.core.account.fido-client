@@ -150,8 +150,7 @@ _policy_checker_is_matched(_match_criteria_t *match_criteria, fido_authenticator
 				&&
 				((match_criteria->user_verification & _USER_VER_METHOD_ALL) == 0)
 				&&
-				((auth_info->user_verification & match_criteria->user_verification) != 0)))
-		{
+				((auth_info->user_verification & match_criteria->user_verification) != 0))) {
 			_INFO("User verification match passed");
 		} else {
 			_ERR("User verification match failed");
@@ -283,53 +282,53 @@ __get_verification_method_string(unsigned long int ver_method)
 
 	switch (ver_method) {
 
-		case _USER_VER_METHOD_PRESENCE:
-			snprintf(ver_str, 127, "%s", "Presence Authenticator");
-			break;
+	case _USER_VER_METHOD_PRESENCE:
+		snprintf(ver_str, 127, "%s", "Presence Authenticator");
+		break;
 
-		case _USER_VER_METHOD_FINGERPRINT:
-			snprintf(ver_str, 127, "%s", "Fingerprint Authenticator");
-			break;
+	case _USER_VER_METHOD_FINGERPRINT:
+		snprintf(ver_str, 127, "%s", "Fingerprint Authenticator");
+		break;
 
-		case _USER_VER_METHOD_PASSCODE:
-			snprintf(ver_str, 127, "%s", "Passcode Authenticator");
-			break;
+	case _USER_VER_METHOD_PASSCODE:
+		snprintf(ver_str, 127, "%s", "Passcode Authenticator");
+		break;
 
-		case _USER_VER_METHOD_VOICE_PRINT:
-			snprintf(ver_str, 127, "%s", "Voice Print Authenticator");
-			break;
+	case _USER_VER_METHOD_VOICE_PRINT:
+		snprintf(ver_str, 127, "%s", "Voice Print Authenticator");
+		break;
 
-		case _USER_VER_METHOD_FACE_PRINT:
-			snprintf(ver_str, 127, "%s", "Face Print Authenticator");
-			break;
+	case _USER_VER_METHOD_FACE_PRINT:
+		snprintf(ver_str, 127, "%s", "Face Print Authenticator");
+		break;
 
-		case _USER_VER_METHOD_LOCATION:
-			snprintf(ver_str, 127, "%s", "Location Authenticator");
-			break;
+	case _USER_VER_METHOD_LOCATION:
+		snprintf(ver_str, 127, "%s", "Location Authenticator");
+		break;
 
-		case _USER_VER_METHOD_EYE_PRINT:
-			snprintf(ver_str, 127, "%s", "Eye Print Authenticator");
-			break;
+	case _USER_VER_METHOD_EYE_PRINT:
+		snprintf(ver_str, 127, "%s", "Eye Print Authenticator");
+		break;
 
-		case _USER_VER_METHOD_PATTERN:
-			snprintf(ver_str, 127, "%s", "Pattern Authenticator");
-			break;
+	case _USER_VER_METHOD_PATTERN:
+		snprintf(ver_str, 127, "%s", "Pattern Authenticator");
+		break;
 
-		case _USER_VER_METHOD_HAND_PRINT:
-			snprintf(ver_str, 127, "%s", "Hand Print Authenticator");
-			break;
+	case _USER_VER_METHOD_HAND_PRINT:
+		snprintf(ver_str, 127, "%s", "Hand Print Authenticator");
+		break;
 
-	//    case _USER_VER_METHOD_NONE:
-	//        snprintf(ver_str, "%s", "");
-	//        break;
+//    case _USER_VER_METHOD_NONE:
+//        snprintf(ver_str, "%s", "");
+//        break;
 
-		case _USER_VER_METHOD_ALL:
-			snprintf(ver_str, 127, "%s", "All Authenticator");
-			break;
+	case _USER_VER_METHOD_ALL:
+		snprintf(ver_str, 127, "%s", "All Authenticator");
+		break;
 
-		default:
-			snprintf(ver_str, 127, "%s", "Other Type");
-			break;
+	default:
+		snprintf(ver_str, 127, "%s", "Other Type");
+		break;
 	}
 
 	return ver_str;

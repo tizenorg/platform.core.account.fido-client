@@ -116,7 +116,7 @@ __init_dbus(void)
 {
 	_INFO("init_dbus");
 #if !GLIB_CHECK_VERSION(2, 35, 0)
-    g_type_init();
+	g_type_init();
 #endif
 
 	GDBusConnection *connection = NULL;
@@ -219,7 +219,7 @@ _create_json_response(ui_data_s *selected_auth)
 		_INFO("_create_json_response end");
 
 		return json;
-    }
+	}
 
 	g_object_unref(gen);
 
@@ -272,7 +272,7 @@ _create_json_response(ui_data_s *selected_auth)
 		_INFO("_create_json_response end");
 
 		return json;
-    }
+	}
 
 CATCH:
 	if (generator != NULL) {
@@ -363,7 +363,7 @@ _auth_arr_cb(JsonArray *array, guint index, JsonNode *element_node, gpointer use
 	if (!obj) {
 		_ERR("json_node_get_object() failed");
 		return;
-    }
+	}
 
 	ui_data_s *ui_data = (ui_data_s *) calloc(1, sizeof(ui_data_s));
 	if (!ui_data) {
@@ -377,7 +377,7 @@ _auth_arr_cb(JsonArray *array, guint index, JsonNode *element_node, gpointer use
 
 		__free_ui_data(ui_data);
 		return;
-    }
+	}
 
 	const char *auth_idx = NULL;
 	auth_idx = json_object_get_string_member(obj, UI_DATA_AUTH_INDEX);

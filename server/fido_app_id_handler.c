@@ -146,21 +146,21 @@ __get_appid_of_dbus_caller(GDBusMethodInvocation *invocation)
 static void
 __soup_cb(SoupSession *session, SoupMessage *msg, gpointer user_data)
 {
-    _INFO("__soup_cb");
+	_INFO("__soup_cb");
 
-    if (user_data == NULL)
-        return;
+	if (user_data == NULL)
+		return;
 
-    _app_id_cb_data_t *cb_data = (_app_id_cb_data_t*)user_data;
+	_app_id_cb_data_t *cb_data = (_app_id_cb_data_t*)user_data;
 
-    GList *app_id_list = NULL;
-    char *real_app_id = NULL;
+	GList *app_id_list = NULL;
+	char *real_app_id = NULL;
 
-    int error_code = FIDO_ERROR_UNTRUSTED_FACET_ID;
+	int error_code = FIDO_ERROR_UNTRUSTED_FACET_ID;
 
-    SoupBuffer *request = NULL;
+	SoupBuffer *request = NULL;
 
-    _INFO("status_code = [%d]", msg->status_code);
+	_INFO("status_code = [%d]", msg->status_code);
 
 	CATCH_IF_FAIL_X(msg->status_code == SOUP_STATUS_OK, error_code = FIDO_ERROR_UNTRUSTED_FACET_ID);
 

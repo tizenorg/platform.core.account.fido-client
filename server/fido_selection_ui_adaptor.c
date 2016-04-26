@@ -448,9 +448,9 @@ __get_proc_path_of_dbus_caller(GDBusMethodInvocation *invocation)
 	snprintf(buf, sizeof(buf), "/proc/%d/cmdline", upid);
 	ret = __read_proc(buf, buf, sizeof(buf));
 	if (ret <= 0) {
-        _ERR("No proc directory (%d)\n", upid);
-        return NULL;
-    }
+		_ERR("No proc directory (%d)\n", upid);
+		return NULL;
+	}
 
 	_INFO("Caller=[%s]", buf);
 

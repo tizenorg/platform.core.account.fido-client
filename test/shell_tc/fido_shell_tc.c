@@ -416,6 +416,6 @@ main(void)
 	get_user_choice();
 
 	g_main_loop_run(mainloop);
- 
+
 	return 0;
 }

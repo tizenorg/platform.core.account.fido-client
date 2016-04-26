@@ -168,7 +168,7 @@ _free_message(_message_t *data)
 
 	default:
 		SAFE_DELETE(data->data);
-    }
+	}
 
 	SAFE_DELETE(data);
 	_INFO("");
@@ -521,7 +521,7 @@ _free_asm_out(_asm_out_t *data)
 		_INFO("Freeing ext list");
 		g_list_free_full(data->ext_list, free);
 		_INFO("After Freeing ext list");
-    }
+	}
 
 	SAFE_DELETE(data);
 	_INFO("");

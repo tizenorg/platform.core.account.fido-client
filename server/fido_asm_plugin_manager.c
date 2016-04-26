@@ -472,6 +472,6 @@ _asm_ipc_send_sync(const char *asm_id, const char *asm_req)
 
 	//g_variant_unref (_ret);
 
-CATCH:
+CATCH :
 	return asm_res_json;
 }

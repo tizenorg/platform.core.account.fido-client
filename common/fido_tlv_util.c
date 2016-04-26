@@ -76,71 +76,71 @@ __get_tlv_pack_by_type(const guchar *tlv_buffer_in, uint16_t type_in, int max_le
 _auth_reg_assertion_tlv_t*
 _tlv_util_decode_reg_assertion(char *tlv_enc)
 {
-    _INFO("_tlv_util_decode_reg_assertion");
+	_INFO("_tlv_util_decode_reg_assertion");
 
-    RET_IF_FAIL(tlv_enc != NULL, NULL);
+	RET_IF_FAIL(tlv_enc != NULL, NULL);
 
-    _INFO("%s", tlv_enc);
+	_INFO("%s", tlv_enc);
 
-    int in_len = strlen(tlv_enc);
-    int tlv_dec_len = in_len * 1.5;
-    unsigned char *tlv_dec = calloc(1, tlv_dec_len);
+	int in_len = strlen(tlv_enc);
+	int tlv_dec_len = in_len * 1.5;
+	unsigned char *tlv_dec = calloc(1, tlv_dec_len);
 
-    int r = _fido_b64url_decode((unsigned char *)tlv_enc, in_len, tlv_dec, &tlv_dec_len);
+	int r = _fido_b64url_decode((unsigned char *)tlv_enc, in_len, tlv_dec, &tlv_dec_len);
 	RET_IF_FAIL(r == 0, NULL);
 
-    _INFO("in len = [%d], decoded len = [%d]", in_len, tlv_dec_len);
+	_INFO("in len = [%d], decoded len = [%d]", in_len, tlv_dec_len);
 
-    _tlv_t *reg_tlv = __get_tlv_pack_by_type(tlv_dec, TAG_UAFV1_REG_ASSERTION, tlv_dec_len);
-    if (reg_tlv != NULL) {
-        _INFO("Found TAG_UAFV1_REG_ASSERTION");
+	_tlv_t *reg_tlv = __get_tlv_pack_by_type(tlv_dec, TAG_UAFV1_REG_ASSERTION, tlv_dec_len);
+	if (reg_tlv != NULL) {
+		_INFO("Found TAG_UAFV1_REG_ASSERTION");
 
-        _free_tlv(reg_tlv);
+		_free_tlv(reg_tlv);
 
-        int krd_start_idx = 2 + 2;
+		int krd_start_idx = 2 + 2;
 
-        _tlv_t *krd_tlv = __get_tlv_pack_by_type(tlv_dec + krd_start_idx, TAG_UAFV1_KRD, (tlv_dec_len - krd_start_idx));
-        if (krd_tlv != NULL) {
-            _INFO("Found TAG_UAFV1_KRD");
-            _free_tlv(krd_tlv);
+		_tlv_t *krd_tlv = __get_tlv_pack_by_type(tlv_dec + krd_start_idx, TAG_UAFV1_KRD, (tlv_dec_len - krd_start_idx));
+		if (krd_tlv != NULL) {
+			_INFO("Found TAG_UAFV1_KRD");
+			_free_tlv(krd_tlv);
 
-            int krd_inner_start_idx = krd_start_idx + 2 + 2;
+			int krd_inner_start_idx = krd_start_idx + 2 + 2;
 
-            _tlv_t *aaid_tlv = __get_tlv_pack_by_type(tlv_dec + krd_inner_start_idx, TAG_AAID, (tlv_dec_len - krd_inner_start_idx));
+			_tlv_t *aaid_tlv = __get_tlv_pack_by_type(tlv_dec + krd_inner_start_idx, TAG_AAID, (tlv_dec_len - krd_inner_start_idx));
 
-            _tlv_t *key_id_tlv = __get_tlv_pack_by_type(tlv_dec + krd_inner_start_idx, TAG_KEYID, (tlv_dec_len - krd_inner_start_idx));
-
-
-            _auth_reg_assertion_tlv_t *assrt_tlv = (_auth_reg_assertion_tlv_t*)calloc(1, sizeof(_auth_reg_assertion_tlv_t));
-
-            if (aaid_tlv != NULL) {
-                _INFO("Found TAG_AAID");
-
-                assrt_tlv->aaid = (char*)calloc(1, aaid_tlv->len + 1);
-                memcpy(assrt_tlv->aaid, aaid_tlv->val, aaid_tlv->len);
-
-                _free_tlv(aaid_tlv);
-            }
-
-            if (key_id_tlv != NULL) {
-                _INFO("Found TAG_KEYID");
-
-                assrt_tlv->key_id = (unsigned char*)calloc(1, key_id_tlv->len);
-                memcpy(assrt_tlv->key_id, key_id_tlv->val, key_id_tlv->len);
-
-                assrt_tlv->key_id_len = key_id_tlv->len;
-
-                _INFO("key_id len = [%d]", key_id_tlv->len);
-
-                _free_tlv(key_id_tlv);
-            }
-
-            _INFO("Found TAG_KEYID");
-            return assrt_tlv;
-        }
-    }
+			_tlv_t *key_id_tlv = __get_tlv_pack_by_type(tlv_dec + krd_inner_start_idx, TAG_KEYID, (tlv_dec_len - krd_inner_start_idx));
 
 
-    return NULL;
+			_auth_reg_assertion_tlv_t *assrt_tlv = (_auth_reg_assertion_tlv_t*)calloc(1, sizeof(_auth_reg_assertion_tlv_t));
+
+			if (aaid_tlv != NULL) {
+				_INFO("Found TAG_AAID");
+
+				assrt_tlv->aaid = (char*)calloc(1, aaid_tlv->len + 1);
+				memcpy(assrt_tlv->aaid, aaid_tlv->val, aaid_tlv->len);
+
+				_free_tlv(aaid_tlv);
+			}
+
+			if (key_id_tlv != NULL) {
+				_INFO("Found TAG_KEYID");
+
+				assrt_tlv->key_id = (unsigned char*)calloc(1, key_id_tlv->len);
+				memcpy(assrt_tlv->key_id, key_id_tlv->val, key_id_tlv->len);
+
+				assrt_tlv->key_id_len = key_id_tlv->len;
+
+				_INFO("key_id len = [%d]", key_id_tlv->len);
+
+				_free_tlv(key_id_tlv);
+			}
+
+			_INFO("Found TAG_KEYID");
+			return assrt_tlv;
+		}
+	}
+
+
+	return NULL;
 }
 
