@@ -25,6 +25,8 @@
 #include <app_manager.h>
 #include <fido_uaf_types.h>
 #include <string.h>
+#include <app_manager.h>
+#include <package_manager.h>
 
 #include "fido_internal_types.h"
 #include "fido_json_handler.h"
@@ -37,12 +39,21 @@
 
 #define _MAX_NW_TIME_OUT 20
 
+#define FIDO_APP_ID_KEY_TIZEN "tizen"
+#define FIDO_APP_ID_KEY_PKG_HASH "pkg-key-hash"
+
 typedef struct _app_id_cb_data {
 	char *caller_app_id;
 	char *real_app_id;
 	_facet_id_cb cb;
 	void *user_data;
 } _app_id_cb_data_t;
+
+typedef struct _cert_match_info {
+	const char *cert_str;
+	bool is_matched;
+} cert_match_info_s;
+
 
 static inline int
 __read_proc(const char *path, char *buf, int size)
@@ -143,6 +154,114 @@ __get_appid_of_dbus_caller(GDBusMethodInvocation *invocation)
 	return app_id;
 }
 
+/*tizen:pkg-key-hash:<sha256_hash-of-public-key-of-pkg-author-cert>*/
+const char*
+__get_pub_key(const char *json_id_str)
+{
+	_INFO("__get_pub_key starting");
+
+	RET_IF_FAIL(json_id_str != NULL, NULL);
+
+
+	char *save_ptr;
+	char *os = strtok_r(strdup(json_id_str), ":", &save_ptr);
+
+	RET_IF_FAIL(os != NULL, NULL);
+
+	if (strcmp(os, FIDO_APP_ID_KEY_TIZEN) != 0) {
+		_ERR("[%s] is not supported", os);
+		return NULL;
+	}
+
+	char *type = strtok_r(NULL, ":", &save_ptr);
+	RET_IF_FAIL(type != NULL, NULL);
+
+	if (strcmp(type, FIDO_APP_ID_KEY_PKG_HASH) != 0) {
+		_ERR("[%s] is not supported", type);
+		return NULL;
+	}
+
+	char *pub_key = strtok_r(NULL, ":", &save_ptr);
+	RET_IF_FAIL(pub_key != NULL, NULL);
+
+	_INFO("__get_pub_key end");
+
+	return pub_key;
+}
+
+static bool
+__cert_cb(package_info_h handle, package_cert_type_e cert_type, const char *cert_value, void *user_data)
+{
+	_INFO("__cert_cb start");
+
+	cert_match_info_s *cert_match_info = user_data;
+
+
+	_INFO("cert type = [%d]", cert_type);
+	_INFO("cert value = [%s]", cert_value);
+
+	if (strcmp(cert_value, cert_match_info->cert_str) == 0) {
+		cert_match_info->is_matched = true;
+		_INFO("Comparison success");
+		return false;
+	}
+
+	return true;
+}
+
+static bool
+__verify_caller_id_with_author_cert(const char *caller_app_id, const char *json_id_str)
+{
+	_INFO("__verify_caller_id_with_author_cert start");
+
+	RET_IF_FAIL(caller_app_id != NULL, false);
+	RET_IF_FAIL(json_id_str != NULL, false);
+
+	app_info_h app_info = NULL;
+	int ret = app_info_create(caller_app_id, &app_info);
+	if (ret != APP_MANAGER_ERROR_NONE) {
+		_ERR("app_info_create failed [%d]", ret);
+		return false;
+	}
+
+	package_info_h pkg_info = NULL;
+	char *pkg_name = NULL;
+
+	cert_match_info_s cert_match_info;
+	cert_match_info.is_matched = false;
+
+	cert_match_info.cert_str = __get_pub_key(json_id_str);
+	CATCH_IF_FAIL(cert_match_info.cert_str != NULL);
+
+
+	_INFO("Before app_info_get_package");
+
+	ret = app_info_get_package(app_info, &pkg_name);
+	CATCH_IF_FAIL(ret == APP_MANAGER_ERROR_NONE);
+
+	_INFO("Before package_info_create [%s]", pkg_name);
+	ret = package_info_create(pkg_name, &pkg_info);
+	CATCH_IF_FAIL(ret == APP_MANAGER_ERROR_NONE);
+
+	_INFO("Before package_info_foreach_cert_info");
+	package_info_foreach_cert_info(pkg_info, __cert_cb, &cert_match_info);
+
+	_INFO("After foreach_cert_info");
+
+CATCH :
+	app_info_destroy(app_info);
+	_INFO("After app_info_destroy");
+
+	package_info_destroy(pkg_info);
+	_INFO("After package_info_destroy");
+
+	SAFE_DELETE(pkg_name);
+
+	_INFO("Before return");
+
+	return cert_match_info.is_matched;
+}
+
 static void
 __soup_cb(SoupSession *session, SoupMessage *msg, gpointer user_data)
 {
@@ -176,14 +295,23 @@ __soup_cb(SoupSession *session, SoupMessage *msg, gpointer user_data)
 	GList *app_id_list_iter = app_id_list;
 	while (app_id_list_iter != NULL) {
 		char *id = (char *)(app_id_list_iter->data);
-		SoupURI *parsed_uri = soup_uri_new(id);
-		if (parsed_uri == NULL)
+
+		/*Try Rule = tizen:pkg-key-hash:<sha256_hash-of-public-key-of-pkg-author-cert>*/
+		bool is_cert_matched =
+				__verify_caller_id_with_author_cert(cb_data->caller_app_id, id);
+		if (is_cert_matched == true) {
+			real_app_id = strdup(id);
+			error_code = FIDO_ERROR_NONE;
+			break;
+		} else {
+			/*Try Rule = String comparison*/
 			if (strcmp(cb_data->caller_app_id, id) == 0) {
 				real_app_id = strdup(id);
 				error_code = FIDO_ERROR_NONE;
 				break;
 			}
-		soup_uri_free(parsed_uri);
+		}
+
 
 		app_id_list_iter = app_id_list_iter->next;
 	}

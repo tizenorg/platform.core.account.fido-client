@@ -14,6 +14,7 @@ pkg_check_modules(SERVER_pkgs REQUIRED
 		aul
 		libsoup-2.4
 		capi-appfw-app-manager
+		capi-appfw-package-manager
 		openssl
 		bundle
 		cynara-client
@@ -32,6 +33,7 @@ pkg_check_modules(SERVER_pkgs REQUIRED
 				aul
 				libsoup-2.4
 				capi-appfw-app-manager
+				capi-appfw-package-manager
 				openssl
 				bundle
 )
