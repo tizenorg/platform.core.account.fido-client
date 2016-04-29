@@ -1,5 +1,5 @@
 [D-BUS Service]
 Name=org.tizen.fidosvcui
 Exec=/usr/bin/fido-ui-service
-User=system
-Group=system
+User=service_fw
+Group=service_fw
