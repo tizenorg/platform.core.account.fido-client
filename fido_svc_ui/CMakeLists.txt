@@ -54,16 +54,9 @@ FOREACH(flag ${UI_PKGS_CFLAGS})
 	SET(EXTRA_CFLGAS "${EXTRA_CFLGAS} ${flag}")
 ENDFOREACH(flag)
 
-ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_SOURCE_DIR}/common/fido-stub.c ${CMAKE_SOURCE_DIR}/common/fido-stub.h
-WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/common/
-COMMAND gdbus-codegen --interface-prefix org.tizen. --generate-c-code fido-stub ${CMAKE_SOURCE_DIR}/common/dbus_interfaces/fido.xml
-COMMENT "Generating FIDO GDBus stubs........................")
-
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE ${EXTRA_CFLGAS}")
-ADD_EXECUTABLE(${UI_PACKAGE_NAME} ${UI_SRCS} ${CMAKE_SOURCE_DIR}/common/fido-stub.c)
-ADD_DEPENDENCIES(${UI_PACKAGE_NAME} ${CMAKE_SOURCE_DIR}/common/fido-stub.h)
-ADD_DEPENDENCIES(${UI_PACKAGE_NAME} ${CMAKE_SOURCE_DIR}/common/fido-stub.c)
-TARGET_LINK_LIBRARIES(${UI_PACKAGE_NAME} "-pie" ${UI_PKGS_LDFLAGS})
+ADD_EXECUTABLE(${UI_PACKAGE_NAME} ${UI_SRCS})
+TARGET_LINK_LIBRARIES(${UI_PACKAGE_NAME} "-pie" ${UI_PKGS_LDFLAGS} fido-client-common)
 CONFIGURE_FILE(${UI_PACKAGE_NAME}.xml.in ${UI_PACKAGE_NAME}.xml)
 
 if(USE_JSON_BUILDER)
