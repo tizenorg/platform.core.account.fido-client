@@ -184,7 +184,7 @@ chsmack -a '_' %{_libdir}/fido/asm/
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
 %{_includedir}/*.h
-/opt/usr/devel/fido/tc/*
+##/opt/usr/devel/fido/tc/*
 
 
 #################################################################################

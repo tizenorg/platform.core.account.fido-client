@@ -48,29 +48,18 @@ SET(SERVER_SRCS
 		fido_asm_plugin_manager.c
 		fido_uaf_policy_checker.c
 		fido_selection_ui_adaptor.c
-		../common/fido_uaf_utils.c
-		../common/fido_json_handler.c
-		../common/fido_tlv_util.c
 		fido_app_id_handler.c
-		../common/fido_b64_util.c
 		fido_privilege_checker.c
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/common)
 
-ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_SOURCE_DIR}/common/fido-stub.c ${CMAKE_SOURCE_DIR}/common/fido-stub.h
-WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/common/
-COMMAND gdbus-codegen --interface-prefix org.tizen. --generate-c-code fido-stub ${CMAKE_SOURCE_DIR}/common/dbus_interfaces/fido.xml
-COMMENT "Generating FIDO GDBus stubs........................")
-
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -Wall -Werror")
 SET(CMAKE_LDFLAGS "-Wl,-zdefs")
 
-ADD_EXECUTABLE(${SVC_DAEMON} ${SERVER_SRCS} ${CMAKE_SOURCE_DIR}/common/fido-stub.c)
-ADD_DEPENDENCIES(${SVC_DAEMON} ${CMAKE_SOURCE_DIR}/common/fido-stub.h)
-ADD_DEPENDENCIES(${SVC_DAEMON} ${CMAKE_SOURCE_DIR}/common/fido-stub.c)
+ADD_EXECUTABLE(${SVC_DAEMON} ${SERVER_SRCS})
 
-TARGET_LINK_LIBRARIES(${SVC_DAEMON} ${SERVER_pkgs_LDFLAGS})
+TARGET_LINK_LIBRARIES(${SVC_DAEMON} ${SERVER_pkgs_LDFLAGS} fido-client-common)
 
 INSTALL(TARGETS ${SVC_DAEMON} DESTINATION bin)
 
