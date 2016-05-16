@@ -837,6 +837,14 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 		return;
 	}
 
+	if (cb_data->uaf_req->header->operation == NULL) {
+		_ERR("op field missing in uaf json message");
+
+		_send_process_response(cb_data, FIDO_ERROR_PROTOCOL_ERROR, NULL);
+
+		return;
+	}
+
 	_INFO("cb_data->type = [%d]", cb_data->type);
 
 	GList *available_authenticators_full = g_list_first(available_authenticators);
@@ -845,10 +853,7 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 
 		_INFO("_PROCESS_TYPE_CHECK_POLICY");
 
-		if (cb_data->uaf_req->header->operation != NULL)
-			_INFO("operation = [%s]", cb_data->uaf_req->header->operation);
-		else
-			_ERR("operation = [NULL]");
+		_INFO("operation = [%s]", cb_data->uaf_req->header->operation);
 
 		if ((strcmp(cb_data->uaf_req->header->operation, _UAF_OPERATION_NAME_KEY_REG) == 0)
 					 || ((strcmp(cb_data->uaf_req->header->operation, _UAF_OPERATION_NAME_KEY_AUTH) == 0))) {
