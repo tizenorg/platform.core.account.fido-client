@@ -17,9 +17,6 @@ pkg_check_modules(SERVER_pkgs REQUIRED
 		capi-appfw-package-manager
 		openssl
 		bundle
-		cynara-client
-		cynara-session
-		cynara-creds-gdbus
 		libtzplatform-config
 )
 else()

@@ -26,9 +26,6 @@ BuildRequires:  pkgconfig(gio-unix-2.0)
 
 %if "%{?tizen_version}" == "3.0"
 BuildRequires:  pkgconfig(libtzplatform-config)
-BuildRequires:  pkgconfig(cynara-client)
-BuildRequires:  pkgconfig(cynara-session)
-BuildRequires:  pkgconfig(cynara-creds-gdbus)
 %endif
 
 BuildRequires:  pkgconfig(pkgmgr-info)
