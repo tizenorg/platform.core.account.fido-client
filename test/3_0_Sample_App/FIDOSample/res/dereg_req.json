@@ -1,0 +1,17 @@
+[
+    {
+        "header": {
+            "upv": {
+                "major": "1",
+                "minor": "0"
+            },
+            "op": "Dereg"
+        },
+        "authenticators": [
+            {
+                "aaid": "0001#8001",
+                "keyID": "uWrbo_8JI1HmPESrNAStTVV8ZbBrzLsf_kZu1QKX2YY"
+            }
+        ]
+    }
+]

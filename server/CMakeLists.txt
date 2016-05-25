@@ -15,6 +15,7 @@ pkg_check_modules(SERVER_pkgs REQUIRED
 		libsoup-2.4
 		capi-appfw-app-manager
 		capi-appfw-package-manager
+		pkgmgr-info
 		openssl
 		bundle
 		libtzplatform-config

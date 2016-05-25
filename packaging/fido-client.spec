@@ -35,6 +35,7 @@ BuildRequires:  pkgconfig(gobject-2.0)
 ##BuildRequires:  pkgconfig(capi-appfw-application)
 BuildRequires:  pkgconfig(capi-appfw-app-manager)
 BuildRequires:  pkgconfig(capi-appfw-package-manager)
+BuildRequires:  pkgconfig(pkgmgr-info)
 BuildRequires:  pkgconfig(libsoup-2.4)
 BuildRequires:  pkgconfig(elementary)
 BuildRequires:  pkgconfig(efl-extension)
@@ -270,7 +271,7 @@ This is a dummy ASM for testing FIDO client.
 %{_libdir}/fido/asm/dummy_asm.json
 %endif
 
-%if "%{?tizen_version}" == "2.3.1"
+%if "%{?tizen_version}" == "230" || "%{?tizen_version}" == "2.3.1"
 #################################################################################
 ## Fido Sample App
 
