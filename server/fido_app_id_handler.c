@@ -27,6 +27,14 @@
 #include <string.h>
 #include <app_manager.h>
 #include <package_manager.h>
+#include <openssl/buffer.h>
+#include <openssl/sha.h>
+#include <openssl/evp.h>
+#include <openssl/bio.h>
+#include <openssl/err.h>
+#include <openssl/x509.h>
+#include <pkgmgr-info.h>
+#include <aul.h>
 
 #include "fido_internal_types.h"
 #include "fido_json_handler.h"
@@ -54,6 +62,9 @@ typedef struct _cert_match_info {
 	bool is_matched;
 } cert_match_info_s;
 
+#ifdef WITH_JSON_BUILDER
+static uid_t __get_uid_of_dbus_caller(GDBusMethodInvocation *invocation);
+#endif
 
 static inline int
 __read_proc(const char *path, char *buf, int size)
@@ -83,6 +94,29 @@ __read_proc(const char *path, char *buf, int size)
 	close(fd);
 
 	return ret;
+}
+
+
+static char*
+__get_appid(GDBusMethodInvocation *invocation, pid_t pid)
+{
+	char *app_id = calloc(1024, sizeof(char));
+
+#ifdef WITH_JSON_BUILDER
+	uid_t uid = __get_uid_of_dbus_caller(invocation);
+	int ret = aul_app_get_appid_bypid_for_uid(pid, app_id, 1023, uid);
+#else
+	int ret = aul_app_get_appid_bypid(pid, app_id, 1023);
+#endif
+
+	if (ret != AUL_R_OK) {
+		_ERR("AUL Get App ID failed [%d]", ret);
+		free(app_id);
+
+		return NULL;
+	}
+
+	return app_id;
 }
 
 static char*
@@ -128,33 +162,47 @@ __get_appid_of_dbus_caller(GDBusMethodInvocation *invocation)
 
 	g_variant_unref(response);
 
-	char *app_id = NULL;
-	int ret = app_manager_get_app_id(remote_pid, &app_id);
-
-	if (app_id == NULL) {
-		_ERR("app_manager_get_app_id for %d failed = %d", remote_pid, ret);
-
-		/* Exception case : Daemons will not have app-ids, for them path will be set : /usr/bin/sample-service */
-		char buf[128];
-		int ret = 0;
-
-		snprintf(buf, sizeof(buf), "/proc/%d/cmdline", upid);
-		ret = __read_proc(buf, buf, sizeof(buf));
-		if (ret <= 0) {
-			_ERR("No proc directory (%d)\n", upid);
-			return NULL;
-		}
-
-		_INFO("Caller=[%s]", buf);
-
-		app_id = strdup(buf);
-	}
-
-
-	return app_id;
+	return __get_appid(invocation, remote_pid);
 }
 
-/*tizen:pkg-key-hash:<sha256_hash-of-public-key-of-pkg-author-cert>*/
+#ifdef WITH_JSON_BUILDER
+static uid_t
+__get_uid_of_dbus_caller(GDBusMethodInvocation *invocation)
+{
+	GError *error = NULL;
+	GDBusConnection *connection = NULL;
+	const gchar *sender = NULL;
+
+	sender = g_dbus_method_invocation_get_sender(invocation);
+	if (!sender) {
+		_ERR("Failed to get sender");
+		return 0;
+	}
+
+	connection = g_dbus_method_invocation_get_connection(invocation);
+	if (connection == NULL) {
+		_ERR("Failed to open connection for the invocation");
+		return 0;
+	}
+
+	GVariant *result = g_dbus_connection_call_sync(connection,
+		"org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",
+		"GetConnectionUnixUser", g_variant_new("(s)", sender), G_VARIANT_TYPE("(u)"),
+		G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
+
+	if (result != NULL) {
+		uid_t uid;
+		g_variant_get(result, "(u)", &uid);
+		g_variant_unref(result);
+
+		return uid;
+	}
+
+	return 0;
+}
+#endif
+
+/*"tizen:pkg-key-hash:B64Encode(Sha256Digest(<Author Root Cert Public Key>))"*/
 const char*
 __get_pub_key(const char *json_id_str)
 {
@@ -187,79 +235,6 @@ __get_pub_key(const char *json_id_str)
 	_INFO("__get_pub_key end");
 
 	return pub_key;
-}
-
-static bool
-__cert_cb(package_info_h handle, package_cert_type_e cert_type, const char *cert_value, void *user_data)
-{
-	_INFO("__cert_cb start");
-
-	cert_match_info_s *cert_match_info = user_data;
-
-
-	_INFO("cert type = [%d]", cert_type);
-	_INFO("cert value = [%s]", cert_value);
-
-	if (strcmp(cert_value, cert_match_info->cert_str) == 0) {
-		cert_match_info->is_matched = true;
-		_INFO("Comparison success");
-		return false;
-	}
-
-	return true;
-}
-
-static bool
-__verify_caller_id_with_author_cert(const char *caller_app_id, const char *json_id_str)
-{
-	_INFO("__verify_caller_id_with_author_cert start");
-
-	RET_IF_FAIL(caller_app_id != NULL, false);
-	RET_IF_FAIL(json_id_str != NULL, false);
-
-	app_info_h app_info = NULL;
-	int ret = app_info_create(caller_app_id, &app_info);
-	if (ret != APP_MANAGER_ERROR_NONE) {
-		_ERR("app_info_create failed [%d]", ret);
-		return false;
-	}
-
-	package_info_h pkg_info = NULL;
-	char *pkg_name = NULL;
-
-	cert_match_info_s cert_match_info;
-	cert_match_info.is_matched = false;
-
-	cert_match_info.cert_str = __get_pub_key(json_id_str);
-	CATCH_IF_FAIL(cert_match_info.cert_str != NULL);
-
-
-	_INFO("Before app_info_get_package");
-
-	ret = app_info_get_package(app_info, &pkg_name);
-	CATCH_IF_FAIL(ret == APP_MANAGER_ERROR_NONE);
-
-	_INFO("Before package_info_create [%s]", pkg_name);
-	ret = package_info_create(pkg_name, &pkg_info);
-	CATCH_IF_FAIL(ret == APP_MANAGER_ERROR_NONE);
-
-	_INFO("Before package_info_foreach_cert_info");
-	package_info_foreach_cert_info(pkg_info, __cert_cb, &cert_match_info);
-
-	_INFO("After foreach_cert_info");
-
-CATCH :
-	app_info_destroy(app_info);
-	_INFO("After app_info_destroy");
-
-	package_info_destroy(pkg_info);
-	_INFO("After package_info_destroy");
-
-	SAFE_DELETE(pkg_name);
-
-	_INFO("Before return");
-
-	return cert_match_info.is_matched;
 }
 
 static void
@@ -295,24 +270,15 @@ __soup_cb(SoupSession *session, SoupMessage *msg, gpointer user_data)
 	GList *app_id_list_iter = app_id_list;
 	while (app_id_list_iter != NULL) {
 		char *id = (char *)(app_id_list_iter->data);
-
-		/*Try Rule = tizen:pkg-key-hash:<sha256_hash-of-public-key-of-pkg-author-cert>*/
-		bool is_cert_matched =
-				__verify_caller_id_with_author_cert(cb_data->caller_app_id, id);
-		if (is_cert_matched == true) {
+		_INFO("%s", id);
+		/*Rule = tizen:pkg-key-hash:<sha256_hash-of-public-key-of-pkg-author-cert>*/
+		if (strcmp(cb_data->caller_app_id, id) == 0) {
 			real_app_id = strdup(id);
 			error_code = FIDO_ERROR_NONE;
+
+			_INFO("Match found");
 			break;
-		} else {
-			/*Try Rule = String comparison*/
-			if (strcmp(cb_data->caller_app_id, id) == 0) {
-				real_app_id = strdup(id);
-				error_code = FIDO_ERROR_NONE;
-				break;
-			}
 		}
-
-
 		app_id_list_iter = app_id_list_iter->next;
 	}
 
@@ -355,6 +321,233 @@ __timer_expired(gpointer data)
 	return FALSE;
 }
 
+static char*
+__b64_encode(unsigned char *input, int ip_len)
+{
+	RET_IF_FAIL(input != NULL, NULL);
+	RET_IF_FAIL(ip_len > 0, NULL);
+
+	unsigned char *output = calloc(ip_len * 1.5, sizeof(char));
+
+	BIO *bmem = NULL;
+	BIO *b64 = NULL;
+	BUF_MEM *bptr = NULL;
+	b64 = BIO_new(BIO_f_base64());
+	if (b64 == NULL) {
+		_ERR("BIO_new failed \n");
+		free(output);
+		return NULL;
+	}
+
+	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+
+	bmem = BIO_new(BIO_s_mem());
+	b64 = BIO_push(b64, bmem);
+	BIO_write(b64, input, ip_len);
+	BIO_flush(b64);
+	BIO_get_mem_ptr(b64, &bptr);
+
+	memcpy(output, bptr->data, bptr->length);
+	output[bptr->length] = 0;
+
+	if(b64)
+		BIO_free_all(b64);
+
+	return (char*)output;
+}
+
+static int
+__b64_decode(const char *encoded_data, int encoded_size, unsigned char **decoded_data, int *decoded_size)
+{
+	RET_IF_FAIL(encoded_data != NULL, -1);
+
+	//_INFO("%s", encoded_data);
+
+	int len = 0;
+	*decoded_size = encoded_size;
+
+	(*decoded_data) = (unsigned char *) calloc((*decoded_size) * 1.5, sizeof(char));
+
+	BIO *bmem = BIO_new_mem_buf((void *) encoded_data, (*decoded_size));
+
+	BIO *bioCmd = BIO_new(BIO_f_base64());
+
+	BIO_set_flags(bioCmd, BIO_FLAGS_BASE64_NO_NL);
+
+	bmem = BIO_push(bioCmd, bmem);
+
+	len = BIO_read(bmem, (void *) (*decoded_data), (*decoded_size));
+	_INFO("%d", len);
+
+	*decoded_size = len;
+
+	BIO_free_all(bmem);
+
+	_INFO("");
+
+	return 0;
+}
+
+static char*
+__get_pub_key_from_cert(const char *cert_b64)
+{
+	RET_IF_FAIL(cert_b64 != NULL, NULL);
+
+	unsigned char pubkey_der_digest[SHA256_DIGEST_LENGTH] = {0, };
+
+	unsigned char* cert_raw = NULL;//calloc(strlen(cert_b64) * 1.5, sizeof(char));
+
+	int cert_raw_len = 0;
+
+	int ret = __b64_decode(cert_b64, strlen(cert_b64), &cert_raw, &cert_raw_len);
+	if (ret != 0) {
+		_ERR("__b64_decode failed");
+		free(cert_raw);
+
+		return NULL;
+	}
+
+	X509 *x509 = d2i_X509(NULL, (const unsigned char **)(&cert_raw), cert_raw_len);
+	if (x509 == NULL) {
+		_ERR("d2i_X509 failed");
+		free(cert_raw);
+		return NULL;
+	}
+
+	int der_len = i2d_X509_PUBKEY(X509_get_X509_PUBKEY(x509), NULL);
+	if (der_len <= 0) {
+		_ERR("i2d_X509_PUBKEY failed");
+		free(cert_raw);
+		return NULL;
+	}
+
+	unsigned char* der_pubkey  = NULL;
+
+	unsigned char* der_pubkey_temp = NULL;
+
+	int hashed_len = 0;
+
+	der_pubkey_temp = der_pubkey = (unsigned char*)OPENSSL_malloc(der_len);
+
+	i2d_X509_PUBKEY(X509_get_X509_PUBKEY(x509), (unsigned char **)&der_pubkey_temp);
+
+	ret = EVP_Digest(der_pubkey, der_len, pubkey_der_digest, (unsigned int*)&hashed_len, EVP_sha256(), NULL);
+
+	if (ret != 1 ) {
+		_ERR("EVP_Digest failed");
+		OPENSSL_free(der_pubkey);
+
+		return NULL;
+	}
+
+	char *pub_key =  __b64_encode(pubkey_der_digest, (int)hashed_len);
+
+	OPENSSL_free(der_pubkey);
+
+	return pub_key;
+}
+
+/*tizen:pkg-key-hash:<sha256_hash-of-public-key-of-pkg-author-cert>*/
+static char*
+__get_tz_facet_id_of_caller(const char *caller_app_id, GDBusMethodInvocation *invocation)
+{
+	RET_IF_FAIL(caller_app_id != NULL, NULL);
+
+#ifdef WITH_JSON_BUILDER
+	uid_t uid = __get_uid_of_dbus_caller(invocation);
+	_INFO("Caller uid =[%d]", uid);
+#endif
+
+	pkgmgrinfo_pkginfo_h handle = NULL;
+
+#ifdef WITH_JSON_BUILDER
+	int ret = pkgmgrinfo_pkginfo_get_usr_pkginfo(caller_app_id, uid, &handle);
+#else
+	int ret = pkgmgrinfo_pkginfo_get_pkginfo(caller_app_id, &handle);
+#endif
+
+	if (ret < 0) {
+		_ERR("Get Pkg Info Failed failed [%d]", ret);
+		return NULL;
+	}
+
+	_INFO("");
+
+	char *pkgid = NULL;
+	ret = pkgmgrinfo_pkginfo_get_pkgid(handle, &pkgid);
+	if (ret != PMINFO_R_OK) {
+
+		_ERR("pkgmgrinfo_pkginfo_get_pkgid failed [%d]", ret);
+		pkgmgrinfo_pkginfo_destroy_pkginfo(handle);
+		return NULL;
+	}
+
+	_INFO("");
+
+	pkgmgrinfo_certinfo_h cert_handle;
+	const char *author_cert = NULL;
+	ret = pkgmgrinfo_pkginfo_create_certinfo(&cert_handle);
+	if (ret != PMINFO_R_OK) {
+		_ERR("");
+		pkgmgrinfo_pkginfo_destroy_pkginfo(handle);
+		return NULL;
+	}
+
+	_INFO("");
+
+#ifdef WITH_JSON_BUILDER
+	ret = pkgmgrinfo_pkginfo_load_certinfo(pkgid, cert_handle, uid);
+#else
+	ret = pkgmgrinfo_pkginfo_load_certinfo(pkgid, cert_handle);
+#endif
+
+	if (ret != PMINFO_R_OK) {
+		_ERR("");
+		pkgmgrinfo_pkginfo_destroy_certinfo(cert_handle);
+		pkgmgrinfo_pkginfo_destroy_pkginfo(handle);
+		return NULL;
+	}
+
+	_INFO("");
+
+	ret = pkgmgrinfo_pkginfo_get_cert_value(cert_handle, PMINFO_AUTHOR_ROOT_CERT, &author_cert);
+	if (ret != PMINFO_R_OK) {
+		pkgmgrinfo_pkginfo_destroy_certinfo(cert_handle);
+		_ERR("");
+		pkgmgrinfo_pkginfo_destroy_pkginfo(handle);
+		return NULL;
+	}
+
+	/*_INFO("Author Root Cert=%s", author_cert);*/
+
+	_INFO("");
+
+	char *author_cert_hash = NULL;
+	char *tz_facet_id = NULL;
+	int tz_facet_id_max_len = -1;
+
+
+	author_cert_hash = __get_pub_key_from_cert(author_cert);
+	_INFO("");
+	CATCH_IF_FAIL(author_cert_hash != NULL);
+
+	tz_facet_id_max_len = strlen(author_cert_hash) + 128;
+	tz_facet_id = (char*)(calloc(1, tz_facet_id_max_len));
+	snprintf(tz_facet_id, tz_facet_id_max_len, "%s:%s", "tizen:pkg-key-hash",
+			 author_cert_hash);
+	_INFO("");
+
+
+CATCH :
+
+	_INFO("Before return");
+
+	pkgmgrinfo_pkginfo_destroy_certinfo(cert_handle);
+	pkgmgrinfo_pkginfo_destroy_pkginfo(handle);
+	_INFO("");
+	return tz_facet_id;
+}
+
 int
 _verify_and_get_facet_id(const char *uaf_app_id, GDBusMethodInvocation *invocation, _facet_id_cb cb, void *user_data)
 {
@@ -369,31 +562,49 @@ _verify_and_get_facet_id(const char *uaf_app_id, GDBusMethodInvocation *invocati
 	if (cb_data == NULL)
 		return FIDO_ERROR_OUT_OF_MEMORY;
 
-	cb_data->caller_app_id = app_id;
+	/* Tizen Facet Id is:
+	*  "tizen:pkg-key-hash:B64Encode(Sha256Digest(<Author Root Cert Public Key>))"
+	*/
+	cb_data->caller_app_id = __get_tz_facet_id_of_caller(app_id, invocation);
+	if (cb_data->caller_app_id == NULL) {
+		SAFE_DELETE(cb_data);
+		return FIDO_ERROR_PERMISSION_DENIED;
+	}
+	_INFO("Caller's Facet Id=%s", cb_data->caller_app_id);
+
 	cb_data->cb = cb;
 	cb_data->user_data = user_data;
 
+	/*Case 1: UAF JSON does not have appID, so no check is required, put facetid*/
 	if (uaf_app_id == NULL) {
-		 cb_data->real_app_id = strdup(app_id);
-		 g_timeout_add(2, __timer_expired, cb_data);
-		 return FIDO_ERROR_NONE;
+		_INFO("UAF msg does not have appID");
+		cb_data->real_app_id = __get_tz_facet_id_of_caller(app_id, invocation);
+		g_timeout_add(2, __timer_expired, cb_data);
+		return FIDO_ERROR_NONE;
 	}
 
+	/*Case 2: Try assuming UAF JSON is not URL, so string comparison check is required*/
+	if (strcmp(cb_data->caller_app_id, uaf_app_id) == 0) {
+		_INFO("UAF msg has direct appID");
+
+		cb_data->real_app_id = strdup(uaf_app_id);
+		g_timeout_add(2, __timer_expired, cb_data);
+
+		return FIDO_ERROR_NONE;
+	}
 
 	SoupURI *parsed_uri = soup_uri_new(uaf_app_id);
-
 	if (parsed_uri == NULL) {
 
-		if (strcmp(app_id, uaf_app_id) == 0) {
-			cb_data->real_app_id = strdup(uaf_app_id);
-			g_timeout_add(2, __timer_expired, cb_data);
-			return FIDO_ERROR_NONE;
-		} else {
-			_free_app_id_cb_data(cb_data);
-			return FIDO_ERROR_PERMISSION_DENIED;
-		}
+		_INFO("soup_uri_new failed");
+		_free_app_id_cb_data(cb_data);
+		return FIDO_ERROR_PERMISSION_DENIED;
 	}
 
+	_INFO("UAF msg has appID url");
+	/* Case 3: UAF JSON is URL, so fetch the json from this url, then look for
+	* tizen:pkg-key-hash in "ids" array, allow only if its matched with the caller's value.
+	*/
 	const char *scheme = soup_uri_get_scheme(parsed_uri);
 	if (scheme == NULL) {
 		 _free_app_id_cb_data(cb_data);
