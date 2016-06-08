@@ -227,9 +227,8 @@ _discover_response_intermediate_cb(GList *asm_response_list, void *user_data)
 
 	if (asm_response_list == NULL)
 		_ERR("Discover response failed");
-	else {
+	else
 		asm_auth_list = _uaf_parser_parse_asm_response_discover(asm_response_list, &error);
-	}
 
 	(cb_data->cb)(error, 0, asm_auth_list, cb_data->user_data);
 
@@ -884,12 +883,10 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 			GList *allowed_auth_list = _policy_checker_get_matched_auth_list(policy, available_authenticators_full);
 			g_list_free_full(available_authenticators_full, _free_asm_auth_list);
 
-			if ((allowed_auth_list != NULL) && g_list_length(allowed_auth_list) > 0) {
-
+			if ((allowed_auth_list != NULL) && g_list_length(allowed_auth_list) > 0)
 				_send_process_response(cb_data, FIDO_ERROR_NONE, NULL);
-			} else {
+			else
 				_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
-			}
 
 			if (allowed_auth_list != NULL)
 				g_list_free_full(allowed_auth_list, _free_matched_auth_data);
@@ -906,12 +903,10 @@ _discover_response_cb_for_process(int tz_error_code, int error_code, GList *avai
 																				   available_authenticators_full);
 			g_list_free_full(available_authenticators_full, _free_asm_auth_list);
 
-			if ((matched_auth_list != NULL) && g_list_length(matched_auth_list) > 0) {
-
+			if ((matched_auth_list != NULL) && g_list_length(matched_auth_list) > 0)
 				_send_process_response(cb_data, FIDO_ERROR_NONE, NULL);
-			} else {
+			else
 				_send_process_response(cb_data, FIDO_ERROR_NO_SUITABLE_AUTHENTICATOR, NULL);
-			}
 
 			if (matched_auth_list != NULL)
 				g_list_free_full(matched_auth_list, __free_matched_dereg_auth_data_list_item);
@@ -1108,9 +1103,8 @@ __facet_id_cb(int err, const char *facet_id, void *user_data)
 
 	error_code = _handle_process_message(cb_data);
 
-	if (error_code != FIDO_ERROR_NONE) {
+	if (error_code != FIDO_ERROR_NONE)
 		_send_process_response(cb_data, error_code, NULL);
-	}
 }
 
 gboolean
@@ -1164,7 +1158,7 @@ _dbus_on_fido_discover(Fido *object, GDBusMethodInvocation *invocation)
 }
 
 gboolean
-_dbus_handle_process_or_check_policy(Fido *object, GDBusMethodInvocation *invocation, 
+_dbus_handle_process_or_check_policy(Fido *object, GDBusMethodInvocation *invocation,
 									const gchar *uaf_request_json, const gchar *channel_binding,
 									 _process_type_t type)
 {

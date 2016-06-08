@@ -346,9 +346,9 @@ fido_uaf_set_server_result(int response_code, const char *uaf_response_json)
 
 	if (is_success == FALSE) {
 		_ERR("fido_call_fido_uaf_notify_result_sync failed [%d]", tizen_error_code);
-		if (dbus_err) {
+		if (dbus_err)
 			_ERR("GError = [%s]", dbus_err->message);
-		}
+
 		return FIDO_ERROR_PROTOCOL_ERROR;
 	}
 

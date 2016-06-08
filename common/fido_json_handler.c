@@ -183,7 +183,7 @@ __uaf_composer_compose_asm_init(JsonGenerator **generator, JsonObject **root_obj
 	return TRUE;
 
 
-	CATCH:
+CATCH:
 	if (generator != NULL && *generator != NULL) {
 		g_object_unref(*generator);
 		*generator = NULL;
@@ -248,7 +248,7 @@ __uaf_composer_compose_asm_response_init(JsonGenerator **generator, JsonObject *
 	return TRUE;
 
 
-	CATCH:
+CATCH:
 	if (generator != NULL && *generator != NULL) {
 		g_object_unref(*generator);
 		*generator = NULL;
@@ -299,8 +299,8 @@ __uaf_composer_compose_asm_version(_version_t *version, JsonNode **node)
 
 	return TRUE;
 
-	CATCH:
-	if ((node !=NULL) && (*node != NULL)) {
+CATCH:
+	if ((node != NULL) && (*node != NULL)) {
 		json_node_free(*node);
 		*node = NULL;
 	}
@@ -349,7 +349,7 @@ __uaf_composer_compose_asm_reg_in(_fido_asm_reg_in_t *reg_in, JsonNode **node)
 
 	return TRUE;
 
-	CATCH:
+CATCH:
 	if (node != NULL && *node != NULL) {
 		json_node_free(*node);
 		*node = NULL;
@@ -390,9 +390,8 @@ __uaf_composer_compose_asm_auth_in(_fido_asm_auth_in_t *auth_in, JsonNode **node
 	if (auth_in->key_ids) {
 		JsonArray *ids = json_array_new();
 
-	for (iter = auth_in->key_ids; iter != NULL; iter = g_list_next(iter)) {
-			json_array_add_string_element(ids, (char *)iter->data);
-	}
+		for (iter = auth_in->key_ids; iter != NULL; iter = g_list_next(iter))
+				json_array_add_string_element(ids, (char *)iter->data);
 
 		json_object_set_array_member(obj, _JSON_KEY_KEY_IDS, ids);
 	}
@@ -457,7 +456,7 @@ __uaf_composer_compose_asm_auth_in(_fido_asm_auth_in_t *auth_in, JsonNode **node
 
 	return TRUE;
 
-	CATCH:
+CATCH:
 	if (*node != NULL) {
 		json_node_free(*node);
 		*node = NULL;
@@ -631,19 +630,16 @@ _uaf_parser_parse_match(JsonObject *match_obj)
 		_match_criteria_t *match_criteria = (_match_criteria_t*)calloc(1, sizeof(_match_criteria_t));
 
 		JsonArray *aaid_arr = json_object_get_array_member(match_obj, _JSON_KEY_AAID);
-		if (aaid_arr != NULL) {
+		if (aaid_arr != NULL)
 			match_criteria->aaid_list = __get_string_list_from_json_array(aaid_arr);
-		}
 
 		JsonArray *vendor_arr = json_object_get_array_member(match_obj, _JSON_KEY_VENDOR_ID);
-		if (vendor_arr != NULL) {
+		if (vendor_arr != NULL)
 			match_criteria->vendor_list = __get_string_list_from_json_array(vendor_arr);
-		}
 
 		JsonArray *key_id_arr = json_object_get_array_member(match_obj, _JSON_KEY_KEY_IDS);
-		if (key_id_arr != NULL) {
+		if (key_id_arr != NULL)
 			match_criteria->key_id_list = __get_string_list_from_json_array(key_id_arr);
-		}
 
 		match_criteria->user_verification = __get_int_from_json_object(match_obj, _JSON_KEY_USER_VERIFICATION);
 
@@ -662,14 +658,12 @@ _uaf_parser_parse_match(JsonObject *match_obj)
 		}
 
 		JsonArray *assertion_schm_arr = json_object_get_array_member(match_obj, _JSON_KEY_ASSERT_SCHEMES);
-		if (assertion_schm_arr) {
+		if (assertion_schm_arr)
 			match_criteria->assertion_scheme_list = __get_string_list_from_json_array(assertion_schm_arr);
-		}
 
 		JsonArray *att_type_arr = json_object_get_array_member(match_obj, _JSON_KEY_ATT_TYPES);
-		if (att_type_arr) {
+		if (att_type_arr)
 			match_criteria->attestation_type_list = __get_string_list_from_json_array(att_type_arr);
-		}
 
 		match_criteria->auth_version = __get_int_from_json_object(match_obj, _JSON_KEY_AUTH_VERSION);
 
@@ -1040,9 +1034,9 @@ _uaf_parser_parse_asm_response_discover(GList *asm_response_list, int *error_cod
 			 _INFO("ASM Response = %s", asm_resp->asm_response_json);
 		 }
 
-		if (asm_resp->error_code == FIDO_ERROR_NONE
+		if ((asm_resp->error_code == FIDO_ERROR_NONE)
 				&&
-				asm_resp->asm_response_json != NULL) {
+				(asm_resp->asm_response_json != NULL)) {
 
 			JsonParser *parser = json_parser_new();
 			CATCH_IF_FAIL(parser != NULL);
@@ -1505,7 +1499,7 @@ _uaf_composer_compose_asm_reg_request(_version_t *version, int auth_index, _fido
 
 	return 0;
 
-	CATCH:
+CATCH:
 	if (generator != NULL) {
 		g_object_unref(generator);
 		generator = NULL;
@@ -1918,9 +1912,8 @@ _uaf_composer_compose_final_challenge(const char *app_id, const char *challenge,
 
 		GError *chb_err = NULL;
 		bool chb_parsed = json_parser_load_from_data(chb_parser, ch_bin, -1, &chb_err);
-		if (chb_parsed == FALSE) {
+		if (chb_parsed == FALSE)
 			return NULL;
-		}
 
 		JsonNode *chb_root = json_parser_get_root(chb_parser);
 		RET_IF_FAIL(chb_root != NULL, NULL);
@@ -2012,19 +2005,16 @@ _uaf_composer_compose_final_challenge(const char *app_id, const char *challenge,
 
 		GError *chb_err = NULL;
 		bool chb_parsed = json_parser_load_from_data(chb_parser, ch_bin, -1, &chb_err);
-		if (chb_parsed == FALSE) {
+		if (chb_parsed == FALSE)
 			return NULL;
-		}
 
 		JsonNode *chb_root = json_parser_get_root(chb_parser);
-		if (chb_root == NULL) {
+		if (chb_root == NULL)
 			return NULL;
-		}
 
 		JsonObject *chb_root_obj = json_node_get_object(chb_root);
-		if (chb_root_obj == NULL) {
+		if (chb_root_obj == NULL)
 			return NULL;
-		}
 
 		char *end_pt = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_SERVER_END_POINT);
 		char *cert = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_TLS_SERVER_CERT);
@@ -2802,9 +2792,8 @@ __get_transaction_list(JsonObject *uaf_obj)
 
 			/*tcDisplayPNGCharacteristics*/
 			JsonObject *tc_disp_obj = json_object_get_object_member(tr_obj, _JSON_KEY_TC_DISP_PNG_CHARS);
-			if (tc_disp_obj != NULL) {
+			if (tc_disp_obj != NULL)
 				trans->display_charac = __get_png_data(tr_obj);
-			}
 
 			trans_list = g_list_append(trans_list, trans);
 		}
@@ -2860,9 +2849,8 @@ __parse_uaf_dereg_message(JsonObject *uaf_object)
 	_dereg_request_t *dereg_req_temp = (_dereg_request_t *)calloc(1, sizeof(_dereg_request_t));
 
 	JsonArray *auth_arr = json_object_get_array_member(uaf_object, _JSON_KEY_AUTHENTICATORS_SMALL);
-	if (auth_arr != NULL) {
+	if (auth_arr != NULL)
 		json_array_foreach_element(auth_arr, __dereg_auth_parser, dereg_req_temp);
-	}
 
 	return dereg_req_temp;
 }
@@ -3030,9 +3018,8 @@ _uaf_parser_parse_trusted_facets(const char *json)
 						int idx = 0;
 						for (; idx < id_arr_len; idx++) {
 							const char *id = json_array_get_string_element(id_arr, idx);
-							if (id != NULL) {
+							if (id != NULL)
 								app_id_list = g_list_append(app_id_list, strdup(id));
-							}
 						}
 					}
 				}

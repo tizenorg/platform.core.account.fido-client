@@ -350,7 +350,7 @@ __b64_encode(unsigned char *input, int ip_len)
 	memcpy(output, bptr->data, bptr->length);
 	output[bptr->length] = 0;
 
-	if(b64)
+	if (b64)
 		BIO_free_all(b64);
 
 	return (char*)output;
@@ -433,7 +433,7 @@ __get_pub_key_from_cert(const char *cert_b64)
 
 	ret = EVP_Digest(der_pubkey, der_len, pubkey_der_digest, (unsigned int*)&hashed_len, EVP_sha256(), NULL);
 
-	if (ret != 1 ) {
+	if (ret != 1) {
 		_ERR("EVP_Digest failed");
 		OPENSSL_free(der_pubkey);
 
@@ -538,8 +538,7 @@ __get_tz_facet_id_of_caller(const char *caller_app_id, GDBusMethodInvocation *in
 	_INFO("");
 
 
-CATCH :
-
+CATCH:
 	_INFO("Before return");
 
 	pkgmgrinfo_pkginfo_destroy_certinfo(cert_handle);
@@ -554,9 +553,8 @@ _verify_and_get_facet_id(const char *uaf_app_id, GDBusMethodInvocation *invocati
 	_INFO("_verify_and_get_facet_id");
 
 	char *app_id = __get_appid_of_dbus_caller(invocation);
-	if (app_id == NULL) {
+	if (app_id == NULL)
 		return FIDO_ERROR_PERMISSION_DENIED;
-	}
 
 	_app_id_cb_data_t *cb_data = (_app_id_cb_data_t*)calloc(1, sizeof(_app_id_cb_data_t));
 	if (cb_data == NULL)

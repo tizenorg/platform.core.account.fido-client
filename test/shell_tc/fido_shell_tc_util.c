@@ -33,7 +33,7 @@ print_fail_result(
 			action_name);
 }
 
-void 
+void
 print_done_result(const char *action_name)
 {
 	printf(TEXT_YELLOW
@@ -42,7 +42,7 @@ print_done_result(const char *action_name)
 			action_name);
 }
 
-void 
+void
 print_success_result(const char *action_name)
 {
 	printf(TEXT_GREEN
@@ -51,7 +51,7 @@ print_success_result(const char *action_name)
 			"\n", action_name);
 }
 
-void 
+void
 print_action_result(
 		const char *action_name,
 		int action_return_value,
@@ -77,7 +77,7 @@ print_action_result(
 	}
 }
 
-int 
+int
 input_string(const char *prompt, size_t max_len, char **string)
 {
 	printf("\n");
@@ -104,7 +104,7 @@ input_string(const char *prompt, size_t max_len, char **string)
 	return strlen(*string);
 }
 
-int 
+int
 input_size(const char *prompt, size_t max_size, size_t *size)
 {
 	printf("\n");
@@ -142,7 +142,7 @@ input_int(const char *prompt, int min_value, int max_value, int *value)
 	return (*value < min_value || *value > max_value ? -1 : 0);
 }
 
-int 
+int
 input_double(
 		const char *prompt,
 		double min_value,
@@ -165,7 +165,7 @@ input_double(
 	return (*value < min_value || *value > max_value ? -1 : 0);
 }
 
-bool 
+bool
 show_confirm_dialog(const char *title)
 {
 	const int options[2] = {1, 2};
@@ -193,7 +193,7 @@ show_confirm_dialog(const char *title)
 	return answer;
 }
 
-int 
+int
 show_menu(
 		const char *title,
 		const int *options,

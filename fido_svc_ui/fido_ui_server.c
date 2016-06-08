@@ -457,7 +457,7 @@ _parse_json_ui_in(const char *ui_auth_json)
 
 	json_array_foreach_element(auth_data_arr, _auth_arr_cb, NULL);
 
-	CATCH:
+CATCH:
 	if (parser != NULL) {
 		g_object_unref(parser);
 		parser = NULL;
@@ -466,7 +466,7 @@ _parse_json_ui_in(const char *ui_auth_json)
 	if (parse_err != NULL) {
 		g_error_free(parse_err);
 		parse_err = NULL;
-		}
+	}
 
 	SAFE_DELETE(ui_auth);
 
@@ -674,9 +674,8 @@ main(int argc, char *argv[])
 	ui_app_remove_event_handler(handlers[APP_EVENT_LOW_MEMORY]);
 
 	ret = ui_app_main(argc, argv, &event_callback, &ad);
-	if (ret != APP_ERROR_NONE) {
+	if (ret != APP_ERROR_NONE)
 		_INFO("app_main() is failed. err = %d", ret);
-	}
 
 	return ret;
 }

@@ -50,7 +50,7 @@ _fido_b64url_encode(const unsigned char *input,  int inlen, unsigned char *outpu
 	*outlen = bptr->length;
 
 	int i;
-	for (i =0; i < *outlen ; i++) {
+	for (i = 0; i < *outlen ; i++) {
 		if (output[i] == '+')
 			output[i] = '-';
 

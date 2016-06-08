@@ -205,9 +205,9 @@ find_auth(void)
 {
 	int ret = fido_foreach_authenticator(auth_list_cb, NULL);
 
-	if (ret != FIDO_ERROR_NONE) {
+	if (ret != FIDO_ERROR_NONE)
 		__show_error(ret);
-	}
+
 	get_user_choice();
 }
 
@@ -362,7 +362,7 @@ get_user_choice(void)
 {
 	int sel_opt = 0;
 	const int options[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-	const char *names[8] = { 	"Find Authenticator",
+	const char *names[8] = {	"Find Authenticator",
 								"Check UAF Message Supported",
 								"Registration",
 								"Authentication",

@@ -83,9 +83,8 @@ _get_ui_queue(void)
 		return _ui_q;
 
 	_ui_q = g_queue_new();
-	if (_ui_q == NULL) {
+	if (_ui_q == NULL)
 		_ERR("Out of memory");
-	}
 
 	return _ui_q;
 }

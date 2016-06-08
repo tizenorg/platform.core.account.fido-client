@@ -669,9 +669,8 @@ main(int argc, char *argv[])
 	ui_app_remove_event_handler(handlers[APP_EVENT_LOW_MEMORY]);
 
 	ret = ui_app_main(argc, argv, &event_callback, &ad);
-	if (ret != APP_ERROR_NONE) {
+	if (ret != APP_ERROR_NONE)
 		dlog_print(DLOG_ERROR, LOG_TAG, "app_main() is failed. err = %d", ret);
-	}
 
 	return ret;
 }

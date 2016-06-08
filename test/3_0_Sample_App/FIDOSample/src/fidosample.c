@@ -87,12 +87,13 @@ static void create_popup(char *popup_str, appdata_s *ad)
 	return;
 }
 
-char *get_error_code(fido_error_e error_code)
+char*
+get_error_code(fido_error_e error_code)
 {
 
-	char *error_str = calloc(1,128);
+	char *error_str = calloc(1, 128);
 
-	if(error_code == FIDO_ERROR_NONE)
+	if (error_code == FIDO_ERROR_NONE)
 		strcpy(error_str, "SUCCESS");
 	else if (error_code == FIDO_ERROR_OUT_OF_MEMORY)
 		strcpy(error_str, "FIDO_ERROR_OUT_OF_MEMORY");
@@ -150,7 +151,7 @@ __print_authinfo(const fido_authenticator_h auth, appdata_s *ad)
 
 	char *title =  NULL;
 	fido_authenticator_get_title(auth, &title);
-	if(title) {
+	if (title != NULL) {
 		sprintf(tmp, " | Title = [%s]", title);
 		strcat(str, tmp);
 	}
@@ -158,7 +159,7 @@ __print_authinfo(const fido_authenticator_h auth, appdata_s *ad)
 
 	char *aaid = NULL;
 	fido_authenticator_get_aaid(auth, &aaid);
-	if(aaid) {
+	if (aaid != NULL) {
 		sprintf(tmp, " | AAID = [%s]", aaid);
 		strcat(str, tmp);
 	}
@@ -166,7 +167,7 @@ __print_authinfo(const fido_authenticator_h auth, appdata_s *ad)
 
 	char *description = NULL;
 	fido_authenticator_get_description(auth, &description);
-	if(description) {
+	if (description != NULL) {
 		sprintf(tmp, " | Description = [%s]", description);
 		strcat(str, tmp);
 	}
@@ -174,7 +175,7 @@ __print_authinfo(const fido_authenticator_h auth, appdata_s *ad)
 
 	char *scheme = NULL;
 	fido_authenticator_get_assertion_scheme(auth, &scheme);
-	if(scheme) {
+	if (scheme != NULL) {
 		sprintf(tmp, " | Scheme = [%s]", scheme);
 		strcat(str, tmp);
 	}
@@ -184,7 +185,7 @@ __print_authinfo(const fido_authenticator_h auth, appdata_s *ad)
 
 	fido_auth_algo_e get_algo = -1;
 	fido_authenticator_get_algorithm(auth, &get_algo);
-	if(get_algo != -1) {
+	if (get_algo != -1) {
 		sprintf(tmp, " | Algo = [%d]", get_algo);
 		strcat(str, tmp);
 	}
@@ -198,35 +199,35 @@ __print_authinfo(const fido_authenticator_h auth, appdata_s *ad)
 
 	fido_auth_key_protection_type_e key_protection = -1;
 	fido_authenticator_get_key_protection_method(auth, &key_protection);
-	if(key_protection != -1) {
+	if (key_protection != -1) {
 		sprintf(tmp, " | Key Protection = [%d]", key_protection);
 		strcat(str, tmp);
 	}
 
 	fido_auth_matcher_protection_type_e matcher_protection = -1;
 	fido_authenticator_get_matcher_protection_method(auth, &matcher_protection);
-	if(matcher_protection != -1) {
+	if (matcher_protection != -1) {
 		sprintf(tmp, " | Matcher Protection = [%d]", matcher_protection);
 		strcat(str, tmp);
 	}
 
 	fido_auth_attachment_hint_e attachment_hint = -1;
 	fido_authenticator_get_attachment_hint(auth, &attachment_hint);
-	if(attachment_hint != -1) {
+	if (attachment_hint != -1) {
 		sprintf(tmp, " | Attachment Hint = [%d]", attachment_hint);
 		strcat(str, tmp);
 	}
 
 	fido_auth_tc_display_type_e tc_discplay = -1;
 	fido_authenticator_get_tc_discplay(auth, &tc_discplay);
-	if(tc_discplay != -1) {
+	if (tc_discplay != -1) {
 		sprintf(tmp, " | Tc Display = [%d]", tc_discplay);
 		strcat(str, tmp);
 	}
 
 	char *tc_display_type = NULL;
 	fido_authenticator_get_tc_display_type(auth, &tc_display_type);
-	if(tc_display_type) {
+	if (tc_display_type != NULL) {
 		sprintf(tmp, " | Tc Display Type = [%s]", tc_display_type);
 		strcat(str, tmp);
 	}
@@ -234,7 +235,7 @@ __print_authinfo(const fido_authenticator_h auth, appdata_s *ad)
 
 	char *icon = NULL;
 	fido_authenticator_get_icon(auth, &icon);
-	if(icon) {
+	if (icon != NULL) {
 		sprintf(tmp, " | Icon = [%s]", icon);
 		strcat(str, tmp);
 	}
@@ -281,8 +282,7 @@ start_check_policy(void *data, Evas_Object *obj, void *event_info)
 		sprintf(str, "[%s]", error_string);
 		create_popup(str, (appdata_s *) data);
 		free(error_string);
-	}
-	else {
+	} else {
 		if (is_supported == true)
 			sprintf(str, "TRUE");
 		else
@@ -295,7 +295,7 @@ start_check_policy(void *data, Evas_Object *obj, void *event_info)
 static void
 _process_cb(fido_error_e tizen_error_code, const char *uaf_response, void *user_data)
 {
-    dlog_print(DLOG_INFO, "org.tizen.Fidosample", "process response = [%d]", tizen_error_code);
+	dlog_print(DLOG_INFO, "org.tizen.Fidosample", "process response = [%d]", tizen_error_code);
 
 	if (tizen_error_code == 0 && uaf_response != NULL) {
 		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "uaf response = %s", uaf_response);
@@ -307,8 +307,7 @@ _process_cb(fido_error_e tizen_error_code, const char *uaf_response, void *user_
 
 		create_popup(popup_str, (appdata_s *) user_data);
 		free(popup_str);
-	}
-	else {
+	} else {
 		__show_error(tizen_error_code, (appdata_s *)user_data);
 	}
 }
@@ -372,13 +371,12 @@ _process_cb_for_notify_pos(fido_error_e tizen_error_code, const char *uaf_respon
 		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "uaf response = %s", uaf_response);
 
 		int ret = fido_uaf_set_server_result(FIDO_SERVER_STATUS_CODE_OK, uaf_response);
-        dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_uaf_set_server_result =[%d]", ret);
+		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_uaf_set_server_result =[%d]", ret);
 
 		char *error_string = get_error_code(tizen_error_code);
 		create_popup(error_string, (appdata_s *) user_data);
 		free(error_string);
-	}
-	else {
+	} else {
 		__show_error(tizen_error_code, (appdata_s *)user_data);
 	}
 }
@@ -386,19 +384,18 @@ _process_cb_for_notify_pos(fido_error_e tizen_error_code, const char *uaf_respon
 static void
 _process_cb_for_notify_neg(fido_error_e tizen_error_code, const char *uaf_response, void *user_data)
 {
-    dlog_print(DLOG_INFO, "org.tizen.Fidosample", "process response = [%d]", tizen_error_code);
+	dlog_print(DLOG_INFO, "org.tizen.Fidosample", "process response = [%d]", tizen_error_code);
 
 	if (tizen_error_code == 0) {
 		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "uaf response = %s", uaf_response);
 
 		int ret = fido_uaf_set_server_result(0, uaf_response);
-        dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_uaf_set_server_result =[%d]", ret);
+		dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido_uaf_set_server_result =[%d]", ret);
 
 		char *error_string = get_error_code(tizen_error_code);
 		create_popup(error_string, (appdata_s *) user_data);
 		free(error_string);
-	}
-	else {
+	} else {
 		__show_error(tizen_error_code, (appdata_s *)user_data);
 	}
 }
@@ -630,9 +627,8 @@ main(int argc, char *argv[])
 	ui_app_remove_event_handler(handlers[APP_EVENT_LOW_MEMORY]);
 
 	ret = ui_app_main(argc, argv, &event_callback, &ad);
-	if (ret != APP_ERROR_NONE) {
+	if (ret != APP_ERROR_NONE)
 		dlog_print(DLOG_ERROR, LOG_TAG, "app_main() is failed. err = %d", ret);
-	}
 
 	return ret;
 }

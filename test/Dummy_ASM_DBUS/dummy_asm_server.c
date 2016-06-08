@@ -191,21 +191,16 @@ _dbus_on_asm_request(Dummyasm *object, GDBusMethodInvocation *invocation, const 
 
 	_INFO("request type=[%s]", req_type);
 
-	if (strcmp(req_type, "GetInfo") == 0) {
+	if (strcmp(req_type, "GetInfo") == 0)
 		dummyasm_complete_asm_request(object, invocation, 0, _GET_INFO_RESPONSE);
-	}
-	if (strcmp(req_type, "Register") == 0) {
+	if (strcmp(req_type, "Register") == 0)
 		dummyasm_complete_asm_request(object, invocation, 0, _REG_RESPONSE);
-	}
-	if (strcmp(req_type, "Authenticate") == 0) {
+	if (strcmp(req_type, "Authenticate") == 0)
 		dummyasm_complete_asm_request(object, invocation, 0, _AUTH_RESPONSE);
-	}
-	if (strcmp(req_type, "Deregister") == 0) {
+	if (strcmp(req_type, "Deregister") == 0)
 		dummyasm_complete_asm_request(object, invocation, 0, _DEREG_RESPONSE);
-	}
-	if (strcmp(req_type, "GetRegistrations") == 0) {
+	if (strcmp(req_type, "GetRegistrations") == 0)
 		dummyasm_complete_asm_request(object, invocation, 0, _GET_REGISTRATIONS_RESPONSE);
-	}
 
 	return true;
 }
@@ -217,14 +212,12 @@ on_bus_acquired(GDBusConnection *connection, const gchar *name, gpointer user_da
 
 		GDBusInterfaceSkeleton* interface = NULL;
 		__dbus_obj = dummyasm_skeleton_new();
-		if (__dbus_obj == NULL) {
+		if (__dbus_obj == NULL)
 			return;
-		}
 
 		interface = G_DBUS_INTERFACE_SKELETON(__dbus_obj);
-		if (!g_dbus_interface_skeleton_export(interface, connection, _DUMMY_ASM_SERVICE_DBUS_PATH, NULL)) {
+		if (!g_dbus_interface_skeleton_export(interface, connection, _DUMMY_ASM_SERVICE_DBUS_PATH, NULL))
 			return;
-		}
 
 		_INFO("before g_signal_connect");
 		g_signal_connect(__dbus_obj, "handle_asm_request",
