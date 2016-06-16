@@ -192,7 +192,7 @@ __print_authinfo(const fido_authenticator_h auth, appdata_s *ad)
 
 	fido_auth_user_verify_type_e user_ver = -1;
 	fido_authenticator_get_verification_method(auth, &user_ver);
-	if(user_ver != -1) {
+	if (user_ver != -1) {
 		sprintf(tmp, " | Verification = [%d]", user_ver);
 		strcat(str, tmp);
 	}
