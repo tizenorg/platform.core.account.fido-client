@@ -140,7 +140,7 @@ void fido_attestation_type_cb_list(fido_auth_attestation_type_e att_type, void *
 }
 
 static void
-__print_authinfo(const fido_authenticator_h auth, appdata_s *ad)
+__print_authinfo (const fido_authenticator_h auth, appdata_s *ad)
 {
 	dlog_print(DLOG_INFO, "org.tizen.Fidosample", "fido __print_authinfo");
 
