@@ -50,7 +50,7 @@ _int_cmp(gconstpointer a, gconstpointer b)
 bool
 _policy_checker_is_matched(_match_criteria_t *match_criteria, fido_authenticator_s *auth_info)
 {
-	_INFO("_policy_checker_is_matched");
+	_INFO("_policy_checker_is_matched::start");
 
 	/* -1 means the int value is not present, so we should ignore that. */
 
@@ -91,7 +91,7 @@ _policy_checker_is_matched(_match_criteria_t *match_criteria, fido_authenticator
 		SAFE_DELETE(auth_aaid);
 	}
 
-	_INFO("keyid matching");
+	_INFO("keyid matching start");
 
 	/* 3. If any Key ID is mentioned in match_criteria, then atleast one Key ID should match */
 	GList *key_id_list = match_criteria->key_id_list;
