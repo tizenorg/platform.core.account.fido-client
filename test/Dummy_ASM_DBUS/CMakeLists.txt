@@ -23,7 +23,7 @@ WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/common/
 COMMAND gdbus-codegen --interface-prefix org.tizen. --generate-c-code dummy-asm-stub ${CMAKE_SOURCE_DIR}/common/dbus_interfaces/dummyasm.xml
 COMMENT "Generating Dummy ASM GDBus stubs........................")
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -Wall -Werror")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -Wall -Werror -fPIE")
 SET(CMAKE_LDFLAGS "-Wl,-zdefs")
 
 SET(DUMMY_ASM_SRCS
@@ -34,7 +34,7 @@ ADD_EXECUTABLE(${ASM_DAEMON} ${DUMMY_ASM_SRCS} ${CMAKE_SOURCE_DIR}/common/dummy-
 ADD_DEPENDENCIES(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/common/dummy-asm-stub.h)
 ADD_DEPENDENCIES(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/common/dummy-asm-stub.c)
 
-TARGET_LINK_LIBRARIES(${ASM_DAEMON} ${ASM_PKGS_LDFLAGS})
+TARGET_LINK_LIBRARIES(${ASM_DAEMON} ${ASM_PKGS_LDFLAGS} "-pie")
 
 INSTALL(TARGETS ${ASM_DAEMON} DESTINATION bin)
 
