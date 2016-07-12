@@ -510,7 +510,7 @@ __get_tz_facet_id_of_caller(const char *caller_app_id, GDBusMethodInvocation *in
 
 	_INFO("");
 
-	ret = pkgmgrinfo_pkginfo_get_cert_value(cert_handle, PMINFO_AUTHOR_ROOT_CERT, &author_cert);
+	ret = pkgmgrinfo_pkginfo_get_cert_value(cert_handle, PMINFO_AUTHOR_SIGNER_CERT, &author_cert);
 	if (ret != PMINFO_R_OK) {
 		pkgmgrinfo_pkginfo_destroy_certinfo(cert_handle);
 		_ERR("");

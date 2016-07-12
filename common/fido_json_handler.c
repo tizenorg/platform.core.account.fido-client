@@ -2016,20 +2016,22 @@ _uaf_composer_compose_final_challenge(const char *app_id, const char *challenge,
 		if (chb_root_obj == NULL)
 			return NULL;
 
-		char *end_pt = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_SERVER_END_POINT);
-		char *cert = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_TLS_SERVER_CERT);
-		char *uni = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_TLS_UNIQUE);
-		char *cid = (char*)json_object_get_string_member(chb_root_obj, _JSON_KEY_CID_PUB_KEY);
+		const gchar *end_pt = json_object_get_string_member(chb_root_obj, _JSON_KEY_SERVER_END_POINT);
+		const gchar *cert = json_object_get_string_member(chb_root_obj, _JSON_KEY_TLS_SERVER_CERT);
+		const gchar *uni = json_object_get_string_member(chb_root_obj, _JSON_KEY_TLS_UNIQUE);
+		const gchar *cid = json_object_get_string_member(chb_root_obj, _JSON_KEY_CID_PUB_KEY);
 
-		json_object_set_string_member(jsonObject, _JSON_KEY_SERVER_END_POINT, end_pt);
-		json_object_set_string_member(jsonObject, _JSON_KEY_TLS_SERVER_CERT, cert);
-		json_object_set_string_member(jsonObject, _JSON_KEY_TLS_UNIQUE, uni);
-		json_object_set_string_member(jsonObject, _JSON_KEY_CID_PUB_KEY, cid);
+		if (end_pt != NULL)
+			json_object_set_string_member(jsonObject, _JSON_KEY_SERVER_END_POINT, end_pt);
 
-		SAFE_DELETE(end_pt);
-		SAFE_DELETE(cert);
-		SAFE_DELETE(uni);
-		SAFE_DELETE(cid);
+		if (cert != NULL)
+			json_object_set_string_member(jsonObject, _JSON_KEY_TLS_SERVER_CERT, cert);
+
+		if (uni != NULL)
+			json_object_set_string_member(jsonObject, _JSON_KEY_TLS_UNIQUE, uni);
+
+		if (cid != NULL)
+			json_object_set_string_member(jsonObject, _JSON_KEY_CID_PUB_KEY, cid);
 
 		g_object_unref(chb_parser);
 	}
