@@ -292,7 +292,7 @@ _asm_plugin_mgr_discover_all(_asm_plugin_discover_response_cb cb, void *user_dat
 
 	cb_data->user_data = user_data;
 
-	if(cb_data->asm_proxy_list_iter == NULL)
+	if (cb_data->asm_proxy_list_iter == NULL)
 		return FIDO_ERROR_NOT_SUPPORTED;
 
 	_fido_asm_proxy_t *asm_proxy = (_fido_asm_proxy_t*)(cb_data->asm_proxy_list_iter->data);
