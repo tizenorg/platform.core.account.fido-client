@@ -33,6 +33,8 @@
 #include "fido-stub.h"
 #include "fido_internal_types.h"
 
+#define OWNER_UID 5001
+
 #define _UI_LAUNCH_RETRY_COUNT 5
 #define _UI_SVC_TERMINATE_TIMEOUT 2000
 
@@ -40,6 +42,7 @@
 #define _FREEDESKTOP_PATH       "/org/freedesktop/DBus"
 #define _FREEDESKTOP_INTERFACE  "org.freedesktop.DBus"
 
+GMainLoop *__mainLoop;
 static GQueue *_ui_q = NULL;
 static int __ui_svc_pid = -1;
 
@@ -270,7 +273,7 @@ __terminate_ui_svc(void)
 	_INFO("Killing inactive UI Service [%d]", __ui_svc_pid);
 
 	if (__ui_svc_pid > 0)
-		aul_terminate_pid(__ui_svc_pid);
+		aul_terminate_pid_for_uid(__ui_svc_pid, OWNER_UID);
 
 	__ui_svc_pid = -1;
 }
@@ -294,22 +297,44 @@ static int
 __launch_svc_ui(bundle *ui_req)
 {
 	int i = 0;
-	for (; i < _UI_LAUNCH_RETRY_COUNT; i++) {
-		if (__ui_svc_pid < 0)
-			__ui_svc_pid = aul_launch_app(_UI_SVC_PACKAGE, ui_req);
-		else {
-			aul_terminate_pid(__ui_svc_pid);
-			__ui_svc_pid = -1;
+//	for (; i < _UI_LAUNCH_RETRY_COUNT; i++) {
+//		if (__ui_svc_pid < 0)
+//			__ui_svc_pid = aul_launch_app_for_uid(_UI_SVC_PACKAGE, ui_req, OWNER_UID);
+//		else {
+//			aul_terminate_pid_for_uid(__ui_svc_pid, OWNER_UID);
+//			__ui_svc_pid = -1;
 
-			__ui_svc_pid = aul_launch_app(_UI_SVC_PACKAGE, ui_req);
-		}
+//			__ui_svc_pid = aul_launch_app_for_uid(_UI_SVC_PACKAGE, ui_req, OWNER_UID);
+//		}
 
-		_INFO("fido svc pid = [%d]", __ui_svc_pid);
+//		_INFO("fido svc pid = [%d]", __ui_svc_pid);
 
-		if (__ui_svc_pid > 0)
-			return FIDO_ERROR_NONE;
+//		if (__ui_svc_pid > 0)
+//			return FIDO_ERROR_NONE;
+//	}
+
+	int _ui_pid = -1;
+
+	for(; i < 10; i++) {
+		_ui_pid = aul_launch_app_for_uid(_UI_SVC_PACKAGE, ui_req, OWNER_UID);
+		if(_ui_pid > 0)
+			break;
 	}
-	return FIDO_ERROR_UNKNOWN;
+
+	if(_ui_pid < 0)
+		return FIDO_ERROR_UNKNOWN;
+
+	__mainLoop = NULL;
+
+	__mainLoop = g_main_loop_new(NULL, FALSE);
+
+	g_main_loop_run(__mainLoop);
+
+	_INFO("");
+
+	aul_terminate_pid_for_uid(_ui_pid, OWNER_UID);
+
+	return FIDO_ERROR_NONE;
 }
 
 static int
@@ -508,5 +533,6 @@ CATCH:
 		__start_ui_svc_term_timer();
 	}
 
+	g_main_loop_quit(__mainLoop);
 	return true;
 }
