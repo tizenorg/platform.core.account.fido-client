@@ -411,6 +411,20 @@ __copy_png_list(GList *src_list)
 	return dest;
 }
 
+gint
+__compare_match(gconstpointer list_elem, gconstpointer supplied_elem)
+{
+	if ((list_elem == NULL) || (supplied_elem == NULL))
+		return -1;
+
+	bool ret = _policy_checker_is_matched((_match_criteria_t*)list_elem ,
+										  (fido_authenticator_s*)supplied_elem);
+	if (ret == true)
+		return 0;
+
+	return -1;
+}
+
 /* Returns _matched_auth_data_t list*/
 GList *
 _policy_checker_get_matched_auth_list(_policy_t *policy, GList *auth_list)
@@ -426,8 +440,8 @@ _policy_checker_get_matched_auth_list(_policy_t *policy, GList *auth_list)
 	RET_IF_FAIL(policy != NULL, NULL);
 	RET_IF_FAIL(auth_list != NULL, NULL);
 
-	//    _match_criteria_t *match_criteria_or = NULL;
 	GList *allowed_list = NULL;
+	/*_match_criteria_t list*/
 	GList *disallowed_list = policy->disallowed_list;
 	GList *accepted_list = policy->accepted_list;
 
@@ -435,7 +449,7 @@ _policy_checker_get_matched_auth_list(_policy_t *policy, GList *auth_list)
 		_INFO("accepted_list count = [%d]", g_list_length(accepted_list));
 
 	if (disallowed_list != NULL)
-		_INFO("allowed_list count = [%d]", g_list_length(disallowed_list));
+		_INFO("disallowed_list count = [%d]", g_list_length(disallowed_list));
 
 	GList *accepted_list_iter = g_list_first(accepted_list);
 	while (accepted_list_iter != NULL) {
@@ -456,45 +470,43 @@ _policy_checker_get_matched_auth_list(_policy_t *policy, GList *auth_list)
 
 					if (disallowed_list != NULL) {
 
-						GList *disallowed_list_iter = g_list_first(disallowed_list);
-						while (disallowed_list_iter != NULL) {
-							_match_criteria_t *disallowed_match_info = (_match_criteria_t *) disallowed_list_iter->data;
+						if (g_list_find_custom(disallowed_list, authenticator,
+											   __compare_match) == NULL) {
 
-							if (!_policy_checker_is_matched(disallowed_match_info, authenticator)) {
-								_INFO("[%s] is not in disallowed list", authenticator->aaid);
-								_matched_auth_data_t *matched_auth_data = (_matched_auth_data_t*) calloc(1, sizeof(_matched_auth_data_t));
-								RET_IF_FAIL(matched_auth_data, NULL);
+							_INFO("[%s] is not in disallowed list", authenticator->aaid);
+							_matched_auth_data_t *matched_auth_data = (_matched_auth_data_t*) calloc(1, sizeof(_matched_auth_data_t));
+							RET_IF_FAIL(matched_auth_data, NULL);
 
-								/*TODO : ASM must send auth index*/
-								if (authenticator->auth_index != NULL)
-									matched_auth_data->auth_index = strdup(authenticator->auth_index);
-								else
-									_ERR("auth index missing");
+							/*TODO : ASM must send auth index*/
+							if (authenticator->auth_index != NULL)
+								matched_auth_data->auth_index = strdup(authenticator->auth_index);
+							else
+								_ERR("auth index missing");
 
-								matched_auth_data->att_type = _get_attestation_type(match_info, authenticator);
+							matched_auth_data->att_type = _get_attestation_type(match_info, authenticator);
 
-								if (authenticator->title != NULL)
-									matched_auth_data->label = strdup(authenticator->title);
-								else {
-									_ERR("title missing, putting ver method");
-									/*If label is null, set verification method name instead*/
-									matched_auth_data->label = __get_verification_method_string(authenticator->user_verification);
-								}
+							if (authenticator->title != NULL)
+								matched_auth_data->label = strdup(authenticator->title);
+							else {
+								_ERR("title missing, putting ver method");
+								/*If label is null, set verification method name instead*/
+								matched_auth_data->label = __get_verification_method_string(authenticator->user_verification);
+							}
 
-								if (authenticator->asm_id != NULL)
-									matched_auth_data->asm_id = strdup(authenticator->asm_id);
-								else
-									_ERR("Authenticator does not have any ASM ID!!");
+							if (authenticator->asm_id != NULL)
+								matched_auth_data->asm_id = strdup(authenticator->asm_id);
+							else
+								_ERR("Authenticator does not have any ASM ID!!");
 
-								matched_auth_data->key_ids = __copy_string_list(match_info->key_id_list);
-								/*fido_display_png_characteristics_descriptor_s list*/
-								matched_auth_data->tc_display_png_characteristics =
-										__copy_png_list(authenticator->tc_display_png_characteristics);
+							matched_auth_data->key_ids = __copy_string_list(match_info->key_id_list);
+							/*fido_display_png_characteristics_descriptor_s list*/
+							matched_auth_data->tc_display_png_characteristics =
+									__copy_png_list(authenticator->tc_display_png_characteristics);
 
 								allowed_list = g_list_append(allowed_list, matched_auth_data);
+							} else {
+								_INFO("[%s] is in disallowed list", authenticator->aaid);
 							}
-							disallowed_list_iter = disallowed_list_iter->next;
-						}
 					} else {
 						_INFO("[%s] adding since no disallowed list", authenticator->aaid);
 						_matched_auth_data_t *matched_auth_data = (_matched_auth_data_t*) calloc(1, sizeof(_matched_auth_data_t));
